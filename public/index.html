@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Agenda</title>
+
+<!-- ====== Supaya bisa "Add to Home Screen" di iPhone dan tampil kayak app ====== -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Agenda">
+<link rel="apple-touch-icon" href="icon-180.png">
+
+<!-- Manifest, biar juga rapi kalau suatu saat dibuka/di-install dari Android/Chrome -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#232E28">
+<style>
+
+/* ==========================================================
+   1. DESIGN TOKENS
+   Ganti warna/ukuran di sini kalau mau ubah tampilan global.
+   ========================================================== */
+:root{
+  --paper:      #EAEDE1;   /* warna latar halaman */
+  --card:       #FFFFFF;   /* warna kartu item */
+  --ink:        #232E28;   /* warna teks utama */
+  --ink-soft:   #5B6459;   /* warna teks sekunder */
+  --line:       #C9D0BC;   /* warna border tipis */
+
+  --matkul:     #C97A3B;   /* aksen jenis: Matkul */
+  --matkul-bg:  #FBEBDC;
+  --tutor:      #2F7A6E;   /* aksen jenis: Tutor */
+  --tutor-bg:   #E2F1EC;
+  --lain:       #6E5A8C;   /* aksen jenis: Lainnya */
+  --lain-bg:    #ECE6F4;
+
+  --danger:     #B4482F;   /* warna tombol hapus */
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  margin: 0;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+
+/* ==========================================================
+   2. LAYOUT UMUM (header, container)
+   ========================================================== */
+.wrap{
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 28px 18px 100px; /* padding bawah = ruang buat tombol tambah */
+}
+
+header{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+h1{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.today-label{
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+
+/* ==========================================================
+   3. TAB HARI (Sen–Min)
+   ========================================================== */
+.day-tabs{
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 18px;
+  scrollbar-width: none;
+}
+.day-tabs::-webkit-scrollbar{ display: none; }
+
+.day-tab{
+  flex: 0 0 auto;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 14px;
+  cursor: pointer;
+  position: relative;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+
+.day-tab.active{
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+/* titik kecil penanda "hari ini", muncul kalau tab itu sedang tidak aktif */
+.day-tab.is-today:not(.active)::after{
+  content: "";
+  position: absolute;
+  top: 6px; right: 7px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--matkul);
+}
+
+
+/* ==========================================================
+   4. DAFTAR JADWAL (kartu item + state kosong)
+   ========================================================== */
+.empty{
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ink-soft);
+}
+.empty .big{
+  font-family: Georgia, serif;
+  font-size: 19px;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.list{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item{
+  display: flex;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 14px 14px 0;
+  overflow: hidden;
+}
+
+/* garis warna di kiri kartu, warnanya mengikuti jenis jadwal */
+.item .bar{
+  width: 5px;
+  border-radius: 4px;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+.item.tipe-matkul .bar{ background: var(--matkul); }
+.item.tipe-tutor  .bar{ background: var(--tutor); }
+.item.tipe-lain   .bar{ background: var(--lain); }
+
+.item-body{ flex: 1; min-width: 0; }
+
+.item-top{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.item-title{ font-size: 16px; font-weight: 600; line-height: 1.3; }
+.item-time{ font-size: 13px; color: var(--ink-soft); white-space: nowrap; padding-top: 2px; }
+
+.item-tag{
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-top: 6px;
+}
+.tipe-matkul .item-tag{ background: var(--matkul-bg); color: var(--matkul); }
+.tipe-tutor  .item-tag{ background: var(--tutor-bg);  color: var(--tutor); }
+.tipe-lain   .item-tag{ background: var(--lain-bg);   color: var(--lain); }
+
+.item-note{
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.item-actions{ display: flex; gap: 14px; margin-top: 10px; }
+.item-actions button{
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.item-actions button.hapus{ color: var(--danger); }
+
+
+/* ==========================================================
+   5. TOMBOL TAMBAH (floating button di bawah layar)
+   ========================================================== */
+.fab{
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  width: min(484px, calc(100% - 36px));
+  padding: 15px 0;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(35,46,40,0.25);
+}
+
+
+/* ==========================================================
+   6. FORM TAMBAH/UBAH JADWAL (bottom sheet)
+   ========================================================== */
+.sheet-backdrop{
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(35,46,40,0.35);
+  z-index: 10;
+}
+.sheet-backdrop.open{ display: flex; }
+
+.sheet{
+  width: 100%;
+  max-width: 520px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--paper);
+  border-radius: 20px 20px 0 0;
+  padding: 22px 18px 26px;
+}
+
+.sheet h2{
+  font-family: Georgia, serif;
+  font-size: 21px;
+  margin: 0 0 16px;
+}
+
+.field{ margin-bottom: 14px; }
+.field label{
+  display: block;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-bottom: 5px;
+}
+.field input, .field select, .field textarea{
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 15px;
+  font-family: inherit;
+}
+.field textarea{ resize: vertical; min-height: 56px; }
+
+/* pilihan jenis: Matkul / Tutor / Lainnya, tampil sebagai 3 tombol sejajar */
+.tipe-choice{ display: flex; gap: 8px; }
+.tipe-choice label{
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  margin: 0;
+}
+.tipe-choice input{ display: none; } /* radio asli disembunyikan, label-nya yang jadi tombol */
+.tipe-choice label.pick-matkul:has(input:checked){ background: var(--matkul-bg); border-color: var(--matkul); color: var(--matkul); }
+.tipe-choice label.pick-tutor:has(input:checked) { background: var(--tutor-bg);  border-color: var(--tutor);  color: var(--tutor); }
+.tipe-choice label.pick-lain:has(input:checked)  { background: var(--lain-bg);   border-color: var(--lain);   color: var(--lain); }
+
+/* pilihan hari: bisa multi-pilih (checkbox), tampil sebagai chip */
+.day-choice{ display: flex; flex-wrap: wrap; gap: 6px; }
+.day-choice label{
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.day-choice input{ display: none; }
+.day-choice label:has(input:checked){ background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+.sheet-actions{ display: flex; gap: 10px; margin-top: 18px; }
+.sheet-actions button{
+  flex: 1;
+  padding: 13px 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-simpan{ background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn-simpan:disabled{ background: #b9bdb2; border-color: #b9bdb2; color: #6f7268; cursor: not-allowed; }
+.btn-batal{ background: transparent; color: var(--ink-soft); }
+
+.loading{ text-align: center; padding: 60px 0; color: var(--ink-soft); font-size: 14px; }
+
+
+/* ==========================================================
+   7. TOMBOL SETTING (API key) DI HEADER
+   ========================================================== */
+.header-right{ display: flex; align-items: center; gap: 10px; }
+.gear-btn{
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  width: 30px; height: 30px;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+
+
+/* ==========================================================
+   8. DUA FAB: AI (atas) & MANUAL (bawah)
+   ========================================================== */
+.fab-ai{
+  background: var(--tutor);
+  bottom: 76px;
+}
+.fab-manual{ }
+
+
+/* ==========================================================
+   9. SHEET "TAMBAH VIA AI"
+   ========================================================== */
+.ai-tabs{ display: flex; gap: 8px; margin-bottom: 16px; }
+.ai-tab, .materi-type-tab{
+  flex: 1;
+  padding: 10px 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  cursor: pointer;
+}
+.ai-tab.active, .materi-type-tab.active{ background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+.ai-error{
+  background: var(--matkul-bg);
+  color: var(--danger);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.hint{ font-size: 12px; color: var(--ink-soft); margin-top: -8px; margin-bottom: 14px; line-height: 1.4; }
+
+
+/* ==========================================================
+   10. SHEET "KONFIRMASI JADWAL" (preview hasil AI)
+   ========================================================== */
+.preview-item{
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.preview-item input{ margin-top: 4px; }
+.preview-title{ font-size: 14.5px; font-weight: 600; }
+.preview-title .item-tag{ margin-left: 6px; vertical-align: middle; }
+.preview-detail{ font-size: 12.5px; color: var(--ink-soft); margin-top: 3px; }
+
+
+/* ==========================================================
+   11. TAB "JADWAL" / "MATERI"
+   ========================================================== */
+.view-tabs{ display: flex; gap: 8px; margin-bottom: 16px; }
+.view-tab{
+  flex: 1;
+  padding: 10px 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.view-tab.active{ background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+.materi-subject{ cursor: pointer; }
+
+
+/* ==========================================================
+   12. DAFTAR FILE MATERI (di dalam sheet detail matkul/tutor)
+   ========================================================== */
+.materi-file{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.materi-file-icon{ font-size: 22px; flex-shrink: 0; }
+.materi-file-info{ flex: 1; min-width: 0; }
+.materi-file-name{ font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.materi-file-date{ font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+.materi-file-actions{ display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; align-items: flex-end; }
+.materi-file-actions button{
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: var(--ink-soft);
+}
+.materi-file-actions button.hapus{ color: var(--danger); }
+
+
+/* ==========================================================
+   13. VIEWER MATERI (tampil di dalam app, bukan tab baru)
+   ========================================================== */
+.materi-viewer-frame{
+  width: 100%;
+  height: 58vh;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.materi-viewer-img{ width: 100%; border-radius: 12px; display: block; }
+.materi-viewer-download{
+  display: block;
+  text-align: center;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--ink);
+  color: var(--paper);
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 12px;
+}
+.doc-preview{
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink);
+  max-height: 55vh;
+  overflow: auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+}
+.doc-preview img{ max-width: 100%; height: auto; }
+.excel-preview table{ border-collapse: collapse; width: 100%; font-size: 12px; }
+.excel-preview td, .excel-preview th{ border: 1px solid var(--line); padding: 4px 6px; text-align: left; }
+
+
+/* ==========================================================
+   14. LAYAR LOGIN / DAFTAR
+   ========================================================== */
+#authScreen{
+  position: fixed;
+  inset: 0;
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+}
+.auth-box{
+  width: 100%;
+  max-width: 360px;
+}
+.auth-box h1{
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 30px;
+  margin-bottom: 4px;
+}
+.auth-sub{ color: var(--ink-soft); font-size: 13.5px; margin-bottom: 20px; }
+.auth-tabs{ display: flex; gap: 8px; margin-bottom: 18px; }
+.auth-tab{
+  flex: 1;
+  padding: 10px 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.auth-tab.active{ background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.auth-error{
+  background: var(--matkul-bg);
+  color: var(--danger);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  display: none;
+}
+.logout-btn{
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.username-label{ font-size: 12.5px; color: var(--ink-soft); }
+
+</style>
+</head>
+<body>
+
+<!-- Layar login / daftar, tampil kalau belum ada token tersimpan -->
+<div id="authScreen">
+  <div class="auth-box">
+    <h1>Agenda</h1>
+    <div class="auth-sub">Masuk dulu buat lihat jadwal & materimu.</div>
+
+    <div class="auth-tabs">
+      <button type="button" class="auth-tab active" data-mode="login">Masuk</button>
+      <button type="button" class="auth-tab" data-mode="register">Daftar</button>
+    </div>
+
+    <div class="auth-error" id="authError"></div>
+
+    <form id="authForm">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="authUsername" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="authPassword" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn-simpan" id="authSubmitBtn" style="width:100%;">Masuk</button>
+    </form>
+  </div>
+</div>
+
+<div class="wrap" id="appWrap" style="display:none">
+  <header>
+    <h1>Agenda</h1>
+    <div class="header-right">
+      <div class="today-label" id="todayLabel"></div>
+      <span class="username-label" id="usernameLabel"></span>
+      <button class="gear-btn" id="apiKeyBtn" title="Atur API key AI (Gemini)">✨</button>
+      <button class="logout-btn" id="logoutBtn">Keluar</button>
+    </div>
+  </header>
+
+  <div class="view-tabs">
+    <button class="view-tab active" data-view="jadwal">Jadwal</button>
+    <button class="view-tab" data-view="materi">Materi</button>
+  </div>
+
+  <div id="jadwalView">
+    <div class="day-tabs" id="dayTabs"></div>
+    <div id="listArea"><div class="loading">Memuat…</div></div>
+  </div>
+
+
+  <div id="materiView" style="display:none">
+    <div id="materiListArea"><div class="loading">Memuat…</div></div>
+  </div>
+</div>
+
+<button class="fab fab-ai" id="openAiBtn" style="display:none">✨ Tambah via AI</button>
+<button class="fab fab-manual" id="openAddBtn" style="display:none">+ Tambah manual</button>
+
+<!-- Form tambah/ubah jadwal, muncul sebagai bottom sheet -->
+<div class="sheet-backdrop" id="backdrop">
+  <div class="sheet">
+    <h2 id="sheetTitle">Jadwal baru</h2>
+    <form id="form">
+
+      <div class="field">
+        <label>Nama kegiatan</label>
+        <input type="text" id="fTitle" placeholder="mis. Struktur Data, Tutor Kalkulus" required>
+      </div>
+
+      <div class="field">
+        <label>Jenis</label>
+        <div class="tipe-choice">
+          <label class="pick-matkul"><input type="radio" name="tipe" value="matkul" checked><span>Matkul</span></label>
+          <label class="pick-tutor"><input type="radio" name="tipe" value="tutor"><span>Tutor</span></label>
+          <label class="pick-lain"><input type="radio" name="tipe" value="lain"><span>Lainnya</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Hari</label>
+        <div class="day-choice" id="dayChoice"></div>
+      </div>
+
+      <div class="field">
+        <label>Jam mulai</label>
+        <input type="time" id="fTime" required>
+      </div>
+
+      <div class="field">
+        <label>Jam selesai (opsional)</label>
+        <input type="time" id="fEndTime">
+      </div>
+
+      <div class="field">
+        <label>Catatan (opsional)</label>
+        <textarea id="fNote" placeholder="mis. Ruang B3.2, bawa laptop"></textarea>
+      </div>
+
+      <div class="sheet-actions">
+        <button type="button" class="btn-batal" id="cancelBtn">Batal</button>
+        <button type="submit" class="btn-simpan">Simpan</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- Sheet: tambah jadwal pakai AI (teks atau foto) -->
+<div class="sheet-backdrop" id="aiBackdrop">
+  <div class="sheet">
+    <h2>Tambah jadwal pakai AI</h2>
+
+    <div class="ai-tabs">
+      <button type="button" class="ai-tab active" data-mode="teks">Ketik Teks</button>
+      <button type="button" class="ai-tab" data-mode="foto">Kirim Foto</button>
+    </div>
+
+    <div id="aiTeksPane">
+      <div class="field">
+        <label>Ceritakan jadwalmu</label>
+        <textarea id="aiTeksInput" rows="5" placeholder="mis. Senin jam 8 pagi kelas Struktur Data di ruang B3.2, Rabu jam 10 tutor Kalkulus"></textarea>
+      </div>
+    </div>
+
+    <div id="aiFotoPane" style="display:none">
+      <div class="field">
+        <label>Upload foto jadwal</label>
+        <input type="file" id="aiFotoInput" accept="image/*">
+      </div>
+    </div>
+
+    <div class="hint">Jadwal akan dibaca AI, lalu kamu bisa cek dulu sebelum disimpan.</div>
+
+    <div class="ai-error" id="aiError" style="display:none"></div>
+
+    <div class="sheet-actions">
+      <button type="button" class="btn-batal" id="aiCancelBtn">Batal</button>
+      <button type="button" class="btn-simpan" id="aiProsesBtn">Proses dengan AI</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: konfirmasi hasil AI sebelum benar-benar disimpan -->
+<div class="sheet-backdrop" id="previewBackdrop">
+  <div class="sheet">
+    <h2>Konfirmasi jadwal</h2>
+    <div id="previewList"></div>
+    <div class="sheet-actions">
+      <button type="button" class="btn-batal" id="previewCancelBtn">Batal</button>
+      <button type="button" class="btn-simpan" id="previewAddBtn">Tambahkan ke jadwal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: daftar materi milik satu matkul/tutor -->
+<div class="sheet-backdrop" id="materiDetailBackdrop">
+  <div class="sheet">
+    <h2 id="materiDetailTitle">Materi</h2>
+    <div id="materiFileList"></div>
+    <div class="sheet-actions">
+      <button type="button" class="btn-batal" id="materiDetailCloseBtn">Tutup</button>
+      <button type="button" class="btn-simpan" id="openMateriUploadBtn">+ Tambah Materi</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: upload materi baru (file atau link) -->
+<div class="sheet-backdrop" id="materiUploadBackdrop">
+  <div class="sheet">
+    <h2>Tambah Materi</h2>
+
+    <div class="ai-tabs">
+      <button type="button" class="materi-type-tab active" data-mode="file">File</button>
+      <button type="button" class="materi-type-tab" data-mode="link">Link</button>
+    </div>
+
+    <div id="materiFilePane">
+      <div class="field">
+        <label>Pilih file (PDF, Word, Excel, atau Foto)</label>
+        <input type="file" id="materiFileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,image/*">
+      </div>
+    </div>
+
+    <div id="materiLinkPane" style="display:none">
+      <div class="field">
+        <label>Nama link (opsional)</label>
+        <input type="text" id="materiLinkLabel" placeholder="mis. Slide Google Drive">
+      </div>
+      <div class="field">
+        <label>URL</label>
+        <input type="url" id="materiLinkUrl" placeholder="https://...">
+      </div>
+    </div>
+
+    <div class="ai-error" id="materiUploadError" style="display:none"></div>
+
+    <div class="sheet-actions">
+      <button type="button" class="btn-batal" id="materiUploadCancelBtn">Batal</button>
+      <button type="button" class="btn-simpan" id="materiUploadSaveBtn">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: lihat isi materi (PDF/foto langsung tampil, tipe lain cuma tombol download) -->
+<div class="sheet-backdrop" id="materiViewerBackdrop">
+  <div class="sheet">
+    <h2 id="materiViewerTitle">Materi</h2>
+    <div id="materiViewerBody"></div>
+    <div class="sheet-actions">
+      <button type="button" class="btn-batal" id="materiViewerCloseBtn">Tutup</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ==========================================================
+   1. KONFIGURASI & KONSTANTA
+   ========================================================== */
+const DAYS      = ["Sen","Sel","Rab","Kam","Jum","Sab","Min"];   // label singkat untuk tab
+const DAY_NAMES = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"]; // label lengkap
+const TIPE_LABEL = { matkul: "Matkul", tutor: "Tutor", lain: "Lainnya" };
+
+// backend di-serve dari domain yang sama (Express nyajiin frontend + API),
+// jadi path relatif aja, gak perlu tulis domain lengkap
+const API_BASE = '';
+const TOKEN_KEY = 'agenda:token';
+const USERNAME_KEY = 'agenda:username';
+
+function getToken(){ return localStorage.getItem(TOKEN_KEY) || ''; }
+function setToken(t){ localStorage.setItem(TOKEN_KEY, t); }
+function clearToken(){ localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USERNAME_KEY); }
+function getUsername(){ return localStorage.getItem(USERNAME_KEY) || ''; }
+function setUsername(u){ localStorage.setItem(USERNAME_KEY, u); }
+
+function authHeader(){
+  return { 'Authorization': 'Bearer ' + getToken() };
+}
+
+/* wrapper fetch API: otomatis kirim token & lempar error kalau gagal */
+async function apiFetch(path, options = {}){
+  const opts = { ...options };
+  opts.headers = { ...(options.headers || {}), ...authHeader() };
+
+  const res = await fetch(API_BASE + path, opts);
+
+  if (res.status === 401){
+    clearToken();
+    tampilkanAuthScreen();
+    throw new Error('Sesi habis, silakan login ulang.');
+  }
+  if (!res.ok){
+    let pesan = 'Terjadi kesalahan.';
+    try { pesan = (await res.json()).error || pesan; } catch (e) {}
+    throw new Error(pesan);
+  }
+  if (res.status === 204) return null;
+  return res.json();
+}
+
+
+/* ==========================================================
+   2. REFERENSI ELEMEN DOM
+   ========================================================== */
+const listArea   = document.getElementById('listArea');
+const dayTabs     = document.getElementById('dayTabs');
+const backdrop     = document.getElementById('backdrop');
+const form         = document.getElementById('form');
+const dayChoice    = document.getElementById('dayChoice');
+const sheetTitle   = document.getElementById('sheetTitle');
+
+
+/* ==========================================================
+   3. STATE APLIKASI
+   ========================================================== */
+let items = [];                                // semua jadwal, disimpan lokal & ke storage
+let selectedDay = getTodayIndex();              // hari yang sedang ditampilkan (0 = Senin)
+let editingId = null;                           // id jadwal yang sedang diedit (null = mode tambah)
+
+function getTodayIndex(){
+  // Date.getDay() = 0 (Minggu) .. 6 (Sabtu) -> digeser jadi 0 (Senin) .. 6 (Minggu)
+  return (new Date().getDay() + 6) % 7;
+}
+
+
+/* ==========================================================
+   4. RENDER: tab hari
+   ========================================================== */
+function renderDayTabs(){
+  dayTabs.innerHTML = '';
+
+  DAYS.forEach((label, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'day-tab'
+      + (i === selectedDay ? ' active' : '')
+      + (i === getTodayIndex() ? ' is-today' : '');
+    btn.textContent = label;
+    btn.onclick = () => {
+      selectedDay = i;
+      renderDayTabs();
+      renderList();
+    };
+    dayTabs.appendChild(btn);
+  });
+}
+
+
+/* ==========================================================
+   5. RENDER: daftar jadwal untuk hari yang dipilih
+   ========================================================== */
+function renderList(){
+  const todaysItems = items
+    .filter(it => it.days.includes(selectedDay))
+    .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+
+  if (todaysItems.length === 0){
+    listArea.innerHTML = `
+      <div class="empty">
+        <div class="big">Belum ada jadwal</div>
+        Hari ${DAY_NAMES[selectedDay]} masih kosong.
+      </div>`;
+    return;
+  }
+
+  listArea.innerHTML = `
+    <div class="list">
+      ${todaysItems.map(renderItemCard).join('')}
+    </div>`;
+
+  // pasang event listener tombol ubah/hapus di tiap kartu
+  listArea.querySelectorAll('.item').forEach(cardEl => {
+    const id = cardEl.dataset.id;
+    cardEl.querySelector('.edit').onclick  = () => openEditSheet(id);
+    cardEl.querySelector('.hapus').onclick = () => hapusItem(id);
+  });
+}
+
+function renderItemCard(it){
+  return `
+    <div class="item tipe-${it.tipe}" data-id="${it.id}">
+      <div class="bar"></div>
+      <div class="item-body">
+        <div class="item-top">
+          <div class="item-title">${escapeHtml(it.title)}</div>
+          <div class="item-time">${it.time}${it.endTime ? '–' + it.endTime : ''}</div>
+        </div>
+        <span class="item-tag">${TIPE_LABEL[it.tipe]}</span>
+        ${it.note ? `<div class="item-note">${escapeHtml(it.note)}</div>` : ''}
+        <div class="item-actions">
+          <button class="edit">Ubah</button>
+          <button class="hapus">Hapus</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+
+/* ==========================================================
+   6. HELPER
+   ========================================================== */
+function timeToMinutes(t){
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function escapeHtml(text){
+  // mencegah isi input user dianggap sebagai tag HTML
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+
+/* ==========================================================
+   7. FORM: buka/tutup sheet tambah & ubah
+   ========================================================== */
+function buildDayChoiceCheckboxes(selectedDays){
+  dayChoice.innerHTML = '';
+  DAY_NAMES.forEach((name, i) => {
+    const isChecked = selectedDays && selectedDays.includes(i);
+    const label = document.createElement('label');
+    label.innerHTML = `
+      <input type="checkbox" value="${i}" ${isChecked ? 'checked' : ''}>
+      <span>${DAYS[i]}</span>`;
+    dayChoice.appendChild(label);
+  });
+}
+
+function openAddSheet(){
+  editingId = null;
+  sheetTitle.textContent = 'Jadwal baru';
+  form.reset();
+  buildDayChoiceCheckboxes([selectedDay]); // default: hari yang lagi dibuka
+  backdrop.classList.add('open');
+}
+
+function openEditSheet(id){
+  const it = items.find(x => x.id === id);
+  if (!it) return;
+
+  editingId = id;
+  sheetTitle.textContent = 'Ubah jadwal';
+  document.getElementById('fTitle').value = it.title;
+  document.getElementById('fTime').value = it.time;
+  document.getElementById('fEndTime').value = it.endTime || '';
+  document.getElementById('fNote').value = it.note || '';
+  form.querySelector(`input[name="tipe"][value="${it.tipe}"]`).checked = true;
+  buildDayChoiceCheckboxes(it.days);
+
+  backdrop.classList.add('open');
+}
+
+function closeSheet(){
+  backdrop.classList.remove('open');
+}
+
+
+/* ==========================================================
+   8. CRUD DATA + PENYIMPANAN (window.storage)
+   ========================================================== */
+async function loadItems(){
+  try {
+    items = await apiFetch('/api/items');
+  } catch (err) {
+    console.error(err);
+    items = [];
+  }
+  renderDayTabs();
+  renderList();
+}
+
+async function hapusItem(id){
+  try {
+    await apiFetch(`/api/items/${id}`, { method: 'DELETE' });
+    items = items.filter(x => x.id !== id);
+    renderList();
+  } catch (err){
+    alert(err.message || 'Gagal menghapus jadwal.');
+  }
+}
+
+async function simpanForm(event){
+  event.preventDefault();
+
+  const title = document.getElementById('fTitle').value.trim();
+  const time  = document.getElementById('fTime').value;
+  const endTime = document.getElementById('fEndTime').value; // opsional
+  const note  = document.getElementById('fNote').value.trim();
+  const tipe  = form.querySelector('input[name="tipe"]:checked').value;
+  const days  = Array.from(dayChoice.querySelectorAll('input:checked')).map(el => Number(el.value));
+
+  if (!title || !time || days.length === 0) return; // validasi sederhana
+
+  const payload = { title, time, endTime, note, tipe, days };
+
+  try {
+    if (editingId){
+      const updated = await apiFetch(`/api/items/${editingId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const it = items.find(x => x.id === editingId);
+      Object.assign(it, updated);
+    } else {
+      const created = await apiFetch('/api/items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      items.push(created);
+    }
+
+    closeSheet();
+    renderList();
+  } catch (err){
+    alert(err.message || 'Gagal menyimpan jadwal.');
+  }
+}
+
+
+/* ==========================================================
+   10. FITUR "TAMBAH VIA AI" (teks bebas atau foto -> jadwal)
+   ========================================================== */
+const APIKEY_KEY = "agenda:apiKey";
+
+function getApiKey(){ return localStorage.getItem(APIKEY_KEY) || ''; }
+function setApiKey(key){ localStorage.setItem(APIKEY_KEY, key); }
+
+document.getElementById('apiKeyBtn').onclick = () => {
+  const current = getApiKey();
+  const input = window.prompt(
+    'Masukkan Google Gemini API key kamu (gratis, bikin di aistudio.google.com/apikey). Disimpan hanya di browser ini:',
+    current
+  );
+  if (input !== null) setApiKey(input.trim());
+};
+
+const aiBackdrop   = document.getElementById('aiBackdrop');
+const aiTeksInput  = document.getElementById('aiTeksInput');
+const aiFotoInput  = document.getElementById('aiFotoInput');
+const aiError      = document.getElementById('aiError');
+const aiProsesBtn  = document.getElementById('aiProsesBtn');
+let aiMode = 'teks';
+
+document.getElementById('openAiBtn').onclick = () => {
+  aiTeksInput.value = '';
+  aiFotoInput.value = '';
+  aiError.style.display = 'none';
+  switchAiMode('teks');
+  aiBackdrop.classList.add('open');
+};
+document.getElementById('aiCancelBtn').onclick = () => aiBackdrop.classList.remove('open');
+aiBackdrop.onclick = (e) => { if (e.target === aiBackdrop) aiBackdrop.classList.remove('open'); };
+
+document.querySelectorAll('.ai-tab').forEach(tab => {
+  tab.onclick = () => switchAiMode(tab.dataset.mode);
+});
+
+function switchAiMode(mode){
+  aiMode = mode;
+  document.querySelectorAll('.ai-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  document.getElementById('aiTeksPane').style.display = mode === 'teks' ? '' : 'none';
+  document.getElementById('aiFotoPane').style.display = mode === 'foto' ? '' : 'none';
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function showAiError(msg){
+  aiError.textContent = msg;
+  aiError.style.display = 'block';
+}
+
+function setAiLoading(isLoading){
+  aiProsesBtn.disabled = isLoading;
+  aiProsesBtn.textContent = isLoading ? 'Memproses…' : 'Proses dengan AI';
+}
+
+const AI_SYSTEM_PROMPT = `Kamu mengubah informasi jadwal (dari teks atau foto) menjadi data terstruktur.
+Balas HANYA dengan JSON array yang valid, tanpa teks lain, tanpa markdown code fence.
+Setiap elemen array berbentuk:
+{"title": string, "tipe": "matkul"|"tutor"|"lain", "time": "HH:MM", "endTime": "HH:MM atau string kosong", "days": [angka 0-6], "note": string}
+Keterangan days: 0=Senin, 1=Selasa, 2=Rabu, 3=Kamis, 4=Jumat, 5=Sabtu, 6=Minggu.
+"time" adalah jam mulai, "endTime" adalah jam selesai kalau disebutkan (mis. "8 - 9 40" artinya time "08:00", endTime "09:40"). Kalau jam selesai tidak disebutkan, endTime = "".
+Kalau satu kegiatan yang sama muncul di beberapa hari dengan jam sama, gabungkan jadi satu elemen dengan beberapa angka di "days".
+Kalau tidak yakin tipenya, pakai "lain". Kalau tidak ada catatan tambahan, note = "".
+Kalau tidak ada jadwal yang bisa dibaca dari input, balas dengan [].`;
+
+async function prosesAI(){
+  aiError.style.display = 'none';
+
+  let key = getApiKey();
+  if (!key){
+    key = window.prompt('Masukkan Google Gemini API key kamu dulu (gratis, dari aistudio.google.com/apikey):');
+    if (!key) return;
+    setApiKey(key.trim());
+    key = getApiKey();
+  }
+
+  let parts;
+  if (aiMode === 'teks'){
+    const teks = aiTeksInput.value.trim();
+    if (!teks){ showAiError('Tulis dulu jadwalnya ya.'); return; }
+    parts = [{ text: teks }];
+  } else {
+    const file = aiFotoInput.files[0];
+    if (!file){ showAiError('Pilih foto dulu ya.'); return; }
+    const base64 = await fileToBase64(file);
+    parts = [
+      { inline_data: { mime_type: file.type || 'image/jpeg', data: base64 } },
+      { text: 'Ini foto jadwalnya, tolong dibaca.' }
+    ];
+  }
+
+  setAiLoading(true);
+  try {
+    const model = 'gemini-3.6-flash';
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(key);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: AI_SYSTEM_PROMPT }] },
+        contents: [{ role: 'user', parts }],
+        generationConfig: { responseMimeType: 'application/json' }
+      })
+    });
+
+    if (!response.ok){
+      const errText = await response.text();
+      let pesan = errText;
+      try {
+        const errJson = JSON.parse(errText);
+        pesan = (errJson.error && errJson.error.message) ? errJson.error.message : errText;
+      } catch (e) { /* biarkan pesan mentah kalau bukan JSON */ }
+      throw new Error('(' + response.status + ') ' + pesan);
+    }
+
+    const data = await response.json();
+    const teksHasil = data.candidates
+      && data.candidates[0]
+      && data.candidates[0].content
+      && data.candidates[0].content.parts
+      && data.candidates[0].content.parts[0]
+      && data.candidates[0].content.parts[0].text;
+
+    if (!teksHasil) throw new Error('Tidak ada balasan teks dari AI.');
+
+    const cleaned = teksHasil.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(cleaned);
+
+    const hasil = (Array.isArray(parsed) ? parsed : [])
+      .map(p => ({
+        title: String(p.title || '').trim(),
+        tipe: ['matkul','tutor','lain'].includes(p.tipe) ? p.tipe : 'lain',
+        time: /^\d{2}:\d{2}$/.test(p.time || '') ? p.time : '00:00',
+        endTime: /^\d{2}:\d{2}$/.test(p.endTime || '') ? p.endTime : '',
+        days: Array.isArray(p.days) ? p.days.filter(d => Number.isInteger(d) && d >= 0 && d <= 6) : [],
+        note: String(p.note || '').trim()
+      }))
+      .filter(it => it.title && it.days.length > 0);
+
+    if (hasil.length === 0){
+      showAiError('AI tidak menemukan jadwal yang bisa dibaca. Coba tulis/foto yang lebih jelas.');
+      return;
+    }
+
+    aiParsedItems = hasil;
+    aiBackdrop.classList.remove('open');
+    openPreviewSheet();
+
+  } catch (err){
+    console.error(err);
+    showAiError(err.message || 'Terjadi kesalahan saat memproses. Coba lagi.');
+  } finally {
+    setAiLoading(false);
+  }
+}
+
+aiProsesBtn.onclick = prosesAI;
+
+
+/* ---------- Sheet konfirmasi hasil AI ---------- */
+const previewBackdrop = document.getElementById('previewBackdrop');
+const previewList     = document.getElementById('previewList');
+let aiParsedItems = [];
+
+function openPreviewSheet(){
+  previewList.innerHTML = aiParsedItems.map((it, idx) => `
+    <label class="preview-item">
+      <input type="checkbox" data-idx="${idx}" checked>
+      <div>
+        <div class="preview-title">${escapeHtml(it.title)} <span class="item-tag tipe-${it.tipe}">${TIPE_LABEL[it.tipe]}</span></div>
+        <div class="preview-detail">${it.days.map(d => DAYS[d]).join(', ')} · ${it.time}${it.endTime ? '–' + it.endTime : ''}${it.note ? ' · ' + escapeHtml(it.note) : ''}</div>
+      </div>
+    </label>
+  `).join('');
+  previewBackdrop.classList.add('open');
+}
+
+document.getElementById('previewCancelBtn').onclick = () => previewBackdrop.classList.remove('open');
+previewBackdrop.onclick = (e) => { if (e.target === previewBackdrop) previewBackdrop.classList.remove('open'); };
+
+document.getElementById('previewAddBtn').onclick = async () => {
+  const idxTerpilih = Array.from(previewList.querySelectorAll('input[type=checkbox]:checked'))
+    .map(cb => Number(cb.dataset.idx));
+
+  previewBackdrop.classList.remove('open');
+
+  for (const idx of idxTerpilih){
+    const it = aiParsedItems[idx];
+    try {
+      const created = await apiFetch('/api/items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: it.title, time: it.time, endTime: it.endTime, note: it.note, tipe: it.tipe, days: it.days })
+      });
+      items.push(created);
+    } catch (err){
+      console.error(err);
+    }
+  }
+
+  renderList();
+};
+
+
+/* ==========================================================
+   11. FITUR "MATERI" (per matkul/tutor: upload/lihat/hapus file & link)
+   Disimpan di server (backend), jadi sinkron di semua device.
+   ========================================================== */
+const MATERI_ICON  = { pdf: '📄', excel: '📊', word: '📝', foto: '🖼️', link: '🔗', lain: '📁' };
+const MATERI_LABEL = { pdf: 'PDF', excel: 'Excel', word: 'Word', foto: 'Foto', link: 'Link', lain: 'File' };
+
+let currentSubject = null; // subject yang lagi dibuka di sheet detail materi
+
+async function getMateriBySubject(subjectKey){
+  return apiFetch(`/api/materi?subjectKey=${encodeURIComponent(subjectKey)}`);
+}
+
+async function getMateriCounts(){
+  const semua = await apiFetch('/api/materi');
+  const counts = {};
+  semua.forEach(m => { counts[m.subjectKey] = (counts[m.subjectKey] || 0) + 1; });
+  return counts;
+}
+
+async function deleteMateriEntry(id){
+  return apiFetch(`/api/materi/${id}`, { method: 'DELETE' });
+}
+
+function detectFileType(file){
+  const name = (file.name || '').toLowerCase();
+  const mime = file.type || '';
+  if (mime.includes('pdf') || name.endsWith('.pdf')) return 'pdf';
+  if (mime.includes('spreadsheet') || name.endsWith('.xlsx') || name.endsWith('.xls') || name.endsWith('.csv')) return 'excel';
+  if (mime.includes('word') || name.endsWith('.docx') || name.endsWith('.doc')) return 'word';
+  if (mime.startsWith('image/')) return 'foto';
+  return 'lain';
+}
+
+function formatTanggalUpload(iso){
+  const d = new Date(iso);
+  const tgl = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  const jam = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+  return `${tgl}, ${jam}`;
+}
+
+/* daftar matkul/tutor unik, diambil dari jadwal yang sudah ada */
+function getUniqueSubjects(){
+  const map = new Map();
+  items
+    .filter(it => it.tipe === 'matkul' || it.tipe === 'tutor')
+    .forEach(it => {
+      const key = it.title.trim().toLowerCase();
+      if (!map.has(key)) map.set(key, { key, title: it.title.trim(), tipe: it.tipe });
+    });
+  return Array.from(map.values()).sort((a, b) => a.title.localeCompare(b.title));
+}
+
+async function renderMateriList(){
+  const materiListArea = document.getElementById('materiListArea');
+  const subjects = getUniqueSubjects();
+
+  if (subjects.length === 0){
+    materiListArea.innerHTML = `
+      <div class="empty">
+        <div class="big">Belum ada matkul/tutor</div>
+        Tambahkan jadwal matkul atau tutor dulu di tab Jadwal.
+      </div>`;
+    return;
+  }
+
+  const counts = await getMateriCounts();
+
+  materiListArea.innerHTML = `
+    <div class="list">
+      ${subjects.map(s => `
+        <div class="item tipe-${s.tipe} materi-subject" data-key="${escapeHtml(s.key)}">
+          <div class="bar"></div>
+          <div class="item-body">
+            <div class="item-top">
+              <div class="item-title">${escapeHtml(s.title)}</div>
+            </div>
+            <span class="item-tag">${TIPE_LABEL[s.tipe]}</span>
+            <div class="item-note">${counts[s.key] || 0} materi</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+
+  materiListArea.querySelectorAll('.materi-subject').forEach(el => {
+    const subject = subjects.find(s => s.key === el.dataset.key);
+    el.onclick = () => openMateriDetail(subject);
+  });
+}
+
+async function openMateriDetail(subject){
+  currentSubject = subject;
+  document.getElementById('materiDetailTitle').textContent = subject.title;
+  const list = await getMateriBySubject(subject.key);
+  renderMateriFileList(list);
+  materiDetailBackdrop.classList.add('open');
+}
+
+function renderMateriFileList(list){
+  const container = document.getElementById('materiFileList');
+
+  if (list.length === 0){
+    container.innerHTML = `<div class="empty" style="padding:24px 10px;">Belum ada materi.<br>Tap "Tambah Materi" buat upload.</div>`;
+    return;
+  }
+
+  container.innerHTML = list.map(m => `
+    <div class="materi-file" data-id="${m.id}">
+      <div class="materi-file-icon">${MATERI_ICON[m.type] || '📁'}</div>
+      <div class="materi-file-info">
+        <div class="materi-file-name">${escapeHtml(m.fileName)}</div>
+        <div class="materi-file-date">${MATERI_LABEL[m.type] || 'File'} · diunggah ${formatTanggalUpload(m.uploadedAt)}</div>
+      </div>
+      <div class="materi-file-actions">
+        <button class="lihat">Lihat</button>
+        <button class="hapus">Hapus</button>
+      </div>
+    </div>`).join('');
+
+  container.querySelectorAll('.materi-file').forEach(row => {
+    const m = list.find(x => x.id === row.dataset.id);
+    row.querySelector('.lihat').onclick  = () => lihatMateri(m);
+    row.querySelector('.hapus').onclick = () => hapusMateri(m.id);
+  });
+}
+
+function urlFileMateri(id){
+  // token lewat query param karena <iframe>/<img> src gak bisa kirim header Authorization
+  return `${API_BASE}/api/materi/${id}/file?token=${encodeURIComponent(getToken())}`;
+}
+
+async function lihatMateri(m){
+  if (m.type === 'link'){
+    window.open(m.url, '_blank');
+    return;
+  }
+
+  document.getElementById('materiViewerTitle').textContent = m.fileName;
+  document.getElementById('materiViewerBody').innerHTML = '<div class="loading">Memuat…</div>';
+  materiViewerBackdrop.classList.add('open');
+
+  const body = document.getElementById('materiViewerBody');
+  const namaAman = escapeHtml(m.fileName);
+  const fileUrl = urlFileMateri(m.id);
+  const tombolDownload = `<a class="materi-viewer-download" href="${fileUrl}" download="${namaAman}">Download file ini</a>`;
+
+  if (m.type === 'pdf'){
+    body.innerHTML = `<iframe class="materi-viewer-frame" src="${fileUrl}"></iframe>${tombolDownload}`;
+
+  } else if (m.type === 'foto'){
+    body.innerHTML = `<img class="materi-viewer-img" src="${fileUrl}" alt="${namaAman}">${tombolDownload}`;
+
+  } else if (m.type === 'word'){
+    try {
+      await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.7.2/mammoth.browser.min.js');
+      const res = await fetch(fileUrl, { headers: authHeader() });
+      const arrayBuffer = await res.arrayBuffer();
+      const result = await mammoth.convertToHtml({ arrayBuffer });
+      body.innerHTML = `<div class="doc-preview">${result.value}</div>${tombolDownload}`;
+    } catch (err){
+      console.error(err);
+      body.innerHTML = `<div class="hint">Preview isi Word gagal dimuat. Download dulu aja ya.</div>${tombolDownload}`;
+    }
+
+  } else if (m.type === 'excel'){
+    try {
+      await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+      const res = await fetch(fileUrl, { headers: authHeader() });
+      const arrayBuffer = await res.arrayBuffer();
+      const wb = XLSX.read(arrayBuffer, { type: 'array' });
+      const html = XLSX.utils.sheet_to_html(wb.Sheets[wb.SheetNames[0]]);
+      body.innerHTML = `<div class="doc-preview excel-preview">${html}</div>${tombolDownload}`;
+    } catch (err){
+      console.error(err);
+      body.innerHTML = `<div class="hint">Preview isi Excel gagal dimuat. Download dulu aja ya.</div>${tombolDownload}`;
+    }
+
+  } else {
+    body.innerHTML = `<div class="hint">Preview belum bisa ditampilkan buat tipe file ini. Download dulu, lalu buka pakai aplikasi yang sesuai.</div>${tombolDownload}`;
+  }
+}
+
+function loadScriptOnce(src){
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)){ resolve(); return; }
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload  = () => resolve();
+    s.onerror = () => reject(new Error('Gagal memuat pustaka preview.'));
+    document.head.appendChild(s);
+  });
+}
+
+function tutupMateriViewer(){
+  materiViewerBackdrop.classList.remove('open');
+}
+
+const materiViewerBackdrop = document.getElementById('materiViewerBackdrop');
+document.getElementById('materiViewerCloseBtn').onclick = tutupMateriViewer;
+materiViewerBackdrop.onclick = (e) => { if (e.target === materiViewerBackdrop) tutupMateriViewer(); };
+
+async function hapusMateri(id){
+  await deleteMateriEntry(id);
+  const list = await getMateriBySubject(currentSubject.key);
+  renderMateriFileList(list);
+  renderMateriList();
+}
+
+const materiDetailBackdrop = document.getElementById('materiDetailBackdrop');
+document.getElementById('materiDetailCloseBtn').onclick = () => materiDetailBackdrop.classList.remove('open');
+materiDetailBackdrop.onclick = (e) => { if (e.target === materiDetailBackdrop) materiDetailBackdrop.classList.remove('open'); };
+
+/* ---------- Sheet: tambah materi baru (file / link) ---------- */
+const materiUploadBackdrop = document.getElementById('materiUploadBackdrop');
+let materiUploadMode = 'file';
+
+document.getElementById('openMateriUploadBtn').onclick = () => {
+  document.getElementById('materiFileInput').value = '';
+  document.getElementById('materiLinkLabel').value = '';
+  document.getElementById('materiLinkUrl').value = '';
+  document.getElementById('materiUploadError').style.display = 'none';
+  switchMateriUploadMode('file');
+  materiUploadBackdrop.classList.add('open');
+};
+document.getElementById('materiUploadCancelBtn').onclick = () => materiUploadBackdrop.classList.remove('open');
+materiUploadBackdrop.onclick = (e) => { if (e.target === materiUploadBackdrop) materiUploadBackdrop.classList.remove('open'); };
+
+document.querySelectorAll('.materi-type-tab').forEach(tab => {
+  tab.onclick = () => switchMateriUploadMode(tab.dataset.mode);
+});
+
+function switchMateriUploadMode(mode){
+  materiUploadMode = mode;
+  document.querySelectorAll('.materi-type-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  document.getElementById('materiFilePane').style.display = mode === 'file' ? '' : 'none';
+  document.getElementById('materiLinkPane').style.display = mode === 'link' ? '' : 'none';
+}
+
+document.getElementById('materiUploadSaveBtn').onclick = async () => {
+  const errEl = document.getElementById('materiUploadError');
+  errEl.style.display = 'none';
+
+  try {
+    const formData = new FormData();
+    formData.append('subjectKey', currentSubject.key);
+    formData.append('subjectName', currentSubject.title);
+
+    if (materiUploadMode === 'file'){
+      const file = document.getElementById('materiFileInput').files[0];
+      if (!file){ errEl.textContent = 'Pilih file dulu ya.'; errEl.style.display = 'block'; return; }
+      formData.append('mode', 'file');
+      formData.append('file', file);
+    } else {
+      const url = document.getElementById('materiLinkUrl').value.trim();
+      if (!url){ errEl.textContent = 'Isi link-nya dulu ya.'; errEl.style.display = 'block'; return; }
+      const label = document.getElementById('materiLinkLabel').value.trim();
+      formData.append('mode', 'link');
+      formData.append('url', url);
+      formData.append('label', label);
+    }
+
+    await apiFetch('/api/materi', { method: 'POST', body: formData });
+
+    materiUploadBackdrop.classList.remove('open');
+    const list = await getMateriBySubject(currentSubject.key);
+    renderMateriFileList(list);
+    renderMateriList();
+
+  } catch (err){
+    console.error(err);
+    errEl.textContent = err.message || 'Gagal menyimpan materi. Coba lagi.';
+    errEl.style.display = 'block';
+  }
+};
+
+/* ---------- Tab "Jadwal" / "Materi" ---------- */
+document.querySelectorAll('.view-tab').forEach(tab => {
+  tab.onclick = () => switchView(tab.dataset.view);
+});
+
+function switchView(view){
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
+  document.getElementById('jadwalView').style.display = view === 'jadwal' ? '' : 'none';
+  document.getElementById('materiView').style.display = view === 'materi' ? '' : 'none';
+  document.getElementById('openAiBtn').style.display   = view === 'jadwal' ? '' : 'none';
+  document.getElementById('openAddBtn').style.display  = view === 'jadwal' ? '' : 'none';
+  if (view === 'materi') renderMateriList();
+}
+
+
+/* ==========================================================
+   9. EVENT LISTENERS & INIT
+   ========================================================== */
+document.getElementById('openAddBtn').onclick = openAddSheet;
+document.getElementById('cancelBtn').onclick = closeSheet;
+backdrop.onclick = (e) => { if (e.target === backdrop) closeSheet(); };
+form.addEventListener('submit', simpanForm);
+
+document.getElementById('todayLabel').textContent = DAY_NAMES[getTodayIndex()];
+
+
+/* ==========================================================
+   15. AUTENTIKASI (login / daftar / logout)
+   ========================================================== */
+const authScreen   = document.getElementById('authScreen');
+const authForm     = document.getElementById('authForm');
+const authError    = document.getElementById('authError');
+const authSubmitBtn = document.getElementById('authSubmitBtn');
+let authMode = 'login';
+
+document.querySelectorAll('.auth-tab').forEach(tab => {
+  tab.onclick = () => {
+    authMode = tab.dataset.mode;
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === authMode));
+    authSubmitBtn.textContent = authMode === 'login' ? 'Masuk' : 'Daftar';
+    authError.style.display = 'none';
+  };
+});
+
+authForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  authError.style.display = 'none';
+
+  const username = document.getElementById('authUsername').value.trim();
+  const password = document.getElementById('authPassword').value;
+
+  authSubmitBtn.disabled = true;
+  try {
+    const res = await fetch(`/api/auth/${authMode === 'login' ? 'login' : 'register'}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+
+    if (!res.ok){
+      authError.textContent = data.error || 'Gagal, coba lagi.';
+      authError.style.display = 'block';
+      return;
+    }
+
+    setToken(data.token);
+    setUsername(data.username);
+    tampilkanApp();
+
+  } catch (err){
+    console.error(err);
+    authError.textContent = 'Gagal terhubung ke server.';
+    authError.style.display = 'block';
+  } finally {
+    authSubmitBtn.disabled = false;
+  }
+});
+
+document.getElementById('logoutBtn').onclick = () => {
+  clearToken();
+  tampilkanAuthScreen();
+};
+
+function tampilkanAuthScreen(){
+  authScreen.style.display = 'flex';
+  document.getElementById('appWrap').style.display = 'none';
+  document.getElementById('openAiBtn').style.display = 'none';
+  document.getElementById('openAddBtn').style.display = 'none';
+}
+
+function tampilkanApp(){
+  authScreen.style.display = 'none';
+  document.getElementById('appWrap').style.display = '';
+  document.getElementById('usernameLabel').textContent = getUsername();
+  switchView('jadwal');
+  loadItems();
+}
+
+// cek status login pas halaman dibuka
+if (getToken()){
+  tampilkanApp();
+} else {
+  tampilkanAuthScreen();
+}
+</script>
+</body>
+</html>
