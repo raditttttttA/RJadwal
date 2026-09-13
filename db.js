@@ -65,6 +65,7 @@ async function initDb() {
       mime_type TEXT,
       file_path TEXT,
       url TEXT,
+      text_content TEXT,
       uploaded_at TEXT NOT NULL,
       FOREIGN KEY (user_id) REFERENCES users(id)
     );

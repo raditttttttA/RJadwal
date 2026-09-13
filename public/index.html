@@ -2712,24 +2712,19 @@ async function generateQuizAI(materiContents, jumlahSoal, kesulitan){
     'susah': 'Level susah: konsep lanjut, variasi jenis soal, perhitungan kompleks, perlu kreativitas'
   };
   
-  // Format parts untuk Gemini (bisa teks, bisa PDF/Foto inline)
+  // Format parts untuk Gemini (text plain dari materi)
   const parts = [];
   materiContents.forEach(m => {
-    if (m.inlineData) {
-      parts.push({
-        inline_data: {
-          mime_type: m.inlineData.mimeType,
-          data: m.inlineData.data
-        }
-      });
-      parts.push({ text: `Ini dokumen materi: ${m.fileName}` });
-    } else if (m.text) {
-      parts.push({ text: `Materi (${m.fileName}):\n${m.text}` });
+    if (m.text) {
+      parts.push({ text: `Materi (${m.fileName}):\n${m.text}\n---\n` });
     }
   });
 
   parts.push({
-    text: `Tolong pelajari dokumen/materi di atas dan buatkan ${jumlahSoal} soal pilihan ganda tentang topik materi tersebut.`
+    text: `Berdasarkan materi di atas, buatkan ${jumlahSoal} soal pilihan ganda ${difficultyGuide[kesulitan]}.
+PENTING: Soal HARUS dari topik materi yang diberikan, variasikan jenisnya.
+Balas HANYA dengan JSON array valid tanpa markdown:
+[ { "question": "soal?", "options": ["A","B","C","D"], "correct": 0 } ]`
   });
 
   const model = 'gemini-1.5-flash-latest';
@@ -2739,16 +2734,6 @@ async function generateQuizAI(materiContents, jumlahSoal, kesulitan){
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      system_instruction: { 
-        parts: [{ 
-          text: `Kamu adalah pembuat soal ujian profesional. Buat ${jumlahSoal} soal pilihan ganda DARI MATERI YANG DIBERIKAN. ${difficultyGuide[kesulitan]}.
-PENTING:
-1. Soal HARUS relevan dengan isi dokumen/materi yang dikirimkan.
-2. Variasikan soal dalam topik tersebut.
-3. Balas HANYA dengan format JSON array valid, tanpa markdown:
-[ { "question": "soal?", "options": ["A","B","C","D"], "correct": 0 } ]` 
-        }] 
-      },
       contents: [{ role: 'user', parts: parts }],
       generationConfig: { responseMimeType: 'application/json' }
     })

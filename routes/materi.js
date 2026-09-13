@@ -68,8 +68,8 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
       if (!url) return res.status(400).json({ error: 'URL wajib diisi.' });
 
       await db.execute({
-        sql: `INSERT INTO materi (id, user_id, subject_key, subject_name, type, file_name, mime_type, file_path, url, uploaded_at)
-              VALUES (?, ?, ?, ?, 'link', ?, NULL, NULL, ?, ?)`,
+        sql: `INSERT INTO materi (id, user_id, subject_key, subject_name, type, file_name, mime_type, file_path, url, text_content, uploaded_at)
+              VALUES (?, ?, ?, ?, 'link', ?, NULL, NULL, ?, NULL, ?)`,
         args: [id, req.userId, subjectKey, subjectName, label || url, url, uploadedAt]
       });
 
@@ -79,14 +79,22 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'File tidak ditemukan.' });
 
     const tipe = detectType(req.file);
-    // key di bucket: <userId>/<uuid><ext>, biar antar user gak tabrakan nama file
     const storageKey = `${req.userId}/${randomUUID()}${path.extname(req.file.originalname || '')}`;
     await uploadFile(storageKey, req.file.buffer, req.file.mimetype);
 
+    // Convert file to text menggunakan Gemini
+    let textContent = '';
+    try {
+      textContent = await convertFileToText(req.file.buffer, req.file.mimetype, req.file.originalname);
+    } catch (err) {
+      console.error('Gagal convert file ke text:', err);
+      textContent = `[File tidak bisa dibaca: ${req.file.originalname}]`;
+    }
+
     await db.execute({
-      sql: `INSERT INTO materi (id, user_id, subject_key, subject_name, type, file_name, mime_type, file_path, url, uploaded_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)`,
-      args: [id, req.userId, subjectKey, subjectName, tipe, req.file.originalname, req.file.mimetype, storageKey, uploadedAt]
+      sql: `INSERT INTO materi (id, user_id, subject_key, subject_name, type, file_name, mime_type, file_path, url, text_content, uploaded_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)`,
+      args: [id, req.userId, subjectKey, subjectName, tipe, req.file.originalname, req.file.mimetype, storageKey, textContent, uploadedAt]
     });
 
     res.json({ id, subjectKey, subjectName, type: tipe, fileName: req.file.originalname, uploadedAt });
@@ -95,6 +103,45 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
     res.status(500).json({ error: 'Gagal mengunggah materi.' });
   }
 });
+
+async function convertFileToText(buffer, mimeType, fileName) {
+  const key = process.env.GEMINI_API_KEY || process.env.API_KEY;
+  if (!key) throw new Error('API Key Gemini tidak ditemukan.');
+
+  const base64 = buffer.toString('base64');
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${encodeURIComponent(key)}`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{
+        role: 'user',
+        parts: [
+          {
+            inline_data: {
+              mime_type: mimeType,
+              data: base64
+            }
+          },
+          {
+            text: 'Baca dokumen ini dan ekstrak semua teks konten penting. Kembalikan hanya teks murni, tanpa format tambahan.'
+          }
+        ]
+      }],
+      generationConfig: { responseMimeType: 'text/plain' }
+    })
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error('Gemini API error: ' + errText);
+  }
+
+  const data = await response.json();
+  const textResult = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  return textResult.substring(0, 50000); // Batasi 50k karakter
+}
 
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
@@ -135,7 +182,7 @@ router.get('/:id/file', authMiddleware, async (req, res) => {
   }
 });
 
-// endpoint untuk mengambil konten materi (teks/data) buat AI Quiz
+// endpoint untuk mengambil konten materi (text plain) buat AI Quiz
 router.get('/:id/content', authMiddleware, async (req, res) => {
   try {
     const result = await db.execute({
@@ -146,32 +193,13 @@ router.get('/:id/content', authMiddleware, async (req, res) => {
     if (!row) return res.status(404).json({ error: 'Materi tidak ditemukan.' });
 
     if (row.type === 'link') {
-      return res.json({ fileName: row.file_name, type: 'link', text: `Materi Link: ${row.file_name} (${row.url})` });
+      return res.json({ fileName: row.file_name, type: 'link', text: `Link materi: ${row.file_name}` });
     }
 
-    if (!row.file_path) return res.status(400).json({ error: 'Bukan file.' });
-
-    // Download file dari Supabase
-    const buffer = await downloadFile(row.file_path);
-    
-    // Kirim base64 untuk PDF & Foto agar langsung dibaca Gemini
-    if (row.type === 'pdf' || row.type === 'foto') {
-      const mimeType = row.type === 'pdf' ? 'application/pdf' : (row.mime_type || 'image/jpeg');
-      return res.json({ 
-        fileName: row.file_name, 
-        type: row.type, 
-        inlineData: {
-          mimeType: mimeType,
-          data: buffer.toString('base64')
-        }
-      });
-    }
-
-    // Tipe lainnya dikirim sebagai teks
     res.json({ 
       fileName: row.file_name, 
       type: row.type, 
-      text: buffer.toString('utf8').substring(0, 10000)
+      text: row.text_content || '[Konten materi tidak tersedia]'
     });
   } catch (err) {
     console.error(err);
