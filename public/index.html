@@ -157,7 +157,7 @@ h1{
 
 
 /* ==========================================================
-   4. DAFTAR JADWAL (kartu item + state kosong)
+   4. TIMELINE JADWAL (vertikal 00-23)
    ========================================================== */
 .empty{
   text-align: center;
@@ -171,77 +171,235 @@ h1{
   margin-bottom: 6px;
 }
 
-.list{
+.timeline{
   display: flex;
   flex-direction: column;
-  gap: 11px;
+  gap: 0;
+  position: relative;
+  padding-left: 52px;
 }
 
-.item{
+.timeline::before{
+  content: "";
+  position: absolute;
+  left: 44px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--line) 0%, var(--line-strong) 50%, var(--line) 100%);
+  border-radius: 2px;
+}
+
+.timeline-row{
   display: flex;
+  align-items: stretch;
+  min-height: 48px;
+  position: relative;
+  animation: fadeSlideIn .3s var(--ease) backwards;
+}
+
+@keyframes fadeSlideIn{
+  from{
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to{
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.timeline-row:nth-child(1){ animation-delay: 0ms; }
+.timeline-row:nth-child(2){ animation-delay: 15ms; }
+.timeline-row:nth-child(3){ animation-delay: 30ms; }
+.timeline-row:nth-child(4){ animation-delay: 45ms; }
+.timeline-row:nth-child(5){ animation-delay: 60ms; }
+.timeline-row:nth-child(6){ animation-delay: 75ms; }
+.timeline-row:nth-child(7){ animation-delay: 90ms; }
+.timeline-row:nth-child(8){ animation-delay: 105ms; }
+.timeline-row:nth-child(9){ animation-delay: 120ms; }
+.timeline-row:nth-child(10){ animation-delay: 135ms; }
+.timeline-row:nth-child(11){ animation-delay: 150ms; }
+.timeline-row:nth-child(12){ animation-delay: 165ms; }
+.timeline-row:nth-child(13){ animation-delay: 180ms; }
+.timeline-row:nth-child(14){ animation-delay: 195ms; }
+.timeline-row:nth-child(15){ animation-delay: 210ms; }
+.timeline-row:nth-child(16){ animation-delay: 225ms; }
+.timeline-row:nth-child(17){ animation-delay: 240ms; }
+.timeline-row:nth-child(18){ animation-delay: 255ms; }
+.timeline-row:nth-child(19){ animation-delay: 270ms; }
+.timeline-row:nth-child(20){ animation-delay: 285ms; }
+.timeline-row:nth-child(21){ animation-delay: 300ms; }
+.timeline-row:nth-child(22){ animation-delay: 315ms; }
+.timeline-row:nth-child(23){ animation-delay: 330ms; }
+.timeline-row:nth-child(24){ animation-delay: 345ms; }
+
+.timeline-hour{
+  position: absolute;
+  left: -52px;
+  width: 44px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  padding-right: 10px;
+  font-variant-numeric: tabular-nums;
+  top: 0;
+  transition: color .2s var(--ease);
+}
+
+.timeline-row.has-event .timeline-hour{
+  color: var(--ink);
+}
+
+.timeline-dot{
+  position: absolute;
+  left: 40px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--line);
+  transition: transform .2s var(--ease), background .2s var(--ease);
+}
+
+.timeline-row.has-event .timeline-dot{
+  transform: scale(1.4);
+}
+
+.timeline-row.has-event.tipe-matkul .timeline-dot{ background: var(--matkul); }
+.timeline-row.has-event.tipe-tutor  .timeline-dot{ background: var(--tutor); }
+.timeline-row.has-event.tipe-lain   .timeline-dot{ background: var(--lain); }
+
+.timeline-content{
+  flex: 1;
+  padding: 4px 0 12px 20px;
+  min-height: 48px;
+}
+
+.timeline-event{
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 15px 15px 15px 0;
-  overflow: hidden;
+  padding: 14px 16px;
+  margin-bottom: 2px;
   box-shadow: var(--shadow-sm);
-  transition: box-shadow .18s var(--ease), transform .18s var(--ease);
+  cursor: pointer;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease);
+  position: relative;
+  overflow: hidden;
 }
-.item:active{ transform: scale(0.994); }
 
-/* garis warna di kiri kartu, warnanya mengikuti jenis jadwal */
-.item .bar{
+.timeline-event::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
   width: 4px;
-  border-radius: 4px;
-  margin-right: 15px;
-  flex-shrink: 0;
 }
-.item.tipe-matkul .bar{ background: var(--matkul); }
-.item.tipe-tutor  .bar{ background: var(--tutor); }
-.item.tipe-lain   .bar{ background: var(--lain); }
 
-.item-body{ flex: 1; min-width: 0; }
+.timeline-event.tipe-matkul::before{ background: var(--matkul); }
+.timeline-event.tipe-tutor::before{ background: var(--tutor); }
+.timeline-event.tipe-lain::before{ background: var(--lain); }
 
-.item-top{
+.timeline-event:hover{
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
+}
+
+.timeline-event:active{
+  transform: scale(0.98);
+}
+
+.event-header{
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 10px;
 }
 
-.item-title{ font-size: 16px; font-weight: 600; line-height: 1.35; letter-spacing: -0.005em; }
-.item-time{ font-size: 13px; color: var(--ink-soft); white-space: nowrap; padding-top: 2px; font-variant-numeric: tabular-nums; }
-
-.item-tag{
-  display: inline-block;
-  font-size: 11px;
+.event-title{
+  font-size: 15px;
   font-weight: 600;
-  padding: 3px 9px;
-  border-radius: 999px;
-  margin-top: 7px;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
 }
-.tipe-matkul .item-tag{ background: var(--matkul-bg); color: var(--matkul); }
-.tipe-tutor  .item-tag{ background: var(--tutor-bg);  color: var(--tutor); }
-.tipe-lain   .item-tag{ background: var(--lain-bg);   color: var(--lain); }
 
-.item-note{
-  font-size: 13.5px;
+.event-time{
+  font-size: 12px;
   color: var(--ink-soft);
-  margin-top: 7px;
-  line-height: 1.45;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  background: var(--paper-raised);
+  padding: 3px 8px;
+  border-radius: 6px;
 }
 
-.item-actions{ display: flex; gap: 16px; margin-top: 11px; }
-.item-actions button{
+.event-tag{
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-top: 6px;
+}
+.tipe-matkul .event-tag{ background: var(--matkul-bg); color: var(--matkul); }
+.tipe-tutor  .event-tag{ background: var(--tutor-bg);  color: var(--tutor); }
+.tipe-lain   .event-tag{ background: var(--lain-bg);   color: var(--lain); }
+
+.event-note{
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.event-actions{
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+  opacity: 0;
+  transition: opacity .2s var(--ease);
+}
+
+.timeline-event:hover .event-actions{
+  opacity: 1;
+}
+
+.event-actions button{
   background: none;
   border: none;
   padding: 0;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
+  transition: color .15s var(--ease);
 }
-.item-actions button.hapus{ color: var(--danger); }
+
+.event-actions button:hover{
+  color: var(--ink);
+}
+
+.event-actions button.hapus{ color: var(--danger); }
+.event-actions button.hapus:hover{ color: var(--danger); }
+
+.timeline-empty-hour{
+  min-height: 48px;
+  position: relative;
+}
+
+.timeline-empty-hour::after{
+  content: "";
+  position: absolute;
+  left: 20px;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--line);
+  opacity: 0.5;
+}
 
 
 /* ==========================================================
@@ -968,102 +1126,77 @@ function renderList(){
     return;
   }
 
-  const grouped = groupItemsByTime(todaysItems);
+  const timeline = buildTimeline(todaysItems);
+  listArea.innerHTML = `<div class="timeline">${timeline}</div>`;
 
-  listArea.innerHTML = `
-    <div class="list">
-      ${grouped.map(renderGroupedCard).join('')}
-    </div>`;
-
-  listArea.querySelectorAll('.item').forEach(cardEl => {
-    const ids = JSON.parse(cardEl.dataset.ids || '[]');
-    cardEl.querySelector('.edit').onclick  = () => openEditSheet(ids[0]);
-    cardEl.querySelector('.hapus').onclick = () => hapusItem(ids[0]);
+  listArea.querySelectorAll('.timeline-event').forEach(eventEl => {
+    const id = eventEl.dataset.id;
+    const editBtn = eventEl.querySelector('.edit');
+    const hapusBtn = eventEl.querySelector('.hapus');
+    if (editBtn) editBtn.onclick = (e) => { e.stopPropagation(); openEditSheet(id); };
+    if (hapusBtn) hapusBtn.onclick = (e) => { e.stopPropagation(); hapusItem(id); };
+    eventEl.onclick = () => openEditSheet(id);
   });
 }
 
-function groupItemsByTime(items){
-  if (items.length === 0) return [];
-
-  const groups = [];
-  let currentGroup = [items[0]];
-  let currentEnd = timeToMinutes(items[0].endTime || items[0].time);
-
-  for (let i = 1; i < items.length; i++){
-    const item = items[i];
-    const itemStart = timeToMinutes(item.time);
-    const itemEnd = timeToMinutes(item.endTime || item.time);
-
-    if (itemStart <= currentEnd){
-      currentGroup.push(item);
-      currentEnd = Math.max(currentEnd, itemEnd);
-    } else {
-      groups.push(currentGroup);
-      currentGroup = [item];
-      currentEnd = itemEnd;
+function buildTimeline(todaysItems){
+  const hourMap = {};
+  
+  todaysItems.forEach(item => {
+    const startMinutes = timeToMinutes(item.time);
+    const endMinutes = item.endTime ? timeToMinutes(item.endTime) : startMinutes + 60;
+    const startHour = Math.floor(startMinutes / 60);
+    const endHour = Math.floor(endMinutes / 60);
+    
+    for (let h = startHour; h <= endHour; h++){
+      if (h >= 0 && h <= 23){
+        if (!hourMap[h]) hourMap[h] = [];
+        if (h === startHour) hourMap[h].push(item);
+      }
     }
+  });
+
+  let html = '';
+  for (let hour = 0; hour < 24; hour++){
+    const hourStr = String(hour).padStart(2, '0');
+    const events = hourMap[hour] || [];
+    const hasEvent = events.length > 0;
+    const tipe = hasEvent ? events[0].tipe : '';
+    
+    html += `
+      <div class="timeline-row ${hasEvent ? 'has-event' : ''} ${hasEvent ? 'tipe-' + tipe : ''}">
+        <div class="timeline-hour">${hourStr}</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          ${hasEvent ? events.map(renderTimelineEvent).join('') : '<div class="timeline-empty-hour"></div>'}
+        </div>
+      </div>`;
   }
-  groups.push(currentGroup);
-
-  return groups;
+  
+  return html;
 }
 
-function minutesToTime(mins){
-  const h = Math.floor(mins / 60);
-  const m = mins % 60;
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-}
-
-function renderGroupedCard(group){
-  const firstItem = group[0];
-  const lastItem = group[group.length - 1];
-  const startTime = firstItem.time;
-  const endTime = lastItem.endTime || lastItem.time;
-
-  const timeLabel = group.length === 1 && !group[0].endTime
-    ? startTime
-    : `${startTime}–${endTime}`;
-
-  const ids = group.map(it => it.id);
-  const titles = group.map(it => it.title).join(', ');
-  const tipo = firstItem.tipe;
-
+function renderTimelineEvent(item){
+  const duration = item.endTime ? 
+    `${item.time}–${item.endTime}` : 
+    item.time;
+  
   return `
-    <div class="item tipe-${tipo}" data-ids='${JSON.stringify(ids)}'>
-      <div class="bar"></div>
-      <div class="item-body">
-        <div class="item-top">
-          <div class="item-title">${escapeHtml(titles)}</div>
-          <div class="item-time">${timeLabel}</div>
-        </div>
-        <span class="item-tag">${TIPE_LABEL[tipo]}</span>
-        ${group.map(it => it.note ? `<div class="item-note">${escapeHtml(it.note)}</div>` : '').join('')}
-        <div class="item-actions">
-          <button class="edit">Ubah</button>
-          <button class="hapus">Hapus</button>
-        </div>
+    <div class="timeline-event tipe-${item.tipe}" data-id="${item.id}">
+      <div class="event-header">
+        <div class="event-title">${escapeHtml(item.title)}</div>
+        <div class="event-time">${duration}</div>
+      </div>
+      <span class="event-tag">${TIPE_LABEL[item.tipe]}</span>
+      ${item.note ? `<div class="event-note">${escapeHtml(item.note)}</div>` : ''}
+      <div class="event-actions">
+        <button class="edit">Ubah</button>
+        <button class="hapus">Hapus</button>
       </div>
     </div>`;
 }
 
-function renderItemCard(it){
-  return `
-    <div class="item tipe-${it.tipe}" data-id="${it.id}">
-      <div class="bar"></div>
-      <div class="item-body">
-        <div class="item-top">
-          <div class="item-title">${escapeHtml(it.title)}</div>
-          <div class="item-time">${it.time}${it.endTime ? '–' + it.endTime : ''}</div>
-        </div>
-        <span class="item-tag">${TIPE_LABEL[it.tipe]}</span>
-        ${it.note ? `<div class="item-note">${escapeHtml(it.note)}</div>` : ''}
-        <div class="item-actions">
-          <button class="edit">Ubah</button>
-          <button class="hapus">Hapus</button>
-        </div>
-      </div>
-    </div>`;
-}
+
 
 
 /* ==========================================================
