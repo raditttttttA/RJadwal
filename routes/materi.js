@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const multer = require('multer');
 const { randomUUID } = require('crypto');
+const pdf = require('pdf-parse');
 const { db } = require('../db');
 const { authMiddleware } = require('../middleware/auth');
 const { uploadFile, getSignedUrl, deleteFile, downloadFile } = require('../storage');
@@ -161,8 +162,13 @@ router.get('/:id/content', authMiddleware, async (req, res) => {
       return res.json({ fileName: row.file_name, type: 'foto', content: contentText, mimeType: row.mime_type });
     } 
     
-    // Untuk tipe file lain (PDF/Docx/Excel), sementara kita kirim sebagai string teks kasar dulu
-    contentText = buffer.toString('utf8').substring(0, 10000); // Batasi 10k karakter
+    if (row.type === 'pdf') {
+      const data = await pdf(buffer);
+      contentText = data.text;
+    } else {
+      // Untuk tipe file lain (Docx/Excel), sementara kita kirim sebagai string teks kasar
+      contentText = buffer.toString('utf8').substring(0, 10000); 
+    }
 
     res.json({ 
       fileName: row.file_name, 
