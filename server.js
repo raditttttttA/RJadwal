@@ -14,6 +14,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// pastikan skema tabel udah siap sebelum request apapun diproses -
+// penting terutama di Vercel (serverless), karena tiap cold start
+// bisa aja kebagian request pertama sebelum initDb() selesai
+const dbReady = initDb().catch((err) => {
+  console.error('Gagal inisialisasi database:', err);
+  throw err;
+});
+app.use(async (req, res, next) => {
+  try {
+    await dbReady;
+    next();
+  } catch (err) {
+    res.status(503).json({ error: 'Database belum siap, coba lagi sebentar.' });
+  }
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/items', itemsRoutes);
 app.use('/api/materi', materiRoutes);
@@ -28,18 +44,14 @@ app.get('*', (req, res) => {
 // Vercel akan mengimpor `app` ini langsung sebagai serverless function,
 // jadi app.listen() hanya dijalankan saat file ini dieksekusi langsung (lokal)
 if (require.main === module) {
-  initDb().then(() => {
+  dbReady.then(() => {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
       console.log(`Server jalan di http://localhost:${PORT}`);
     });
   }).catch((err) => {
-    console.error('Gagal inisialisasi database:', err);
     process.exit(1);
   });
-} else {
-  // di Vercel, pastikan tabel sudah ada sebelum request pertama diproses
-  initDb().catch((err) => console.error('Gagal inisialisasi database:', err));
 }
 
 module.exports = app;

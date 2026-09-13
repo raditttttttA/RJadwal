@@ -13,7 +13,11 @@
 
 <!-- Manifest, biar juga rapi kalau suatu saat dibuka/di-install dari Android/Chrome -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#232E28">
+<meta name="theme-color" content="#1C2A20">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 
 /* ==========================================================
@@ -21,30 +25,58 @@
    Ganti warna/ukuran di sini kalau mau ubah tampilan global.
    ========================================================== */
 :root{
-  --paper:      #EAEDE1;   /* warna latar halaman */
-  --card:       #FFFFFF;   /* warna kartu item */
-  --ink:        #232E28;   /* warna teks utama */
-  --ink-soft:   #5B6459;   /* warna teks sekunder */
-  --line:       #C9D0BC;   /* warna border tipis */
+  --paper:        #ECEFE1;   /* warna latar halaman */
+  --paper-raised: #F7F8F0;   /* permukaan sedikit lebih terang, buat track tab dsb */
+  --card:         #FFFFFF;   /* warna kartu item */
+  --ink:          #1C2A20;   /* warna teks utama */
+  --ink-soft:     #5C6656;   /* warna teks sekunder */
+  --ink-faint:    #99A08C;   /* warna teks/placeholder paling redup */
+  --line:         #D9DFC8;   /* warna border tipis */
+  --line-strong:  #C1CBA9;   /* border yang sedikit lebih tegas (hover/focus) */
 
-  --matkul:     #C97A3B;   /* aksen jenis: Matkul */
-  --matkul-bg:  #FBEBDC;
-  --tutor:      #2F7A6E;   /* aksen jenis: Tutor */
-  --tutor-bg:   #E2F1EC;
-  --lain:       #6E5A8C;   /* aksen jenis: Lainnya */
-  --lain-bg:    #ECE6F4;
+  --primary:      #B85A25;   /* warna aksen utama app (tombol, tab aktif) */
+  --primary-dark: #9A4A1D;
+  --primary-bg:   #F6E6D3;
 
-  --danger:     #B4482F;   /* warna tombol hapus */
+  --matkul:     #B85A25;   /* aksen jenis: Matkul (sama dgn primary, jenis paling umum) */
+  --matkul-bg:  #F6E6D3;
+  --tutor:      #1F6B5B;   /* aksen jenis: Tutor */
+  --tutor-bg:   #DCEEE7;
+  --lain:       #5B4488;   /* aksen jenis: Lainnya */
+  --lain-bg:    #E7E0F3;
+
+  --danger:     #A63C24;   /* warna tombol hapus */
+  --danger-bg:  #F7E2D8;
+
+  --shadow-sm: 0 1px 2px rgba(20,28,20,0.05);
+  --shadow-md: 0 10px 24px -14px rgba(20,28,20,0.35);
+  --shadow-lg: 0 20px 44px -18px rgba(20,28,20,0.4);
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+
+  --ease: cubic-bezier(.4,0,.2,1);
 }
 
 *{ box-sizing: border-box; }
+*:focus-visible{ outline: 2px solid var(--primary); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
 
 body{
   margin: 0;
   min-height: 100vh;
   background: var(--paper);
   color: var(--ink);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display{
+  font-family: "Fraunces", Georgia, "Iowan Old Style", serif;
 }
 
 
@@ -54,21 +86,21 @@ body{
 .wrap{
   max-width: 520px;
   margin: 0 auto;
-  padding: 28px 18px 100px; /* padding bawah = ruang buat tombol tambah */
+  padding: 32px 18px 110px; /* padding bawah = ruang buat tombol tambah */
 }
 
 header{
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 
 h1{
-  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-family: "Fraunces", Georgia, "Iowan Old Style", serif;
   font-size: 30px;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   margin: 0;
 }
 
@@ -83,41 +115,44 @@ h1{
    ========================================================== */
 .day-tabs{
   display: flex;
-  gap: 6px;
+  gap: 7px;
   overflow-x: auto;
-  padding-bottom: 10px;
-  margin-bottom: 18px;
+  padding: 4px 4px 12px;
+  margin: 0 -4px 18px;
   scrollbar-width: none;
 }
 .day-tabs::-webkit-scrollbar{ display: none; }
 
 .day-tab{
   flex: 0 0 auto;
-  padding: 9px 14px;
+  padding: 9px 16px;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: transparent;
+  background: var(--card);
   color: var(--ink-soft);
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   position: relative;
-  transition: background .15s ease, color .15s ease, border-color .15s ease;
+  transition: background .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease), transform .12s var(--ease);
 }
+.day-tab:active{ transform: scale(0.96); }
 
 .day-tab.active{
   background: var(--ink);
   color: var(--paper);
   border-color: var(--ink);
+  box-shadow: var(--shadow-sm);
 }
 
 /* titik kecil penanda "hari ini", muncul kalau tab itu sedang tidak aktif */
 .day-tab.is-today:not(.active)::after{
   content: "";
   position: absolute;
-  top: 6px; right: 7px;
+  top: 7px; right: 8px;
   width: 5px; height: 5px;
   border-radius: 50%;
-  background: var(--matkul);
+  background: var(--primary);
 }
 
 
@@ -126,12 +161,12 @@ h1{
    ========================================================== */
 .empty{
   text-align: center;
-  padding: 60px 20px;
+  padding: 64px 20px;
   color: var(--ink-soft);
 }
 .empty .big{
-  font-family: Georgia, serif;
-  font-size: 19px;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 20px;
   color: var(--ink);
   margin-bottom: 6px;
 }
@@ -139,23 +174,26 @@ h1{
 .list{
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 11px;
 }
 
 .item{
   display: flex;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 14px 14px 14px 0;
+  border-radius: var(--radius-md);
+  padding: 15px 15px 15px 0;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .18s var(--ease), transform .18s var(--ease);
 }
+.item:active{ transform: scale(0.994); }
 
 /* garis warna di kiri kartu, warnanya mengikuti jenis jadwal */
 .item .bar{
-  width: 5px;
+  width: 4px;
   border-radius: 4px;
-  margin-right: 14px;
+  margin-right: 15px;
   flex-shrink: 0;
 }
 .item.tipe-matkul .bar{ background: var(--matkul); }
@@ -171,15 +209,16 @@ h1{
   gap: 10px;
 }
 
-.item-title{ font-size: 16px; font-weight: 600; line-height: 1.3; }
-.item-time{ font-size: 13px; color: var(--ink-soft); white-space: nowrap; padding-top: 2px; }
+.item-title{ font-size: 16px; font-weight: 600; line-height: 1.35; letter-spacing: -0.005em; }
+.item-time{ font-size: 13px; color: var(--ink-soft); white-space: nowrap; padding-top: 2px; font-variant-numeric: tabular-nums; }
 
 .item-tag{
   display: inline-block;
   font-size: 11px;
-  padding: 2px 8px;
+  font-weight: 600;
+  padding: 3px 9px;
   border-radius: 999px;
-  margin-top: 6px;
+  margin-top: 7px;
 }
 .tipe-matkul .item-tag{ background: var(--matkul-bg); color: var(--matkul); }
 .tipe-tutor  .item-tag{ background: var(--tutor-bg);  color: var(--tutor); }
@@ -188,20 +227,19 @@ h1{
 .item-note{
   font-size: 13.5px;
   color: var(--ink-soft);
-  margin-top: 6px;
-  line-height: 1.4;
+  margin-top: 7px;
+  line-height: 1.45;
 }
 
-.item-actions{ display: flex; gap: 14px; margin-top: 10px; }
+.item-actions{ display: flex; gap: 16px; margin-top: 11px; }
 .item-actions button{
   background: none;
   border: none;
   padding: 0;
   font-size: 12.5px;
+  font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 2px;
 }
 .item-actions button.hapus{ color: var(--danger); }
 
@@ -215,16 +253,19 @@ h1{
   bottom: 24px;
   transform: translateX(-50%);
   width: min(484px, calc(100% - 36px));
-  padding: 15px 0;
-  background: var(--ink);
-  color: var(--paper);
+  padding: 16px 0;
+  background: var(--primary);
+  color: #fff;
   border: none;
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   font-size: 15px;
   font-weight: 600;
+  letter-spacing: -0.005em;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(35,46,40,0.25);
+  box-shadow: var(--shadow-lg);
+  transition: transform .12s var(--ease), box-shadow .12s var(--ease);
 }
+.fab:active{ transform: translateX(-50%) scale(0.97); box-shadow: var(--shadow-md); }
 
 
 /* ==========================================================
@@ -236,10 +277,15 @@ h1{
   display: none;
   align-items: flex-end;
   justify-content: center;
-  background: rgba(35,46,40,0.35);
+  background: rgba(20,28,20,0.42);
+  backdrop-filter: blur(2px);
   z-index: 10;
 }
-.sheet-backdrop.open{ display: flex; }
+.sheet-backdrop.open{
+  display: flex;
+  animation: fadeIn .18s var(--ease);
+}
+@keyframes fadeIn{ from{ opacity: 0; } to{ opacity: 1; } }
 
 .sheet{
   width: 100%;
@@ -247,34 +293,55 @@ h1{
   max-height: 88vh;
   overflow-y: auto;
   background: var(--paper);
-  border-radius: 20px 20px 0 0;
-  padding: 22px 18px 26px;
+  border-radius: 26px 26px 0 0;
+  padding: 14px 20px 28px;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp .22s var(--ease);
+}
+@keyframes slideUp{ from{ transform: translateY(24px); opacity: 0; } to{ transform: translateY(0); opacity: 1; } }
+
+/* pegangan kecil di atas sheet, penanda visual "bisa di-swipe" */
+.sheet::before{
+  content: "";
+  display: block;
+  width: 38px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--line-strong);
+  margin: 2px auto 16px;
 }
 
 .sheet h2{
-  font-family: Georgia, serif;
+  font-family: "Fraunces", Georgia, serif;
   font-size: 21px;
-  margin: 0 0 16px;
+  font-weight: 600;
+  margin: 0 0 18px;
 }
 
-.field{ margin-bottom: 14px; }
+.field{ margin-bottom: 15px; }
 .field label{
   display: block;
   font-size: 12.5px;
+  font-weight: 500;
   color: var(--ink-soft);
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 .field input, .field select, .field textarea{
   width: 100%;
-  padding: 11px 12px;
+  padding: 12px 13px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--card);
   color: var(--ink);
   font-size: 15px;
   font-family: inherit;
+  transition: border-color .15s var(--ease), box-shadow .15s var(--ease);
 }
-.field textarea{ resize: vertical; min-height: 56px; }
+.field input:focus, .field select:focus, .field textarea:focus{
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-bg);
+}
+.field textarea{ resize: vertical; min-height: 58px; }
 
 /* pilihan jenis: Matkul / Tutor / Lainnya, tampil sebagai 3 tombol sejajar */
 .tipe-choice{ display: flex; gap: 8px; }
@@ -283,13 +350,15 @@ h1{
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 0;
+  padding: 11px 0;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   font-size: 13.5px;
+  font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
   margin: 0;
+  transition: background .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease);
 }
 .tipe-choice input{ display: none; } /* radio asli disembunyikan, label-nya yang jadi tombol */
 .tipe-choice label.pick-matkul:has(input:checked){ background: var(--matkul-bg); border-color: var(--matkul); color: var(--matkul); }
@@ -297,33 +366,37 @@ h1{
 .tipe-choice label.pick-lain:has(input:checked)  { background: var(--lain-bg);   border-color: var(--lain);   color: var(--lain); }
 
 /* pilihan hari: bisa multi-pilih (checkbox), tampil sebagai chip */
-.day-choice{ display: flex; flex-wrap: wrap; gap: 6px; }
+.day-choice{ display: flex; flex-wrap: wrap; gap: 7px; }
 .day-choice label{
-  padding: 8px 10px;
+  padding: 9px 12px;
   border: 1px solid var(--line);
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   font-size: 13px;
+  font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
+  transition: background .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease);
 }
 .day-choice input{ display: none; }
 .day-choice label:has(input:checked){ background: var(--ink); border-color: var(--ink); color: var(--paper); }
 
-.sheet-actions{ display: flex; gap: 10px; margin-top: 18px; }
+.sheet-actions{ display: flex; gap: 10px; margin-top: 20px; }
 .sheet-actions button{
   flex: 1;
-  padding: 13px 0;
+  padding: 14px 0;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   font-size: 14.5px;
   font-weight: 600;
   cursor: pointer;
+  transition: transform .12s var(--ease), opacity .12s var(--ease);
 }
-.btn-simpan{ background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.btn-simpan:disabled{ background: #b9bdb2; border-color: #b9bdb2; color: #6f7268; cursor: not-allowed; }
+.sheet-actions button:active{ transform: scale(0.97); }
+.btn-simpan{ background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-simpan:disabled{ background: #c7cbba; border-color: #c7cbba; color: #838a76; cursor: not-allowed; }
 .btn-batal{ background: transparent; color: var(--ink-soft); }
 
-.loading{ text-align: center; padding: 60px 0; color: var(--ink-soft); font-size: 14px; }
+.loading{ text-align: center; padding: 64px 0; color: var(--ink-soft); font-size: 14px; }
 
 
 /* ==========================================================
@@ -331,14 +404,16 @@ h1{
    ========================================================== */
 .header-right{ display: flex; align-items: center; gap: 10px; }
 .gear-btn{
-  background: none;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: 999px;
-  width: 30px; height: 30px;
+  width: 32px; height: 32px;
   font-size: 14px;
   cursor: pointer;
   color: var(--ink-soft);
+  transition: transform .12s var(--ease);
 }
+.gear-btn:active{ transform: scale(0.92); }
 
 
 /* ==========================================================
@@ -346,37 +421,52 @@ h1{
    ========================================================== */
 .fab-ai{
   background: var(--tutor);
-  bottom: 76px;
+  bottom: 78px;
 }
 .fab-manual{ }
 
 
 /* ==========================================================
-   9. SHEET "TAMBAH VIA AI"
+   9. SEGMENTED CONTROL (dipakai bareng: tab jadwal/materi,
+      tab masuk/daftar, tab teks/foto, tab file/link)
    ========================================================== */
-.ai-tabs{ display: flex; gap: 8px; margin-bottom: 16px; }
-.ai-tab, .materi-type-tab{
-  flex: 1;
-  padding: 10px 0;
+.ai-tabs, .view-tabs, .auth-tabs{
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--paper-raised);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 18px;
+}
+.ai-tab, .materi-type-tab, .view-tab, .auth-tab{
+  flex: 1;
+  padding: 9px 0;
+  border: none;
+  border-radius: 8px;
   background: transparent;
   color: var(--ink-soft);
   font-size: 13.5px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background .18s var(--ease), color .18s var(--ease), box-shadow .18s var(--ease);
 }
-.ai-tab.active, .materi-type-tab.active{ background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.ai-tab.active, .materi-type-tab.active, .view-tab.active, .auth-tab.active{
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
 
 .ai-error{
-  background: var(--matkul-bg);
+  background: var(--danger-bg);
   color: var(--danger);
-  border-radius: 10px;
-  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  padding: 11px 13px;
   font-size: 13px;
-  margin-bottom: 12px;
+  margin-bottom: 13px;
 }
 
-.hint{ font-size: 12px; color: var(--ink-soft); margin-top: -8px; margin-bottom: 14px; line-height: 1.4; }
+.hint{ font-size: 12px; color: var(--ink-soft); margin-top: -8px; margin-bottom: 15px; line-height: 1.45; }
 
 
 /* ==========================================================
@@ -385,15 +475,15 @@ h1{
 .preview-item{
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 11px;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: var(--radius-sm);
+  padding: 13px;
   margin-bottom: 8px;
   cursor: pointer;
 }
-.preview-item input{ margin-top: 4px; }
+.preview-item input{ margin-top: 4px; accent-color: var(--primary); }
 .preview-title{ font-size: 14.5px; font-weight: 600; }
 .preview-title .item-tag{ margin-left: 6px; vertical-align: middle; }
 .preview-detail{ font-size: 12.5px; color: var(--ink-soft); margin-top: 3px; }
@@ -401,21 +491,8 @@ h1{
 
 /* ==========================================================
    11. TAB "JADWAL" / "MATERI"
+   (styling gabung ke section 9 — segmented control bersama)
    ========================================================== */
-.view-tabs{ display: flex; gap: 8px; margin-bottom: 16px; }
-.view-tab{
-  flex: 1;
-  padding: 10px 0;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: transparent;
-  color: var(--ink-soft);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.view-tab.active{ background: var(--ink); border-color: var(--ink); color: var(--paper); }
-
 .materi-subject{ cursor: pointer; }
 
 
@@ -425,26 +502,26 @@ h1{
 .materi-file{
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: var(--radius-sm);
+  padding: 13px;
   margin-bottom: 8px;
+  box-shadow: var(--shadow-sm);
 }
 .materi-file-icon{ font-size: 22px; flex-shrink: 0; }
 .materi-file-info{ flex: 1; min-width: 0; }
 .materi-file-name{ font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
 .materi-file-date{ font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
-.materi-file-actions{ display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; align-items: flex-end; }
+.materi-file-actions{ display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; align-items: flex-end; }
 .materi-file-actions button{
   background: none;
   border: none;
   padding: 0;
   font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 2px;
   color: var(--ink-soft);
 }
 .materi-file-actions button.hapus{ color: var(--danger); }
@@ -457,20 +534,20 @@ h1{
   width: 100%;
   height: 58vh;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   background: #fff;
 }
-.materi-viewer-img{ width: 100%; border-radius: 12px; display: block; }
+.materi-viewer-img{ width: 100%; border-radius: var(--radius-sm); display: block; }
 .materi-viewer-download{
   display: block;
   text-align: center;
-  padding: 12px;
-  border-radius: 10px;
-  background: var(--ink);
-  color: var(--paper);
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: #fff;
   text-decoration: none;
   font-weight: 600;
-  margin-top: 12px;
+  margin-top: 13px;
 }
 .doc-preview{
   font-size: 13.5px;
@@ -480,12 +557,12 @@ h1{
   overflow: auto;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 14px;
+  border-radius: var(--radius-sm);
+  padding: 15px;
 }
 .doc-preview img{ max-width: 100%; height: auto; }
 .excel-preview table{ border-collapse: collapse; width: 100%; font-size: 12px; }
-.excel-preview td, .excel-preview th{ border: 1px solid var(--line); padding: 4px 6px; text-align: left; }
+.excel-preview td, .excel-preview th{ border: 1px solid var(--line); padding: 5px 7px; text-align: left; }
 
 
 /* ==========================================================
@@ -494,7 +571,10 @@ h1{
 #authScreen{
   position: fixed;
   inset: 0;
-  background: var(--paper);
+  background:
+    radial-gradient(var(--line) 1px, transparent 1px);
+  background-size: 22px 22px;
+  background-color: var(--paper);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -504,45 +584,52 @@ h1{
 .auth-box{
   width: 100%;
   max-width: 360px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 32px 26px 26px;
+  box-shadow: var(--shadow-lg);
 }
+.auth-mark{
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--primary-bg);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.auth-mark svg{ width: 22px; height: 22px; }
 .auth-box h1{
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 30px;
+  font-family: "Fraunces", 'Times New Roman', serif;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   margin-bottom: 4px;
 }
-.auth-sub{ color: var(--ink-soft); font-size: 13.5px; margin-bottom: 20px; }
-.auth-tabs{ display: flex; gap: 8px; margin-bottom: 18px; }
-.auth-tab{
-  flex: 1;
-  padding: 10px 0;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: transparent;
-  color: var(--ink-soft);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.auth-tab.active{ background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.auth-sub{ color: var(--ink-soft); font-size: 13.5px; margin-bottom: 22px; line-height: 1.5; }
 .auth-error{
-  background: var(--matkul-bg);
+  background: var(--danger-bg);
   color: var(--danger);
-  border-radius: 10px;
-  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  padding: 11px 13px;
   font-size: 13px;
-  margin-bottom: 12px;
+  margin-bottom: 13px;
   display: none;
 }
 .logout-btn{
-  background: none;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 5px 12px;
+  padding: 6px 13px;
   font-size: 12.5px;
+  font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
 }
-.username-label{ font-size: 12.5px; color: var(--ink-soft); }
+.username-label{ font-size: 12.5px; font-weight: 500; color: var(--ink-soft); }
 
 </style>
 </head>
@@ -551,6 +638,16 @@ h1{
 <!-- Layar login / daftar, tampil kalau belum ada token tersimpan -->
 <div id="authScreen">
   <div class="auth-box">
+    <div class="auth-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M3 9.5H21" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M8 3V6.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M16 3V6.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M7 13H11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M7 17H15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </div>
     <h1>Agenda</h1>
     <div class="auth-sub">Masuk dulu buat lihat jadwal & materimu.</div>
 
