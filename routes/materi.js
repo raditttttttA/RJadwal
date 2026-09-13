@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const multer = require('multer');
 const { randomUUID } = require('crypto');
-const pdf = require('pdf-parse');
 const { db } = require('../db');
 const { authMiddleware } = require('../middleware/auth');
 const { uploadFile, getSignedUrl, deleteFile, downloadFile } = require('../storage');
@@ -147,33 +146,32 @@ router.get('/:id/content', authMiddleware, async (req, res) => {
     if (!row) return res.status(404).json({ error: 'Materi tidak ditemukan.' });
 
     if (row.type === 'link') {
-      return res.json({ fileName: row.file_name, type: 'link', content: `Link: ${row.url}` });
+      return res.json({ fileName: row.file_name, type: 'link', text: `Materi Link: ${row.file_name} (${row.url})` });
     }
 
     if (!row.file_path) return res.status(400).json({ error: 'Bukan file.' });
 
     // Download file dari Supabase
     const buffer = await downloadFile(row.file_path);
-    let contentText = "";
-
-    if (row.type === 'foto') {
-      // Kirim base64 agar AI bisa "melihat" foto materi
-      contentText = buffer.toString('base64');
-      return res.json({ fileName: row.file_name, type: 'foto', content: contentText, mimeType: row.mime_type });
-    } 
     
-    if (row.type === 'pdf') {
-      const data = await pdf(buffer);
-      contentText = data.text;
-    } else {
-      // Untuk tipe file lain (Docx/Excel), sementara kita kirim sebagai string teks kasar
-      contentText = buffer.toString('utf8').substring(0, 10000); 
+    // Kirim base64 untuk PDF & Foto agar langsung dibaca Gemini
+    if (row.type === 'pdf' || row.type === 'foto') {
+      const mimeType = row.type === 'pdf' ? 'application/pdf' : (row.mime_type || 'image/jpeg');
+      return res.json({ 
+        fileName: row.file_name, 
+        type: row.type, 
+        inlineData: {
+          mimeType: mimeType,
+          data: buffer.toString('base64')
+        }
+      });
     }
 
+    // Tipe lainnya dikirim sebagai teks
     res.json({ 
       fileName: row.file_name, 
       type: row.type, 
-      content: contentText 
+      text: buffer.toString('utf8').substring(0, 10000)
     });
   } catch (err) {
     console.error(err);

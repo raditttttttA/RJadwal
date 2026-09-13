@@ -2702,7 +2702,7 @@ async function startQuiz(){
   }
 }
 
-async function generateQuizAI(content, jumlahSoal, kesulitan){
+async function generateQuizAI(materiContents, jumlahSoal, kesulitan){
   let key = getApiKey();
   if(!key) throw new Error('API Key belum diatur.');
   
@@ -2712,21 +2712,52 @@ async function generateQuizAI(content, jumlahSoal, kesulitan){
     'susah': 'Level susah: konsep lanjut, variasi jenis soal, perhitungan kompleks, perlu kreativitas'
   };
   
-  const model = 'gemini-3.6-flash';
+  // Format parts untuk Gemini (bisa teks, bisa PDF/Foto inline)
+  const parts = [];
+  materiContents.forEach(m => {
+    if (m.inlineData) {
+      parts.push({
+        inline_data: {
+          mime_type: m.inlineData.mimeType,
+          data: m.inlineData.data
+        }
+      });
+      parts.push({ text: `Ini dokumen materi: ${m.fileName}` });
+    } else if (m.text) {
+      parts.push({ text: `Materi (${m.fileName}):\n${m.text}` });
+    }
+  });
+
+  parts.push({
+    text: `Tolong pelajari dokumen/materi di atas dan buatkan ${jumlahSoal} soal pilihan ganda tentang topik materi tersebut.`
+  });
+
+  const model = 'gemini-1.5-flash';
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(key);
   
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      system_instruction: { parts: [{ text: `Buat ${jumlahSoal} soal pilihan ganda UNIK dari materi berikut. ${difficultyGuide[kesulitan]}
-PENTING: Variasikan jenis soal dalam topik yang sama, jangan clone soal. Balas HANYA JSON array valid tanpa markdown: [ { question: 'soal?', options: ['A','B','C','D'], correct: 0 } ]` }] },
-      contents: [{ role: 'user', parts: [{ text: JSON.stringify(content) }] }],
+      system_instruction: { 
+        parts: [{ 
+          text: `Kamu adalah pembuat soal ujian profesional. Buat ${jumlahSoal} soal pilihan ganda DARI MATERI YANG DIBERIKAN. ${difficultyGuide[kesulitan]}.
+PENTING:
+1. Soal HARUS relevan dengan isi dokumen/materi yang dikirimkan.
+2. Variasikan soal dalam topik tersebut.
+3. Balas HANYA dengan format JSON array valid, tanpa markdown:
+[ { "question": "soal?", "options": ["A","B","C","D"], "correct": 0 } ]` 
+        }] 
+      },
+      contents: [{ role: 'user', parts: parts }],
       generationConfig: { responseMimeType: 'application/json' }
     })
   });
   
-  if (!response.ok) throw new Error('API Gemini error');
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error('API Gemini error: ' + errText);
+  }
   const data = await response.json();
   const text = data.candidates[0].content.parts[0].text;
   const cleaned = text.replace(/```json|```/g, '').trim();
