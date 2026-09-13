@@ -2684,15 +2684,20 @@ async function startQuiz(){
   try {
     const materiContents = await Promise.all(selected.map(async (id) => {
       try {
-        return await apiFetch(`/api/materi/${id}/content`);
+        const data = await apiFetch(`/api/materi/${id}/content`);
+        console.log('Materi content:', data);
+        return data;
       } catch(e) {
+        console.error('Error fetch materi:', e);
         return { fileName: 'Materi', content: 'File tidak dapat dibaca' };
       }
     }));
     
+    console.log('Sending to AI:', materiContents);
     const soal = await generateQuizAI(materiContents, parseInt(quizCount), quizDifficulty);
     renderQuiz(soal);
   } catch(err){
+    console.error('Quiz error:', err);
     body.innerHTML = `<div class="empty"><div class="big">Gagal generate quiz</div>${err.message}</div>`;
   }
 }
