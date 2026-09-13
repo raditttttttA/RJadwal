@@ -2712,21 +2712,6 @@ async function generateQuizAI(materiContents, jumlahSoal, kesulitan){
     'susah': 'Level susah: konsep lanjut, variasi jenis soal, perhitungan kompleks, perlu kreativitas'
   };
   
-  // Format parts untuk Gemini (text plain dari materi)
-  const parts = [];
-  materiContents.forEach(m => {
-    if (m.text) {
-      parts.push({ text: `Materi (${m.fileName}):\n${m.text}\n---\n` });
-    }
-  });
-
-  parts.push({
-    text: `Berdasarkan materi di atas, buatkan ${jumlahSoal} soal pilihan ganda ${difficultyGuide[kesulitan]}.
-PENTING: Soal HARUS dari topik materi yang diberikan, variasikan jenisnya.
-Balas HANYA dengan JSON array valid tanpa markdown:
-[ { "question": "soal?", "options": ["A","B","C","D"], "correct": 0 } ]`
-  });
-
   const model = 'gemini-1.5-flash-latest';
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(key);
   
@@ -2734,15 +2719,14 @@ Balas HANYA dengan JSON array valid tanpa markdown:
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      contents: [{ role: 'user', parts: parts }],
+      system_instruction: { parts: [{ text: `Buat ${jumlahSoal} soal pilihan ganda UNIK dari materi berikut. ${difficultyGuide[kesulitan]}
+PENTING: Variasikan jenis soal dalam topik yang sama, jangan clone soal. Balas HANYA JSON array valid tanpa markdown: [ { question: 'soal?', options: ['A','B','C','D'], correct: 0 } ]` }] },
+      contents: [{ role: 'user', parts: [{ text: JSON.stringify(materiContents) }] }],
       generationConfig: { responseMimeType: 'application/json' }
     })
   });
   
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error('API Gemini error: ' + errText);
-  }
+  if (!response.ok) throw new Error('API Gemini error');
   const data = await response.json();
   const text = data.candidates[0].content.parts[0].text;
   const cleaned = text.replace(/```json|```/g, '').trim();
