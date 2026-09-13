@@ -968,17 +968,82 @@ function renderList(){
     return;
   }
 
+  const grouped = groupItemsByTime(todaysItems);
+
   listArea.innerHTML = `
     <div class="list">
-      ${todaysItems.map(renderItemCard).join('')}
+      ${grouped.map(renderGroupedCard).join('')}
     </div>`;
 
-  // pasang event listener tombol ubah/hapus di tiap kartu
   listArea.querySelectorAll('.item').forEach(cardEl => {
-    const id = cardEl.dataset.id;
-    cardEl.querySelector('.edit').onclick  = () => openEditSheet(id);
-    cardEl.querySelector('.hapus').onclick = () => hapusItem(id);
+    const ids = JSON.parse(cardEl.dataset.ids || '[]');
+    cardEl.querySelector('.edit').onclick  = () => openEditSheet(ids[0]);
+    cardEl.querySelector('.hapus').onclick = () => hapusItem(ids[0]);
   });
+}
+
+function groupItemsByTime(items){
+  if (items.length === 0) return [];
+
+  const groups = [];
+  let currentGroup = [items[0]];
+  let currentEnd = timeToMinutes(items[0].endTime || items[0].time);
+
+  for (let i = 1; i < items.length; i++){
+    const item = items[i];
+    const itemStart = timeToMinutes(item.time);
+    const itemEnd = timeToMinutes(item.endTime || item.time);
+
+    if (itemStart <= currentEnd){
+      currentGroup.push(item);
+      currentEnd = Math.max(currentEnd, itemEnd);
+    } else {
+      groups.push(currentGroup);
+      currentGroup = [item];
+      currentEnd = itemEnd;
+    }
+  }
+  groups.push(currentGroup);
+
+  return groups;
+}
+
+function minutesToTime(mins){
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+function renderGroupedCard(group){
+  const firstItem = group[0];
+  const lastItem = group[group.length - 1];
+  const startTime = firstItem.time;
+  const endTime = lastItem.endTime || lastItem.time;
+
+  const timeLabel = group.length === 1 && !group[0].endTime
+    ? startTime
+    : `${startTime}–${endTime}`;
+
+  const ids = group.map(it => it.id);
+  const titles = group.map(it => it.title).join(', ');
+  const tipo = firstItem.tipe;
+
+  return `
+    <div class="item tipe-${tipo}" data-ids='${JSON.stringify(ids)}'>
+      <div class="bar"></div>
+      <div class="item-body">
+        <div class="item-top">
+          <div class="item-title">${escapeHtml(titles)}</div>
+          <div class="item-time">${timeLabel}</div>
+        </div>
+        <span class="item-tag">${TIPE_LABEL[tipo]}</span>
+        ${group.map(it => it.note ? `<div class="item-note">${escapeHtml(it.note)}</div>` : '').join('')}
+        <div class="item-actions">
+          <button class="edit">Ubah</button>
+          <button class="hapus">Hapus</button>
+        </div>
+      </div>
+    </div>`;
 }
 
 function renderItemCard(it){
