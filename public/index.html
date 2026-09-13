@@ -1117,15 +1117,6 @@ function renderList(){
     .filter(it => it.days.includes(selectedDay))
     .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
 
-  if (todaysItems.length === 0){
-    listArea.innerHTML = `
-      <div class="empty">
-        <div class="big">Belum ada jadwal</div>
-        Hari ${DAY_NAMES[selectedDay]} masih kosong.
-      </div>`;
-    return;
-  }
-
   const timeline = buildTimeline(todaysItems);
   listArea.innerHTML = `<div class="timeline">${timeline}</div>`;
 
