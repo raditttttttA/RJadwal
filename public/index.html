@@ -649,40 +649,256 @@ h1{
 
 /* ==========================================================
    11. TAB "JADWAL" / "MATERI"
-   (styling gabung ke section 9 — segmented control bersama)
    ========================================================== */
-.materi-subject{ cursor: pointer; }
+.materi-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  animation: fadeIn .3s var(--ease);
+}
+
+.materi-card{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 20px 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
+  animation: scaleUp .3s var(--ease) backwards;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes scaleUp{
+  from{
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to{
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.materi-card:nth-child(1){ animation-delay: 0ms; }
+.materi-card:nth-child(2){ animation-delay: 50ms; }
+.materi-card:nth-child(3){ animation-delay: 100ms; }
+.materi-card:nth-child(4){ animation-delay: 150ms; }
+.materi-card:nth-child(5){ animation-delay: 200ms; }
+.materi-card:nth-child(6){ animation-delay: 250ms; }
+
+.materi-card::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(184,90,37,0.1) 0%, transparent 80%);
+  opacity: 0;
+  transition: opacity .3s var(--ease);
+  pointer-events: none;
+}
+
+.materi-card:hover::before{
+  opacity: 1;
+}
+
+.materi-card:hover{
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary);
+}
+
+.materi-card:active{
+  transform: translateY(-2px) scale(0.98);
+}
+
+.materi-card.tipe-matkul{
+  border-color: var(--matkul);
+}
+
+.materi-card.tipe-tutor{
+  border-color: var(--tutor);
+}
+
+.materi-card.tipe-lain{
+  border-color: var(--lain);
+}
+
+.materi-icon{
+  font-size: 48px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(20,28,20,0.08));
+  transition: transform .25s var(--ease);
+}
+
+.materi-card:hover .materi-icon{
+  transform: scale(1.15) rotate(5deg);
+}
+
+.materi-title{
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.materi-count{
+  font-size: 12px;
+  color: var(--ink-soft);
+  background: var(--paper-raised);
+  padding: 4px 10px;
+  border-radius: 999px;
+  min-width: 50px;
+}
+
+.materi-badge{
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--primary);
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(184,90,37,0.2);
+}
 
 
 /* ==========================================================
    12. DAFTAR FILE MATERI (di dalam sheet detail matkul/tutor)
    ========================================================== */
+.materi-file-list{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn .3s var(--ease);
+}
+
 .materi-file{
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 14px;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: 13px;
-  margin-bottom: 8px;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
   box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease), background .2s var(--ease);
+  animation: slideInLeft .25s var(--ease) backwards;
 }
-.materi-file-icon{ font-size: 22px; flex-shrink: 0; }
-.materi-file-info{ flex: 1; min-width: 0; }
-.materi-file-name{ font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
-.materi-file-date{ font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
-.materi-file-actions{ display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; align-items: flex-end; }
+
+@keyframes slideInLeft{
+  from{
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to{
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.materi-file:nth-child(1){ animation-delay: 0ms; }
+.materi-file:nth-child(2){ animation-delay: 40ms; }
+.materi-file:nth-child(3){ animation-delay: 80ms; }
+.materi-file:nth-child(4){ animation-delay: 120ms; }
+.materi-file:nth-child(5){ animation-delay: 160ms; }
+.materi-file:nth-child(6){ animation-delay: 200ms; }
+
+.materi-file:hover{
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
+  background: var(--paper-raised);
+}
+
+.materi-file:active{
+  transform: scale(0.98);
+}
+
+.materi-file-icon{
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(20,28,20,0.06));
+  transition: transform .2s var(--ease);
+}
+
+.materi-file:hover .materi-file-icon{
+  transform: scale(1.15);
+}
+
+.materi-file-info{
+  flex: 1;
+  min-width: 0;
+}
+
+.materi-file-name{
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+  margin-bottom: 3px;
+}
+
+.materi-file-date{
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.materi-file-actions{
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity .2s var(--ease);
+}
+
+.materi-file:hover .materi-file-actions{
+  opacity: 1;
+}
+
 .materi-file-actions button{
-  background: none;
-  border: none;
-  padding: 0;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   color: var(--ink-soft);
+  transition: background .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease);
 }
-.materi-file-actions button.hapus{ color: var(--danger); }
+
+.materi-file-actions button:hover{
+  background: var(--card);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.materi-file-actions button.hapus{
+  color: var(--danger);
+}
+
+.materi-file-actions button.hapus:hover{
+  background: var(--danger-bg);
+  border-color: var(--danger);
+}
 
 
 /* ==========================================================
@@ -1600,23 +1816,27 @@ async function renderMateriList(){
   const counts = await getMateriCounts();
 
   materiListArea.innerHTML = `
-    <div class="list">
+    <div class="materi-grid">
       ${subjects.map(s => `
-        <div class="item tipe-${s.tipe} materi-subject" data-key="${escapeHtml(s.key)}">
-          <div class="bar"></div>
-          <div class="item-body">
-            <div class="item-top">
-              <div class="item-title">${escapeHtml(s.title)}</div>
-            </div>
-            <span class="item-tag">${TIPE_LABEL[s.tipe]}</span>
-            <div class="item-note">${counts[s.key] || 0} materi</div>
-          </div>
+        <div class="materi-card tipe-${s.tipe}" data-key="${escapeHtml(s.key)}">
+          ${counts[s.key] ? `<div class="materi-badge">${counts[s.key]}</div>` : ''}
+          <div class="materi-icon">${s.tipe === 'matkul' ? '📚' : s.tipe === 'tutor' ? '👨‍🏫' : '📋'}</div>
+          <div class="materi-title">${escapeHtml(s.title)}</div>
+          <div class="materi-count">${counts[s.key] || 0} file</div>
         </div>`).join('')}
     </div>`;
 
-  materiListArea.querySelectorAll('.materi-subject').forEach(el => {
+  materiListArea.querySelectorAll('.materi-card').forEach(el => {
     const subject = subjects.find(s => s.key === el.dataset.key);
     el.onclick = () => openMateriDetail(subject);
+    
+    el.addEventListener('mousemove', (e) => {
+      const rect = el.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      el.style.setProperty('--cursor-x', `${x}%`);
+      el.style.setProperty('--cursor-y', `${y}%`);
+    });
   });
 }
 
@@ -1636,18 +1856,18 @@ function renderMateriFileList(list){
     return;
   }
 
-  container.innerHTML = list.map(m => `
+  container.innerHTML = `<div class="materi-file-list">${list.map(m => `
     <div class="materi-file" data-id="${m.id}">
       <div class="materi-file-icon">${MATERI_ICON[m.type] || '📁'}</div>
       <div class="materi-file-info">
         <div class="materi-file-name">${escapeHtml(m.fileName)}</div>
-        <div class="materi-file-date">${MATERI_LABEL[m.type] || 'File'} · diunggah ${formatTanggalUpload(m.uploadedAt)}</div>
+        <div class="materi-file-date">${MATERI_LABEL[m.type] || 'File'} · ${formatTanggalUpload(m.uploadedAt)}</div>
       </div>
       <div class="materi-file-actions">
         <button class="lihat">Lihat</button>
         <button class="hapus">Hapus</button>
       </div>
-    </div>`).join('');
+    </div>`).join('')}</div>`;
 
   container.querySelectorAll('.materi-file').forEach(row => {
     const m = list.find(x => x.id === row.dataset.id);
