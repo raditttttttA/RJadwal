@@ -26,4 +26,11 @@ async function deleteFile(key) {
   await supabase.storage.from(BUCKET).remove([key]).catch(() => {});
 }
 
-module.exports = { uploadFile, getSignedUrl, deleteFile, BUCKET };
+async function downloadFile(key) {
+  const { data, error } = await supabase.storage.from(BUCKET).download(key);
+  if (error) throw error;
+  const arrayBuffer = await data.arrayBuffer();
+  return Buffer.from(arrayBuffer);
+}
+
+module.exports = { uploadFile, getSignedUrl, deleteFile, downloadFile, BUCKET };

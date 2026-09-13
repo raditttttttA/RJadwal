@@ -4,7 +4,7 @@ const multer = require('multer');
 const { randomUUID } = require('crypto');
 const { db } = require('../db');
 const { authMiddleware } = require('../middleware/auth');
-const { uploadFile, getSignedUrl, deleteFile } = require('../storage');
+const { uploadFile, getSignedUrl, deleteFile, downloadFile } = require('../storage');
 
 const router = express.Router();
 
@@ -132,6 +132,46 @@ router.get('/:id/file', authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(404).send('File tidak ditemukan di server.');
+  }
+});
+
+// endpoint untuk mengambil konten materi (teks/data) buat AI Quiz
+router.get('/:id/content', authMiddleware, async (req, res) => {
+  try {
+    const result = await db.execute({
+      sql: 'SELECT * FROM materi WHERE id = ? AND user_id = ?',
+      args: [req.params.id, req.userId]
+    });
+    const row = result.rows[0];
+    if (!row) return res.status(404).json({ error: 'Materi tidak ditemukan.' });
+
+    if (row.type === 'link') {
+      return res.json({ fileName: row.file_name, type: 'link', content: `Link: ${row.url}` });
+    }
+
+    if (!row.file_path) return res.status(400).json({ error: 'Bukan file.' });
+
+    // Download file dari Supabase
+    const buffer = await downloadFile(row.file_path);
+    let contentText = "";
+
+    if (row.type === 'foto') {
+      // Kirim base64 agar AI bisa "melihat" foto materi
+      contentText = buffer.toString('base64');
+      return res.json({ fileName: row.file_name, type: 'foto', content: contentText, mimeType: row.mime_type });
+    } 
+    
+    // Untuk tipe file lain (PDF/Docx/Excel), sementara kita kirim sebagai string teks kasar dulu
+    contentText = buffer.toString('utf8').substring(0, 10000); // Batasi 10k karakter
+
+    res.json({ 
+      fileName: row.file_name, 
+      type: row.type, 
+      content: contentText 
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Gagal membaca konten materi.' });
   }
 });
 
