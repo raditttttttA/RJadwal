@@ -1142,7 +1142,10 @@ function buildTimeline(todaysItems){
     for (let h = startHour; h <= endHour; h++){
       if (h >= 0 && h <= 23){
         if (!hourMap[h]) hourMap[h] = [];
-        if (h === startHour) hourMap[h].push(item);
+        // Masukkan item ke setiap jam yang dilewatinya
+        if (!hourMap[h].some(existing => existing.id === item.id)) {
+          hourMap[h].push(item);
+        }
       }
     }
   });
