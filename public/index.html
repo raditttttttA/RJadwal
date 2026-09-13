@@ -648,11 +648,18 @@ h1{
 
 
 /* ==========================================================
-   11. TAB "JADWAL" / "MATERI"
+   11. TAB "JADWAL" / "MATERI" / "QUIZ"
    ========================================================== */
 .materi-grid{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  animation: fadeIn .3s var(--ease);
+}
+
+.quiz-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 16px;
   animation: fadeIn .3s var(--ease);
 }
@@ -902,6 +909,371 @@ h1{
 
 
 /* ==========================================================
+   12.5. QUIZ INTERFACE
+   ========================================================== */
+.quiz-card{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 20px 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
+  animation: scaleUp .3s var(--ease) backwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.quiz-card:nth-child(1){ animation-delay: 0ms; }
+.quiz-card:nth-child(2){ animation-delay: 50ms; }
+.quiz-card:nth-child(3){ animation-delay: 100ms; }
+.quiz-card:nth-child(4){ animation-delay: 150ms; }
+.quiz-card:nth-child(5){ animation-delay: 200ms; }
+.quiz-card:nth-child(6){ animation-delay: 250ms; }
+
+.quiz-card::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(91,68,136,0.1) 0%, transparent 80%);
+  opacity: 0;
+  transition: opacity .3s var(--ease);
+  pointer-events: none;
+}
+
+.quiz-card:hover::before{
+  opacity: 1;
+}
+
+.quiz-card:hover{
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-md);
+  border-color: var(--lain);
+}
+
+.quiz-card:active{
+  transform: translateY(-2px) scale(0.98);
+}
+
+.quiz-icon{
+  font-size: 52px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(20,28,20,0.08));
+  transition: transform .25s var(--ease);
+}
+
+.quiz-card:hover .quiz-icon{
+  transform: scale(1.15) rotate(-5deg);
+}
+
+.quiz-title{
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.quiz-subtitle{
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.materi-select-item{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background .2s var(--ease), border-color .2s var(--ease);
+  animation: slideInLeft .25s var(--ease) backwards;
+}
+
+.materi-select-item:nth-child(1){ animation-delay: 0ms; }
+.materi-select-item:nth-child(2){ animation-delay: 40ms; }
+.materi-select-item:nth-child(3){ animation-delay: 80ms; }
+.materi-select-item:nth-child(4){ animation-delay: 120ms; }
+.materi-select-item:nth-child(5){ animation-delay: 160ms; }
+
+.materi-select-item:hover{
+  background: var(--paper-raised);
+  border-color: var(--primary);
+}
+
+.materi-select-item input[type="checkbox"]{
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.materi-select-info{
+  flex: 1;
+  min-width: 0;
+}
+
+.materi-select-name{
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.materi-select-type{
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+.quiz-container{
+  animation: fadeIn .3s var(--ease);
+}
+
+.quiz-header{
+  background: linear-gradient(135deg, var(--lain) 0%, var(--primary) 100%);
+  color: #fff;
+  padding: 24px 20px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 20px;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+}
+
+.quiz-header h3{
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 24px;
+  margin: 0 0 8px;
+}
+
+.quiz-header p{
+  margin: 0;
+  opacity: 0.9;
+  font-size: 14px;
+}
+
+.quiz-progress{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.quiz-question-card{
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  animation: slideInLeft .3s var(--ease);
+}
+
+.quiz-question-number{
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+
+.quiz-question-text{
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+
+.quiz-options{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quiz-option{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  cursor: pointer;
+  transition: all .2s var(--ease);
+  position: relative;
+}
+
+.quiz-option:hover{
+  border-color: var(--primary);
+  background: var(--primary-bg);
+  transform: translateX(4px);
+}
+
+.quiz-option.selected{
+  border-color: var(--primary);
+  background: var(--primary-bg);
+}
+
+.quiz-option.correct{
+  border-color: var(--tutor);
+  background: var(--tutor-bg);
+}
+
+.quiz-option.wrong{
+  border-color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.quiz-option-letter{
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--paper-raised);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: all .2s var(--ease);
+}
+
+.quiz-option:hover .quiz-option-letter,
+.quiz-option.selected .quiz-option-letter{
+  background: var(--primary);
+  color: #fff;
+}
+
+.quiz-option.correct .quiz-option-letter{
+  background: var(--tutor);
+  color: #fff;
+}
+
+.quiz-option.wrong .quiz-option-letter{
+  background: var(--danger);
+  color: #fff;
+}
+
+.quiz-option-text{
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.quiz-nav-buttons{
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.quiz-nav-buttons button{
+  flex: 1;
+  padding: 14px 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s var(--ease);
+}
+
+.quiz-nav-buttons .btn-primary{
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.quiz-nav-buttons .btn-primary:hover{
+  background: var(--primary-dark);
+}
+
+.quiz-nav-buttons .btn-secondary{
+  background: var(--card);
+  color: var(--ink-soft);
+}
+
+.quiz-nav-buttons .btn-secondary:hover{
+  background: var(--paper-raised);
+}
+
+.quiz-result-card{
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  animation: scaleUp .4s var(--ease);
+}
+
+.quiz-result-icon{
+  font-size: 72px;
+  margin-bottom: 16px;
+  animation: bounce .6s var(--ease);
+}
+
+@keyframes bounce{
+  0%, 100%{ transform: translateY(0); }
+  50%{ transform: translateY(-20px); }
+}
+
+.quiz-result-score{
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.quiz-result-text{
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+
+.quiz-result-details{
+  display: flex;
+  justify-content: space-around;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.quiz-result-stat{
+  flex: 1;
+  padding: 16px;
+  background: var(--paper-raised);
+  border-radius: var(--radius-md);
+}
+
+.quiz-result-stat-value{
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.quiz-result-stat-label{
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+
+
+/* ==========================================================
    13. VIEWER MATERI (tampil di dalam app, bukan tab baru)
    ========================================================== */
 .materi-viewer-frame{
@@ -1060,6 +1432,7 @@ h1{
   <div class="view-tabs">
     <button class="view-tab active" data-view="jadwal">Jadwal</button>
     <button class="view-tab" data-view="materi">Materi</button>
+    <button class="view-tab" data-view="quiz">Quiz</button>
   </div>
 
   <div id="jadwalView">
@@ -1070,6 +1443,10 @@ h1{
 
   <div id="materiView" style="display:none">
     <div id="materiListArea"><div class="loading">Memuat…</div></div>
+  </div>
+
+  <div id="quizView" style="display:none">
+    <div id="quizListArea"><div class="loading">Memuat…</div></div>
   </div>
 </div>
 
@@ -1221,13 +1598,61 @@ h1{
   </div>
 </div>
 
-<!-- Sheet: lihat isi materi (PDF/foto langsung tampil, tipe lain cuma tombol download) -->
-<div class="sheet-backdrop" id="materiViewerBackdrop">
+<!-- Sheet: detail matkul/tutor (quiz) -->
+<div class="sheet-backdrop" id="quizDetailBackdrop">
   <div class="sheet">
-    <h2 id="materiViewerTitle">Materi</h2>
-    <div id="materiViewerBody"></div>
+    <h2 id="quizDetailTitle">Pilih Materi Quiz</h2>
+    <div id="quizMateriList"></div>
+    
+    <div class="field">
+      <label>Jumlah Soal</label>
+      <div style="display: flex; gap: 10px;">
+        <label style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 11px; border: 1px solid var(--line); border-radius: var(--radius-sm); cursor: pointer; transition: all .15s var(--ease);">
+          <input type="radio" name="quizCount" value="10" checked style="display: none;">
+          <span>10 soal</span>
+        </label>
+        <label style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 11px; border: 1px solid var(--line); border-radius: var(--radius-sm); cursor: pointer; transition: all .15s var(--ease);">
+          <input type="radio" name="quizCount" value="20" style="display: none;">
+          <span>20 soal</span>
+        </label>
+        <label style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 11px; border: 1px solid var(--line); border-radius: var(--radius-sm); cursor: pointer; transition: all .15s var(--ease);">
+          <input type="radio" name="quizCount" value="30" style="display: none;">
+          <span>30 soal</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Tingkat Kesulitan</label>
+      <div style="display: flex; gap: 10px;">
+        <label style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 11px; border: 1px solid var(--line); border-radius: var(--radius-sm); cursor: pointer; transition: all .15s var(--ease);">
+          <input type="radio" name="quizDifficulty" value="mudah" checked style="display: none;">
+          <span>Mudah</span>
+        </label>
+        <label style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 11px; border: 1px solid var(--line); border-radius: var(--radius-sm); cursor: pointer; transition: all .15s var(--ease);">
+          <input type="radio" name="quizDifficulty" value="medium" style="display: none;">
+          <span>Medium</span>
+        </label>
+        <label style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 11px; border: 1px solid var(--line); border-radius: var(--radius-sm); cursor: pointer; transition: all .15s var(--ease);">
+          <input type="radio" name="quizDifficulty" value="susah" style="display: none;">
+          <span>Susah</span>
+        </label>
+      </div>
+    </div>
+
     <div class="sheet-actions">
-      <button type="button" class="btn-batal" id="materiViewerCloseBtn">Tutup</button>
+      <button type="button" class="btn-batal" id="quizDetailCloseBtn">Tutup</button>
+      <button type="button" class="btn-simpan" id="startQuizBtn">Mulai Quiz</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: quiz display -->
+<div class="sheet-backdrop" id="quizDisplayBackdrop">
+  <div class="sheet">
+    <div id="quizDisplayBody"></div>
+    <div class="sheet-actions">
+      <button type="button" class="btn-batal" id="quizDisplayCloseBtn">Selesai</button>
     </div>
   </div>
 </div>
@@ -2034,9 +2459,11 @@ function switchView(view){
   document.querySelectorAll('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
   document.getElementById('jadwalView').style.display = view === 'jadwal' ? '' : 'none';
   document.getElementById('materiView').style.display = view === 'materi' ? '' : 'none';
+  document.getElementById('quizView').style.display = view === 'quiz' ? '' : 'none';
   document.getElementById('openAiBtn').style.display   = view === 'jadwal' ? '' : 'none';
   document.getElementById('openAddBtn').style.display  = view === 'jadwal' ? '' : 'none';
   if (view === 'materi') renderMateriList();
+  if (view === 'quiz') renderQuizList();
 }
 
 
@@ -2130,6 +2557,240 @@ if (getToken()){
 } else {
   tampilkanAuthScreen();
 }
+
+/* ==========================================================
+   16. FITUR QUIZ (AI-generated dari materi)
+   ========================================================== */
+async function renderQuizList(){
+  const quizListArea = document.getElementById('quizListArea');
+  const subjects = getUniqueSubjects();
+
+  if (subjects.length === 0){
+    quizListArea.innerHTML = `
+      <div class="empty">
+        <div class="big">Belum ada matkul/tutor</div>
+        Tambahkan jadwal matkul atau tutor dulu di tab Jadwal.
+      </div>`;
+    return;
+  }
+
+  quizListArea.innerHTML = `
+    <div class="quiz-grid">
+      ${subjects.map(s => `
+        <div class="quiz-card tipe-${s.tipe}" data-key="${escapeHtml(s.key)}">
+          <div class="quiz-icon">${s.tipe === 'matkul' ? '🧠' : s.tipe === 'tutor' ? '👨‍🎓' : '📝'}</div>
+          <div class="quiz-title">${escapeHtml(s.title)}</div>
+          <div class="quiz-subtitle">${TIPE_LABEL[s.tipe]}</div>
+        </div>`).join('')}
+    </div>`;
+
+  quizListArea.querySelectorAll('.quiz-card').forEach(el => {
+    const subject = subjects.find(s => s.key === el.dataset.key);
+    el.onclick = () => openQuizMateriSelect(subject);
+    
+    el.addEventListener('mousemove', (e) => {
+      const rect = el.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      el.style.setProperty('--cursor-x', `${x}%`);
+      el.style.setProperty('--cursor-y', `${y}%`);
+    });
+  });
+}
+
+let selectedMateriIds = [];
+async function openQuizMateriSelect(subject){
+  document.getElementById('quizDetailTitle').textContent = `Pilih Materi: ${subject.title}`;
+  const list = await getMateriBySubject(subject.key);
+  const container = document.getElementById('quizMateriList');
+  
+  if (list.length === 0){
+    container.innerHTML = `<div class="empty">Belum ada materi untuk matkul ini.</div>`;
+    selectedMateriIds = [];
+  } else {
+    container.innerHTML = list.map(m => `
+      <label class="materi-select-item">
+        <input type="checkbox" value="${m.id}" data-type="${m.type}">
+        <div class="materi-select-info">
+          <div class="materi-select-name">${escapeHtml(m.fileName)}</div>
+          <div class="materi-select-type">${MATERI_LABEL[m.type]}</div>
+        </div>
+      </label>
+    `).join('');
+  }
+  
+  const backdrop = document.getElementById('quizDetailBackdrop');
+  backdrop.classList.add('open');
+  
+  setTimeout(() => {
+    backdrop.querySelectorAll('input[name="quizCount"]').forEach((radio, idx) => {
+      radio.parentElement.onclick = () => {
+        backdrop.querySelectorAll('input[name="quizCount"]').forEach(r => {
+          r.parentElement.style.background = '';
+          r.parentElement.style.borderColor = 'var(--line)';
+          r.parentElement.style.color = 'var(--ink-soft)';
+        });
+        radio.checked = true;
+        radio.parentElement.style.background = 'var(--primary-bg)';
+        radio.parentElement.style.borderColor = 'var(--primary)';
+        radio.parentElement.style.color = 'var(--primary)';
+      };
+      if (idx === 0) radio.parentElement.click();
+    });
+    
+    backdrop.querySelectorAll('input[name="quizDifficulty"]').forEach((radio, idx) => {
+      radio.parentElement.onclick = () => {
+        backdrop.querySelectorAll('input[name="quizDifficulty"]').forEach(r => {
+          r.parentElement.style.background = '';
+          r.parentElement.style.borderColor = 'var(--line)';
+          r.parentElement.style.color = 'var(--ink-soft)';
+        });
+        radio.checked = true;
+        radio.parentElement.style.background = 'var(--lain-bg)';
+        radio.parentElement.style.borderColor = 'var(--lain)';
+        radio.parentElement.style.color = 'var(--lain)';
+      };
+      if (idx === 0) radio.parentElement.click();
+    });
+  }, 50);
+}
+
+document.getElementById('quizDetailCloseBtn').onclick = () => document.getElementById('quizDetailBackdrop').classList.remove('open');
+document.getElementById('startQuizBtn').onclick = startQuiz;
+
+async function startQuiz(){
+  const selected = Array.from(document.querySelectorAll('#quizMateriList input:checked')).map(i => i.value);
+  if (selected.length === 0) return alert('Pilih minimal satu materi.');
+  
+  const quizCount = document.querySelector('input[name="quizCount"]:checked').value;
+  const quizDifficulty = document.querySelector('input[name="quizDifficulty"]:checked').value;
+  
+  document.getElementById('quizDetailBackdrop').classList.remove('open');
+  const body = document.getElementById('quizDisplayBody');
+  body.innerHTML = '<div class="loading">AI sedang meracik soal…</div>';
+  document.getElementById('quizDisplayBackdrop').classList.add('open');
+
+  try {
+    const materiContents = await Promise.all(selected.map(async (id) => {
+      try {
+        return await apiFetch(`/api/materi/${id}/content`);
+      } catch(e) {
+        return { fileName: 'Materi', content: 'File tidak dapat dibaca' };
+      }
+    }));
+    
+    const soal = await generateQuizAI(materiContents, parseInt(quizCount), quizDifficulty);
+    renderQuiz(soal);
+  } catch(err){
+    body.innerHTML = `<div class="empty"><div class="big">Gagal generate quiz</div>${err.message}</div>`;
+  }
+}
+
+async function generateQuizAI(content, jumlahSoal, kesulitan){
+  let key = getApiKey();
+  if(!key) throw new Error('API Key belum diatur.');
+  
+  const difficultyGuide = {
+    'mudah': 'Level mudah: konsep dasar, langsung aplikasi, minimal perhitungan rumit',
+    'medium': 'Level medium: kombinasi konsep, perlu pemahaman lebih, ada perhitungan menengah',
+    'susah': 'Level susah: konsep lanjut, variasi jenis soal, perhitungan kompleks, perlu kreativitas'
+  };
+  
+  const model = 'gemini-3.6-flash';
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(key);
+  
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      system_instruction: { parts: [{ text: `Buat ${jumlahSoal} soal pilihan ganda UNIK dari materi berikut. ${difficultyGuide[kesulitan]}
+PENTING: Variasikan jenis soal dalam topik yang sama, jangan clone soal. Balas HANYA JSON array valid tanpa markdown: [ { question: 'soal?', options: ['A','B','C','D'], correct: 0 } ]` }] },
+      contents: [{ role: 'user', parts: [{ text: JSON.stringify(content) }] }],
+      generationConfig: { responseMimeType: 'application/json' }
+    })
+  });
+  
+  if (!response.ok) throw new Error('API Gemini error');
+  const data = await response.json();
+  const text = data.candidates[0].content.parts[0].text;
+  const cleaned = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(cleaned);
+}
+
+function renderQuiz(soal){
+  const body = document.getElementById('quizDisplayBody');
+  let currentIdx = 0;
+  let score = 0;
+  
+  function showQuestion(){
+    const q = soal[currentIdx];
+    body.innerHTML = `
+      <div class="quiz-container">
+        <div class="quiz-progress">Soal ${currentIdx + 1} dari ${soal.length}</div>
+        <div class="quiz-question-card">
+          <div class="quiz-question-number">Pertanyaan ${currentIdx + 1}</div>
+          <div class="quiz-question-text">${escapeHtml(q.question)}</div>
+          <div class="quiz-options">
+            ${q.options.map((opt, i) => `
+              <div class="quiz-option" onclick="selectOption(this, ${i}, ${q.correct})">
+                <div class="quiz-option-letter">${String.fromCharCode(65+i)}</div>
+                <div class="quiz-option-text">${escapeHtml(opt)}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  window.selectOption = (el, idx, correct) => {
+    const parent = el.parentElement;
+    if (parent.querySelector('.selected')) return;
+    el.classList.add('selected');
+    if (idx === correct) { el.classList.add('correct'); score++; }
+    else { 
+      el.classList.add('wrong'); 
+      parent.querySelectorAll('.quiz-option')[correct].classList.add('correct'); 
+    }
+    
+    setTimeout(() => {
+      currentIdx++;
+      if (currentIdx < soal.length) showQuestion();
+      else showResult(score, soal.length);
+    }, 1200);
+  };
+  
+  showQuestion();
+}
+
+function showResult(score, total){
+  const persen = Math.round((score / total) * 100);
+  const emoji = persen >= 80 ? '🎉' : persen >= 60 ? '👍' : '💪';
+  document.getElementById('quizDisplayBody').innerHTML = `
+    <div class="quiz-result-card">
+      <div class="quiz-result-icon">${emoji}</div>
+      <div class="quiz-result-score">${score}/${total}</div>
+      <div class="quiz-result-text">${persen}% - ${persen >= 80 ? 'Luar biasa!' : persen >= 60 ? 'Bagus!' : 'Tingkatkan lagi!'}</div>
+      <div class="quiz-result-details">
+        <div class="quiz-result-stat">
+          <div class="quiz-result-stat-value">${score}</div>
+          <div class="quiz-result-stat-label">Benar</div>
+        </div>
+        <div class="quiz-result-stat">
+          <div class="quiz-result-stat-value">${total - score}</div>
+          <div class="quiz-result-stat-label">Salah</div>
+        </div>
+      </div>
+      <button class="btn-primary" style="width:100%;margin-top:16px" onclick="document.getElementById('quizDisplayBackdrop').classList.remove('open'); renderQuizList();">Kembali ke Quiz</button>
+    </div>
+  `;
+}
+
+document.getElementById('quizDisplayCloseBtn').onclick = () => {
+  document.getElementById('quizDisplayBackdrop').classList.remove('open');
+  renderQuizList();
+};
+
 </script>
 </body>
 </html>
