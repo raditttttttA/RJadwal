@@ -1432,7 +1432,6 @@ h1{
   <div class="view-tabs">
     <button class="view-tab active" data-view="jadwal">Jadwal</button>
     <button class="view-tab" data-view="materi">Materi</button>
-    <button class="view-tab" data-view="quiz">Quiz</button>
   </div>
 
   <div id="jadwalView">
@@ -1443,10 +1442,6 @@ h1{
 
   <div id="materiView" style="display:none">
     <div id="materiListArea"><div class="loading">Memuat…</div></div>
-  </div>
-
-  <div id="quizView" style="display:none">
-    <div id="quizListArea"><div class="loading">Memuat…</div></div>
   </div>
 </div>
 
@@ -2489,11 +2484,9 @@ function switchView(view){
   document.querySelectorAll('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
   document.getElementById('jadwalView').style.display = view === 'jadwal' ? '' : 'none';
   document.getElementById('materiView').style.display = view === 'materi' ? '' : 'none';
-  document.getElementById('quizView').style.display = view === 'quiz' ? '' : 'none';
   document.getElementById('openAiBtn').style.display   = view === 'jadwal' ? '' : 'none';
   document.getElementById('openAddBtn').style.display  = view === 'jadwal' ? '' : 'none';
   if (view === 'materi') renderMateriList();
-  if (view === 'quiz') renderQuizList();
 }
 
 
