@@ -68,8 +68,8 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
       if (!url) return res.status(400).json({ error: 'URL wajib diisi.' });
 
       await db.execute({
-        sql: `INSERT INTO materi (id, user_id, subject_key, subject_name, type, file_name, mime_type, file_path, url, text_content, uploaded_at)
-              VALUES (?, ?, ?, ?, 'link', ?, NULL, NULL, ?, NULL, ?)`,
+        sql: `INSERT INTO materi (id, user_id, subject_key, subject_name, type, file_name, mime_type, file_path, url, uploaded_at)
+              VALUES (?, ?, ?, ?, 'link', ?, NULL, NULL, ?, ?)`,
         args: [id, req.userId, subjectKey, subjectName, label || url, url, uploadedAt]
       });
 
@@ -82,19 +82,10 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
     const storageKey = `${req.userId}/${randomUUID()}${path.extname(req.file.originalname || '')}`;
     await uploadFile(storageKey, req.file.buffer, req.file.mimetype);
 
-    // Convert file to text menggunakan Gemini
-    let textContent = '';
-    try {
-      textContent = await convertFileToText(req.file.buffer, req.file.mimetype, req.file.originalname);
-    } catch (err) {
-      console.error('Gagal convert file ke text:', err);
-      textContent = `[File tidak bisa dibaca: ${req.file.originalname}]`;
-    }
-
     await db.execute({
-      sql: `INSERT INTO materi (id, user_id, subject_key, subject_name, type, file_name, mime_type, file_path, url, text_content, uploaded_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)`,
-      args: [id, req.userId, subjectKey, subjectName, tipe, req.file.originalname, req.file.mimetype, storageKey, textContent, uploadedAt]
+      sql: `INSERT INTO materi (id, user_id, subject_key, subject_name, type, file_name, mime_type, file_path, url, uploaded_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)`,
+      args: [id, req.userId, subjectKey, subjectName, tipe, req.file.originalname, req.file.mimetype, storageKey, uploadedAt]
     });
 
     res.json({ id, subjectKey, subjectName, type: tipe, fileName: req.file.originalname, uploadedAt });
@@ -103,45 +94,6 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
     res.status(500).json({ error: 'Gagal mengunggah materi.' });
   }
 });
-
-async function convertFileToText(buffer, mimeType, fileName) {
-  const key = process.env.GEMINI_API_KEY || process.env.API_KEY;
-  if (!key) throw new Error('API Key Gemini tidak ditemukan.');
-
-  const base64 = buffer.toString('base64');
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${encodeURIComponent(key)}`;
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{
-        role: 'user',
-        parts: [
-          {
-            inline_data: {
-              mime_type: mimeType,
-              data: base64
-            }
-          },
-          {
-            text: 'Baca dokumen ini dan ekstrak semua teks konten penting. Kembalikan hanya teks murni, tanpa format tambahan.'
-          }
-        ]
-      }],
-      generationConfig: { responseMimeType: 'text/plain' }
-    })
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error('Gemini API error: ' + errText);
-  }
-
-  const data = await response.json();
-  const textResult = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  return textResult.substring(0, 50000); // Batasi 50k karakter
-}
 
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
