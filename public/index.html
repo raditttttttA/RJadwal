@@ -1669,6 +1669,7 @@ h1{
 </div>
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 /* ==========================================================
    1. KONFIGURASI & KONSTANTA
@@ -1973,9 +1974,12 @@ async function simpanForm(event){
    10. FITUR "TAMBAH VIA AI" (teks bebas atau foto -> jadwal)
    ========================================================== */
 const APIKEY_KEY = "agenda:apiKey";
+const GROQKEY_KEY = "agenda:groqKey";
 
 function getApiKey(){ return localStorage.getItem(APIKEY_KEY) || ''; }
 function setApiKey(key){ localStorage.setItem(APIKEY_KEY, key); }
+function getGroqKey(){ return localStorage.getItem(GROQKEY_KEY) || ''; }
+function setGroqKey(key){ localStorage.setItem(GROQKEY_KEY, key); }
 
 document.getElementById('apiKeyBtn').onclick = () => {
   const current = getApiKey();
@@ -1985,6 +1989,21 @@ document.getElementById('apiKeyBtn').onclick = () => {
   );
   if (input !== null) setApiKey(input.trim());
 };
+
+// Tombol Groq API key (baru)
+const groqBtn = document.createElement('button');
+groqBtn.className = 'gear-btn';
+groqBtn.title = 'Atur Groq API key (gratis dari console.groq.com/keys)';
+groqBtn.textContent = '⚡';
+groqBtn.onclick = () => {
+  const current = getGroqKey();
+  const input = window.prompt(
+    'Masukkan Groq API key kamu (gratis, bikin di console.groq.com/keys). Disimpan hanya di browser ini:',
+    current
+  );
+  if (input !== null) setGroqKey(input.trim());
+};
+document.querySelector('.header-right').insertBefore(groqBtn, document.getElementById('logoutBtn'));
 
 const aiBackdrop   = document.getElementById('aiBackdrop');
 const aiTeksInput  = document.getElementById('aiTeksInput');
@@ -2703,8 +2722,8 @@ async function startQuiz(){
 }
 
 async function generateQuizAI(materiContents, jumlahSoal, kesulitan){
-  let key = getApiKey();
-  if(!key) throw new Error('API Key belum diatur.');
+  let groqKey = getGroqKey();
+  if(!groqKey) throw new Error('Groq API Key belum diatur.');
   
   const difficultyGuide = {
     'mudah': 'Level mudah: konsep dasar, langsung aplikasi, minimal perhitungan rumit',
@@ -2712,49 +2731,76 @@ async function generateQuizAI(materiContents, jumlahSoal, kesulitan){
     'susah': 'Level susah: konsep lanjut, variasi jenis soal, perhitungan kompleks, perlu kreativitas'
   };
   
-  const parts = [];
-  materiContents.forEach(m => {
-    if (m.base64) {
-      parts.push({
-        inline_data: {
-          mime_type: m.mimeType || 'application/pdf',
-          data: m.base64
-        }
-      });
-      parts.push({ text: `Dokumen materi: ${m.fileName}` });
+  // Extract text dari base64 PDF
+  let materiText = '';
+  for (const m of materiContents) {
+    if (m.base64 && m.type === 'pdf') {
+      try {
+        const text = await extractPdfText(m.base64, m.fileName);
+        materiText += `\n=== ${m.fileName} ===\n${text}\n`;
+      } catch (err) {
+        console.error('Gagal extract PDF:', err);
+        materiText += `\n=== ${m.fileName} ===\n[Gagal membaca PDF]\n`;
+      }
     } else if (m.text) {
-      parts.push({ text: `Materi ${m.fileName}: ${m.text}` });
+      materiText += `\n=== ${m.fileName} ===\n${m.text}\n`;
     }
-  });
+  }
 
-  parts.push({
-    text: `Berdasarkan dokumen/materi di atas, buatkan ${jumlahSoal} soal pilihan ganda ${difficultyGuide[kesulitan]}.
-PENTING: Soal HARUS dari isi dokumen materi tersebut, bukan nama filenya!
-Balas HANYA dengan JSON array valid tanpa markdown:
-[ { "question": "soal?", "options": ["A","B","C","D"], "correct": 0 } ]`
-  });
-
-  // Pakai gemini-1.5-flash untuk support dokumen multimodal
-  const model = 'gemini-1.5-flash';
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(key);
+  const url = 'https://api.groq.com/openai/v1/chat/completions';
   
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + groqKey
+    },
     body: JSON.stringify({
-      contents: [{ role: 'user', parts: parts }],
-      generationConfig: { responseMimeType: 'application/json' }
+      model: 'llama-3.3-70b-versatile',
+      messages: [{
+        role: 'user',
+        content: `Kamu adalah pembuat soal ujian. Berdasarkan MATERI di bawah, buatkan ${jumlahSoal} soal pilihan ganda ${difficultyGuide[kesulitan]}.
+PENTING: Soal HARUS dari isi materi, bukan di luar topik!
+Balas HANYA JSON array tanpa markdown:
+[ { "question": "soal?", "options": ["A","B","C","D"], "correct": 0 } ]
+
+MATERI:
+${materiText}`
+      }],
+      temperature: 0.7,
+      max_tokens: 2000
     })
   });
   
   if (!response.ok) {
     const errText = await response.text();
-    throw new Error('API Gemini error: ' + errText);
+    throw new Error('Groq API error: ' + errText);
   }
+  
   const data = await response.json();
-  const text = data.candidates[0].content.parts[0].text;
+  const text = data.choices[0].message.content;
   const cleaned = text.replace(/```json|```/g, '').trim();
   return JSON.parse(cleaned);
+}
+
+async function extractPdfText(base64Data, fileName) {
+  const binaryString = atob(base64Data);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  
+  const pdf = await pdfjsLib.getDocument(bytes).promise;
+  let fullText = '';
+  
+  for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+    const page = await pdf.getPage(i);
+    const textContent = await page.getTextContent();
+    const pageText = textContent.items.map(item => item.str).join(' ');
+    fullText += pageText + '\n';
+  }
+  
+  return fullText.substring(0, 5000); // Batasi 5000 karakter per PDF
 }
 
 function renderQuiz(soal){
