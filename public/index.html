@@ -2756,7 +2756,7 @@ async function generateQuizAI(materiContents, jumlahSoal, kesulitan){
       'Authorization': 'Bearer ' + groqKey
     },
     body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
+      model: 'llama3-70b-8192',
       messages: [{
         role: 'user',
         content: `Kamu adalah pembuat soal ujian. Berdasarkan MATERI di bawah, buatkan ${jumlahSoal} soal pilihan ganda ${difficultyGuide[kesulitan]}.
