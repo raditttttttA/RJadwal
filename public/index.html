@@ -2747,6 +2747,26 @@ async function generateQuizAI(materiContents, jumlahSoal, kesulitan){
     }
   }
 
+  // Ambil list model aktif dari Groq otomatis
+  let modelName = 'llama-3.1-8b-instant';
+  try {
+    const modelsRes = await fetch('https://api.groq.com/openai/v1/models', {
+      headers: { 'Authorization': 'Bearer ' + groqKey }
+    });
+    if (modelsRes.ok) {
+      const modelsData = await modelsRes.json();
+      const availableModels = modelsData.data.map(m => m.id);
+      // Cari model llama 70b atau 8b yang aktif
+      const bestModel = availableModels.find(id => id.includes('llama') && (id.includes('70b') || id.includes('versatile'))) 
+                     || availableModels.find(id => id.includes('llama') && id.includes('8b'))
+                     || availableModels[0];
+      if (bestModel) modelName = bestModel;
+      console.log('Model Groq aktif terpilih:', modelName);
+    }
+  } catch (e) {
+    console.error('Gagal fetch models list, fallback ke default:', e);
+  }
+
   const url = 'https://api.groq.com/openai/v1/chat/completions';
   
   const response = await fetch(url, {
@@ -2756,7 +2776,7 @@ async function generateQuizAI(materiContents, jumlahSoal, kesulitan){
       'Authorization': 'Bearer ' + groqKey
     },
     body: JSON.stringify({
-      model: 'llama-3.1-70b-versatile',
+      model: modelName,
       messages: [{
         role: 'user',
         content: `Kamu adalah pembuat soal ujian. Berdasarkan MATERI di bawah, buatkan ${jumlahSoal} soal pilihan ganda ${difficultyGuide[kesulitan]}.
