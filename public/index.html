@@ -2719,9 +2719,14 @@ async function generateQuizAI(materiContents, jumlahSoal, kesulitan){
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      system_instruction: { parts: [{ text: `Buat ${jumlahSoal} soal pilihan ganda UNIK dari materi berikut. ${difficultyGuide[kesulitan]}
-PENTING: Variasikan jenis soal dalam topik yang sama, jangan clone soal. Balas HANYA JSON array valid tanpa markdown: [ { question: 'soal?', options: ['A','B','C','D'], correct: 0 } ]` }] },
-      contents: [{ role: 'user', parts: [{ text: JSON.stringify(materiContents) }] }],
+      system_instruction: { parts: [{ text: `PENTING! BACA MATERI BERIKUT DAN BUAT SOAL HANYA DARI MATERI ITU SAJA!
+Kamu HARUS membuat ${jumlahSoal} soal pilihan ganda yang 100% berasal dari isi materi yang diberikan.
+DILARANG membuat soal diluar topik/materi yang diberikan.
+Tingkat kesulitan: ${difficultyGuide[kesulitan]}
+Variasikan jenis soal tapi tetap dari topik/materi yang sama.
+Balas HANYA dengan JSON array valid tanpa markdown, tanpa teks lain:
+[ { "question": "soal dari materi?", "options": ["A","B","C","D"], "correct": 0 } ]` }] },
+      contents: [{ role: 'user', parts: [{ text: `MATERI:\n${JSON.stringify(materiContents, null, 2)}\n\nBUAT SOAL HANYA DARI MATERI DI ATAS!` }] }],
       generationConfig: { responseMimeType: 'application/json' }
     })
   });

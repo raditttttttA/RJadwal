@@ -134,7 +134,7 @@ router.get('/:id/file', authMiddleware, async (req, res) => {
   }
 });
 
-// endpoint untuk mengambil konten materi (text plain) buat AI Quiz
+// endpoint untuk mengambil konten materi (teks/data) buat AI Quiz
 router.get('/:id/content', authMiddleware, async (req, res) => {
   try {
     const result = await db.execute({
@@ -145,13 +145,19 @@ router.get('/:id/content', authMiddleware, async (req, res) => {
     if (!row) return res.status(404).json({ error: 'Materi tidak ditemukan.' });
 
     if (row.type === 'link') {
-      return res.json({ fileName: row.file_name, type: 'link', text: `Link materi: ${row.file_name}` });
+      return res.json({ fileName: row.file_name, type: 'link', text: `Link: ${row.url}` });
     }
+
+    if (!row.file_path) return res.status(400).json({ error: 'Bukan file.' });
+
+    // Download file dari Supabase dan convert ke text
+    const buffer = await downloadFile(row.file_path);
+    let textContent = buffer.toString('utf8').substring(0, 20000); // Batasi 20k karakter
 
     res.json({ 
       fileName: row.file_name, 
       type: row.type, 
-      text: row.text_content || '[Konten materi tidak tersedia]'
+      text: textContent 
     });
   } catch (err) {
     console.error(err);
