@@ -134,7 +134,7 @@ router.get('/:id/file', authMiddleware, async (req, res) => {
   }
 });
 
-// endpoint untuk mengambil konten materi (teks/data) buat AI Quiz
+// endpoint untuk mengambil konten materi (Base64 untuk AI Quiz)
 router.get('/:id/content', authMiddleware, async (req, res) => {
   try {
     const result = await db.execute({
@@ -150,14 +150,16 @@ router.get('/:id/content', authMiddleware, async (req, res) => {
 
     if (!row.file_path) return res.status(400).json({ error: 'Bukan file.' });
 
-    // Download file dari Supabase dan convert ke text
     const buffer = await downloadFile(row.file_path);
-    let textContent = buffer.toString('utf8').substring(0, 20000); // Batasi 20k karakter
-
+    
+    // Kirim base64 agar Gemini bisa baca aslinya (PDF/Foto)
+    const mimeType = row.type === 'pdf' ? 'application/pdf' : (row.mime_type || 'image/jpeg');
+    
     res.json({ 
       fileName: row.file_name, 
       type: row.type, 
-      text: textContent 
+      mimeType: mimeType,
+      base64: buffer.toString('base64')
     });
   } catch (err) {
     console.error(err);
