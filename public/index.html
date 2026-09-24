@@ -1564,11 +1564,12 @@ h1{
     <div class="ai-tabs">
       <button type="button" class="materi-type-tab active" data-mode="file">File</button>
       <button type="button" class="materi-type-tab" data-mode="link">Link</button>
+      <button type="button" class="materi-type-tab" data-mode="tugas">Tugas</button>
     </div>
 
     <div id="materiFilePane">
       <div class="field">
-        <label>Pilih file (PDF, Word, Excel, atau Foto)</label>
+        <label>Pilih file (PDF, Word, Excel, Foto)</label>
         <input type="file" id="materiFileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,image/*">
       </div>
     </div>
@@ -1576,11 +1577,18 @@ h1{
     <div id="materiLinkPane" style="display:none">
       <div class="field">
         <label>Nama link (opsional)</label>
-        <input type="text" id="materiLinkLabel" placeholder="mis. Slide Google Drive">
+        <input type="text" id="materiLinkLabel" placeholder="mis. Link Tugas/Slide">
       </div>
       <div class="field">
         <label>URL</label>
         <input type="url" id="materiLinkUrl" placeholder="https://...">
+      </div>
+    </div>
+
+    <div id="materiTugasPane" style="display:none">
+      <div class="field">
+        <label>Detail Tugas</label>
+        <textarea id="materiTugasText" rows="4" placeholder="mis. Kerjakan latihan soal hal 45, kumpul di email"></textarea>
       </div>
     </div>
 
@@ -2201,8 +2209,8 @@ document.getElementById('previewAddBtn').onclick = async () => {
    11. FITUR "MATERI" (per matkul/tutor: upload/lihat/hapus file & link)
    Disimpan di server (backend), jadi sinkron di semua device.
    ========================================================== */
-const MATERI_ICON  = { pdf: '📄', excel: '📊', word: '📝', foto: '🖼️', link: '🔗', lain: '📁' };
-const MATERI_LABEL = { pdf: 'PDF', excel: 'Excel', word: 'Word', foto: 'Foto', link: 'Link', lain: 'File' };
+const MATERI_ICON  = { pdf: '📄', excel: '📊', word: '📝', foto: '🖼️', link: '🔗', tugas: '📌', lain: '📁' };
+const MATERI_LABEL = { pdf: 'PDF', excel: 'Excel', word: 'Word', foto: 'Foto', link: 'Link', tugas: 'Tugas', lain: 'File' };
 
 let currentSubject = null; // subject yang lagi dibuka di sheet detail materi
 
@@ -2336,6 +2344,12 @@ async function lihatMateri(m){
     window.open(m.url, '_blank');
     return;
   }
+  if (m.type === 'tugas'){
+    document.getElementById('materiViewerTitle').textContent = m.fileName;
+    document.getElementById('materiViewerBody').innerHTML = `<div class="doc-preview" style="white-space: pre-wrap;">${escapeHtml(m.file_path || m.url || 'Detail tugas')}</div>`;
+    materiViewerBackdrop.classList.add('open');
+    return;
+  }
 
   document.getElementById('materiViewerTitle').textContent = m.fileName;
   document.getElementById('materiViewerBody').innerHTML = '<div class="loading">Memuat…</div>';
@@ -2436,6 +2450,8 @@ function switchMateriUploadMode(mode){
   document.querySelectorAll('.materi-type-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
   document.getElementById('materiFilePane').style.display = mode === 'file' ? '' : 'none';
   document.getElementById('materiLinkPane').style.display = mode === 'link' ? '' : 'none';
+  const tugasPane = document.getElementById('materiTugasPane');
+  if (tugasPane) tugasPane.style.display = mode === 'tugas' ? '' : 'none';
 }
 
 document.getElementById('materiUploadSaveBtn').onclick = async () => {
@@ -2452,13 +2468,17 @@ document.getElementById('materiUploadSaveBtn').onclick = async () => {
       if (!file){ errEl.textContent = 'Pilih file dulu ya.'; errEl.style.display = 'block'; return; }
       formData.append('mode', 'file');
       formData.append('file', file);
-    } else {
+    } else if (materiUploadMode === 'link') {
       const url = document.getElementById('materiLinkUrl').value.trim();
       if (!url){ errEl.textContent = 'Isi link-nya dulu ya.'; errEl.style.display = 'block'; return; }
-      const label = document.getElementById('materiLinkLabel').value.trim();
       formData.append('mode', 'link');
       formData.append('url', url);
-      formData.append('label', label);
+      formData.append('label', document.getElementById('materiLinkLabel').value.trim());
+    } else if (materiUploadMode === 'tugas') {
+      const text = document.getElementById('materiTugasText').value.trim();
+      if (!text){ errEl.textContent = 'Tulis detail tugasnya.'; errEl.style.display = 'block'; return; }
+      formData.append('mode', 'tugas');
+      formData.append('text', text);
     }
 
     await apiFetch('/api/materi', { method: 'POST', body: formData });
@@ -2470,7 +2490,7 @@ document.getElementById('materiUploadSaveBtn').onclick = async () => {
 
   } catch (err){
     console.error(err);
-    errEl.textContent = err.message || 'Gagal menyimpan materi. Coba lagi.';
+    errEl.textContent = err.message || 'Gagal menyimpan.';
     errEl.style.display = 'block';
   }
 };

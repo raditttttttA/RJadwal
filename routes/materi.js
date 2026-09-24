@@ -76,6 +76,20 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
       return res.json({ id, subjectKey, subjectName, type: 'link', fileName: label || url, url, uploadedAt });
     }
 
+    if (mode === 'tugas') {
+      const { text } = req.body;
+      if (!text) return res.status(400).json({ error: 'Detail tugas wajib diisi.' });
+      
+      const title = text.length > 30 ? text.substring(0, 30) + '...' : text;
+      await db.execute({
+        sql: `INSERT INTO materi (id, user_id, subject_key, subject_name, type, file_name, mime_type, file_path, url, uploaded_at)
+              VALUES (?, ?, ?, ?, 'tugas', ?, NULL, NULL, ?, ?)`,
+        args: [id, req.userId, subjectKey, subjectName, title, text, uploadedAt]
+      });
+
+      return res.json({ id, subjectKey, subjectName, type: 'tugas', fileName: title, uploadedAt });
+    }
+
     if (!req.file) return res.status(400).json({ error: 'File tidak ditemukan.' });
 
     const tipe = detectType(req.file);
