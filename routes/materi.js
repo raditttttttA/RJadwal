@@ -28,8 +28,15 @@ function rowToMateri(r) {
     subjectName: r.subject_name,
     type: r.type,
     fileName: r.file_name,
+    filePath: r.file_path || undefined,
+    mimeType: r.mime_type || undefined,
     url: r.url || undefined,
-    uploadedAt: r.uploaded_at
+    uploadedAt: r.uploaded_at,
+    deadline: r.deadline || undefined,
+    taskDesc: r.task_desc || (r.type === 'tugas' && r.url && !r.url.startsWith('http') ? r.url : undefined),
+    isCompleted: r.is_completed === 1 || r.is_completed === '1',
+    completedAt: r.completed_at || undefined,
+    hasProof: Boolean(r.proof_path)
   };
 }
 
@@ -77,17 +84,59 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
     }
 
     if (mode === 'tugas') {
-      const { text } = req.body;
-      if (!text) return res.status(400).json({ error: 'Detail tugas wajib diisi.' });
-      
-      const title = text.length > 30 ? text.substring(0, 30) + '...' : text;
+      const taskTitle = (req.body.taskTitle || req.body.title || req.body.text || '').trim();
+      const taskDesc = (req.body.taskDesc || '').trim();
+      const deadline = req.body.deadline ? req.body.deadline.trim() : null;
+      const attachmentType = req.body.attachmentType || 'none';
+
+      if (!taskTitle) {
+        return res.status(400).json({ error: 'Judul tugas wajib diisi.' });
+      }
+
+      let filePath = null;
+      let mimeType = null;
+      let linkUrl = null;
+
+      if (attachmentType === 'file' && req.file) {
+        mimeType = req.file.mimetype;
+        filePath = `${req.userId}/${randomUUID()}${path.extname(req.file.originalname || '')}`;
+        await uploadFile(filePath, req.file.buffer, req.file.mimetype);
+      } else if (attachmentType === 'link' && req.body.linkUrl) {
+        linkUrl = req.body.linkUrl.trim();
+      }
+
       await db.execute({
-        sql: `INSERT INTO materi (id, user_id, subject_key, subject_name, type, file_name, mime_type, file_path, url, uploaded_at)
-              VALUES (?, ?, ?, ?, 'tugas', ?, NULL, NULL, ?, ?)`,
-        args: [id, req.userId, subjectKey, subjectName, title, text, uploadedAt]
+        sql: `INSERT INTO materi (id, user_id, subject_key, subject_name, type, file_name, mime_type, file_path, url, uploaded_at, deadline, task_desc, is_completed, completed_at, proof_path)
+              VALUES (?, ?, ?, ?, 'tugas', ?, ?, ?, ?, ?, ?, ?, 0, NULL, NULL)`,
+        args: [
+          id,
+          req.userId,
+          subjectKey,
+          subjectName,
+          taskTitle,
+          mimeType,
+          filePath,
+          linkUrl,
+          uploadedAt,
+          deadline,
+          taskDesc
+        ]
       });
 
-      return res.json({ id, subjectKey, subjectName, type: 'tugas', fileName: title, uploadedAt });
+      return res.json({
+        id,
+        subjectKey,
+        subjectName,
+        type: 'tugas',
+        fileName: taskTitle,
+        taskDesc,
+        deadline,
+        url: linkUrl || undefined,
+        filePath: filePath || undefined,
+        mimeType: mimeType || undefined,
+        isCompleted: false,
+        uploadedAt
+      });
     }
 
     if (!req.file) return res.status(400).json({ error: 'File tidak ditemukan.' });
@@ -109,6 +158,88 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
   }
 });
 
+// Endpoint untuk menandai tugas selesai (opsional dengan upload foto bukti)
+router.post('/:id/complete', authMiddleware, upload.single('proof'), async (req, res) => {
+  try {
+    const result = await db.execute({
+      sql: 'SELECT * FROM materi WHERE id = ? AND user_id = ?',
+      args: [req.params.id, req.userId]
+    });
+    const row = result.rows[0];
+    if (!row) return res.status(404).json({ error: 'Tugas tidak ditemukan.' });
+
+    let proofKey = row.proof_path || null;
+    if (req.file) {
+      if (row.proof_path) {
+        await deleteFile(row.proof_path);
+      }
+      proofKey = `${req.userId}/proof_${randomUUID()}${path.extname(req.file.originalname || '.jpg')}`;
+      await uploadFile(proofKey, req.file.buffer, req.file.mimetype);
+    }
+
+    const now = new Date().toISOString();
+    await db.execute({
+      sql: 'UPDATE materi SET is_completed = 1, completed_at = ?, proof_path = ? WHERE id = ?',
+      args: [now, proofKey, req.params.id]
+    });
+
+    res.json({
+      ok: true,
+      id: req.params.id,
+      isCompleted: true,
+      completedAt: now,
+      hasProof: Boolean(proofKey)
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Gagal menyelesaikan tugas.' });
+  }
+});
+
+// Endpoint untuk membatalkan status tugas selesai
+router.post('/:id/uncomplete', authMiddleware, async (req, res) => {
+  try {
+    const result = await db.execute({
+      sql: 'SELECT * FROM materi WHERE id = ? AND user_id = ?',
+      args: [req.params.id, req.userId]
+    });
+    const row = result.rows[0];
+    if (!row) return res.status(404).json({ error: 'Tugas tidak ditemukan.' });
+
+    if (row.proof_path) {
+      await deleteFile(row.proof_path);
+    }
+
+    await db.execute({
+      sql: 'UPDATE materi SET is_completed = 0, completed_at = NULL, proof_path = NULL WHERE id = ?',
+      args: [req.params.id]
+    });
+
+    res.json({ ok: true, id: req.params.id, isCompleted: false, hasProof: false });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Gagal membatalkan status tugas.' });
+  }
+});
+
+// Endpoint untuk melihat foto bukti penyelesaian tugas (redirect ke signed URL 60s)
+router.get('/:id/proof', authMiddleware, async (req, res) => {
+  try {
+    const result = await db.execute({
+      sql: 'SELECT * FROM materi WHERE id = ? AND user_id = ?',
+      args: [req.params.id, req.userId]
+    });
+    const row = result.rows[0];
+    if (!row || !row.proof_path) return res.status(404).send('Foto bukti tidak ditemukan.');
+
+    const signedUrl = await getSignedUrl(row.proof_path, 60);
+    res.redirect(signedUrl);
+  } catch (err) {
+    console.error(err);
+    res.status(404).send('Foto bukti tidak ditemukan di server.');
+  }
+});
+
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const result = await db.execute({
@@ -120,6 +251,9 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 
     if (row.file_path) {
       await deleteFile(row.file_path);
+    }
+    if (row.proof_path) {
+      await deleteFile(row.proof_path);
     }
     await db.execute({ sql: 'DELETE FROM materi WHERE id = ?', args: [req.params.id] });
     res.json({ ok: true });

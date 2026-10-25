@@ -907,6 +907,461 @@ h1{
   border-color: var(--danger);
 }
 
+/* ==========================================================
+   12.3. TUGAS, DEADLINE, STATUS, DAN PROOF BUKTI FOTO
+   ========================================================== */
+.materi-filter-tabs{
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  background: var(--paper-raised);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+.materi-filter-tab{
+  flex: 1;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .15s var(--ease);
+}
+.materi-filter-tab.active{
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
+
+.materi-tugas-badge{
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-bg);
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-top: -4px;
+}
+
+/* Card Tugas */
+.task-card{
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s var(--ease);
+  animation: slideInLeft .25s var(--ease) backwards;
+}
+.task-card:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.task-card.is-completed{
+  border-left-color: var(--tutor);
+  background: #fbfdfc;
+  opacity: 0.92;
+}
+
+.task-card-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.task-title-area{
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+.task-icon{
+  font-size: 20px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+.task-title{
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.35;
+  word-break: break-word;
+}
+.task-card.is-completed .task-title{
+  color: var(--ink-soft);
+}
+
+.task-badges{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+.badge-status{
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.badge-status.status-selesai{
+  background: var(--tutor-bg);
+  color: var(--tutor);
+}
+.badge-status.status-pending{
+  background: #FEF3C7;
+  color: #92400E;
+}
+.badge-status.status-overdue{
+  background: var(--danger-bg);
+  color: var(--danger);
+  animation: pulse .8s ease infinite alternate;
+}
+@keyframes pulse{
+  from{ opacity: 0.85; }
+  to{ opacity: 1; transform: scale(1.03); }
+}
+
+.badge-deadline{
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+.badge-deadline.today{
+  background: var(--primary-bg);
+  border-color: var(--primary);
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+.badge-deadline.overdue{
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.task-desc{
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  background: var(--paper-raised);
+  padding: 8px 12px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.task-attach-item{
+  display: flex;
+  align-items: center;
+}
+.btn-task-attach{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--card);
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .15s var(--ease);
+}
+.btn-task-attach:hover{
+  background: var(--primary-bg);
+  border-color: var(--primary);
+  color: var(--primary-dark);
+}
+
+.task-card-footer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+}
+.task-completed-info{
+  font-size: 11.5px;
+  color: var(--tutor);
+  font-weight: 500;
+}
+.task-card-actions{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.btn-selesai-task{
+  background: var(--tutor);
+  color: #fff;
+  border: none;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .15s var(--ease);
+}
+.btn-selesai-task:hover{
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+.btn-uncomplete-task{
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .15s var(--ease);
+}
+.btn-uncomplete-task:hover{
+  background: var(--paper-raised);
+  color: var(--ink);
+}
+.btn-lihat-bukti{
+  background: var(--card);
+  color: var(--tutor);
+  border: 1px solid var(--tutor);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s var(--ease);
+}
+.btn-lihat-bukti:hover{
+  background: var(--tutor-bg);
+}
+.btn-hapus-task{
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  color: var(--ink-faint);
+  transition: all .15s var(--ease);
+}
+.btn-hapus-task:hover{
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+/* Quick Deadline & Attach Tabs */
+.quick-deadline-btns{
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.quick-deadline-btn{
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .15s var(--ease);
+}
+.quick-deadline-btn:hover{
+  background: var(--card);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.task-attach-tabs{
+  display: flex;
+  gap: 6px;
+}
+.task-attach-tab{
+  flex: 1;
+  padding: 8px 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: all .15s var(--ease);
+}
+.task-attach-tab.active{
+  border-color: var(--primary);
+  background: var(--primary-bg);
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+/* Dialog Selesaikan Tugas */
+.complete-task-sub{
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-top: -10px;
+  margin-bottom: 8px;
+}
+.complete-task-desc{
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 16px;
+  line-height: 1.45;
+}
+.complete-options{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.complete-opt-card{
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.complete-opt-header{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.complete-opt-icon{
+  font-size: 24px;
+}
+.complete-opt-title{
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.complete-opt-sub{
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.complete-photo-upload-area{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.btn-pilih-foto{
+  background: var(--paper-raised);
+  border: 1px dashed var(--line-strong);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  transition: all .15s var(--ease);
+}
+.btn-pilih-foto:hover{
+  background: var(--card);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+#proofPreviewBox{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+#proofPreviewImg{
+  max-width: 100%;
+  max-height: 160px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  border: 1px solid var(--line);
+}
+.btn-hapus-foto{
+  background: transparent;
+  border: none;
+  color: var(--danger);
+  font-size: 12px;
+  cursor: pointer;
+}
+.btn-simpan-bukti{
+  background: var(--tutor);
+  color: #fff;
+  border: none;
+  padding: 12px 0;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s var(--ease);
+}
+.btn-simpan-bukti:disabled{
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.complete-divider{
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 12px;
+}
+.complete-divider::before, .complete-divider::after{
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--line);
+}
+.complete-divider span{
+  padding: 0 10px;
+}
+.btn-selesai-tanpa-foto{
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 13px 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all .15s var(--ease);
+}
+.btn-selesai-tanpa-foto:hover{
+  background: var(--card);
+  border-color: var(--ink);
+}
+
+.proof-meta-info{
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: -8px;
+}
 
 /* ==========================================================
    12.5. QUIZ INTERFACE
@@ -1548,18 +2003,23 @@ h1{
 <div class="sheet-backdrop" id="materiDetailBackdrop">
   <div class="sheet">
     <h2 id="materiDetailTitle">Materi</h2>
+    <div class="materi-filter-tabs" id="materiFilterTabs">
+      <button type="button" class="materi-filter-tab active" data-filter="semua">Semua (<span id="countSemua">0</span>)</button>
+      <button type="button" class="materi-filter-tab" data-filter="file">Materi File (<span id="countFile">0</span>)</button>
+      <button type="button" class="materi-filter-tab" data-filter="tugas">Tugas (<span id="countTugas">0</span>)</button>
+    </div>
     <div id="materiFileList"></div>
     <div class="sheet-actions">
       <button type="button" class="btn-batal" id="materiDetailCloseBtn">Tutup</button>
-      <button type="button" class="btn-simpan" id="openMateriUploadBtn">+ Tambah Materi</button>
+      <button type="button" class="btn-simpan" id="openMateriUploadBtn">+ Tambah Materi / Tugas</button>
     </div>
   </div>
 </div>
 
-<!-- Sheet: upload materi baru (file atau link) -->
+<!-- Sheet: upload materi baru (file, link, atau tugas) -->
 <div class="sheet-backdrop" id="materiUploadBackdrop">
   <div class="sheet">
-    <h2>Tambah Materi</h2>
+    <h2>Tambah Materi / Tugas</h2>
 
     <div class="ai-tabs">
       <button type="button" class="materi-type-tab active" data-mode="file">File</button>
@@ -1587,8 +2047,37 @@ h1{
 
     <div id="materiTugasPane" style="display:none">
       <div class="field">
-        <label>Detail Tugas</label>
-        <textarea id="materiTugasText" rows="4" placeholder="mis. Kerjakan latihan soal hal 45, kumpul di email"></textarea>
+        <label>Judul Tugas</label>
+        <input type="text" id="materiTugasTitle" placeholder="mis. Tugas 2 Aljabar Linear">
+      </div>
+      <div class="field">
+        <label>Catatan / Detail Tugas (opsional)</label>
+        <textarea id="materiTugasDesc" rows="3" placeholder="mis. Kerjakan latihan soal hal 45, kumpul di email"></textarea>
+      </div>
+      <div class="field">
+        <label>Batas Waktu / Deadline (opsional)</label>
+        <input type="datetime-local" id="materiTugasDeadline">
+        <div class="quick-deadline-btns">
+          <button type="button" class="quick-deadline-btn" data-days="1">Besok</button>
+          <button type="button" class="quick-deadline-btn" data-days="3">+3 Hari</button>
+          <button type="button" class="quick-deadline-btn" data-days="7">+1 Minggu</button>
+          <button type="button" class="quick-deadline-btn" id="clearDeadlineBtn">Hapus</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Lampiran Tugas (opsional)</label>
+        <div class="task-attach-tabs">
+          <button type="button" class="task-attach-tab active" data-mode="none">Tanpa Lampiran</button>
+          <button type="button" class="task-attach-tab" data-mode="file">📎 File / Foto</button>
+          <button type="button" class="task-attach-tab" data-mode="link">🔗 Link</button>
+        </div>
+        <div id="taskAttachFileBox" style="display:none; margin-top:10px;">
+          <input type="file" id="materiTugasFileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,image/*">
+          <div class="hint" style="margin-top:6px; margin-bottom:0;">Bisa upload PDF, Word, Excel, atau Foto tugas.</div>
+        </div>
+        <div id="taskAttachLinkBox" style="display:none; margin-top:10px;">
+          <input type="url" id="materiTugasLinkUrl" placeholder="https://drive.google.com/... atau link tugas">
+        </div>
       </div>
     </div>
 
@@ -1597,6 +2086,62 @@ h1{
     <div class="sheet-actions">
       <button type="button" class="btn-batal" id="materiUploadCancelBtn">Batal</button>
       <button type="button" class="btn-simpan" id="materiUploadSaveBtn">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: konfirmasi tugas selesai (pilihan upload foto bukti atau tanpa foto) -->
+<div class="sheet-backdrop" id="completeTaskBackdrop">
+  <div class="sheet">
+    <h2>Selesaikan Tugas</h2>
+    <div class="complete-task-sub" id="completeTaskTitle">Nama Tugas</div>
+    <p class="complete-task-desc">Apakah kamu ingin menyertakan foto bukti pengerjaan (misal foto lembar jawaban / screenshot) atau menyelesaikan langsung?</p>
+    
+    <div class="complete-options">
+      <!-- Opsi 1: Upload Foto Bukti -->
+      <div class="complete-opt-card" id="completeWithPhotoCard">
+        <div class="complete-opt-header">
+          <span class="complete-opt-icon">📷</span>
+          <div>
+            <div class="complete-opt-title">Selesai dengan Foto Bukti</div>
+            <div class="complete-opt-sub">Upload foto hasil / lembar pengerjaan</div>
+          </div>
+        </div>
+        <div class="complete-photo-upload-area" id="proofUploadArea">
+          <input type="file" id="proofFileInput" accept="image/*" style="display:none">
+          <button type="button" class="btn-pilih-foto" id="btnPilihFoto">Pilih / Jepret Foto</button>
+          <div id="proofPreviewBox" style="display:none;">
+            <img id="proofPreviewImg" src="" alt="Bukti Pengerjaan">
+            <button type="button" class="btn-hapus-foto" id="btnHapusFoto">Ganti Foto</button>
+          </div>
+        </div>
+        <button type="button" class="btn-simpan-bukti" id="btnSimpanDenganFoto" disabled>Selesaikan & Upload Foto</button>
+      </div>
+
+      <div class="complete-divider"><span>atau</span></div>
+
+      <!-- Opsi 2: Selesai Tanpa Foto -->
+      <button type="button" class="btn-selesai-tanpa-foto" id="btnSelesaiTanpaFoto">
+        ⚡ Selesaikan Tanpa Foto
+      </button>
+    </div>
+
+    <div class="sheet-actions" style="margin-top:14px;">
+      <button type="button" class="btn-batal" id="completeTaskCancelBtn">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: lihat foto bukti penyelesaian tugas -->
+<div class="sheet-backdrop" id="proofViewerBackdrop">
+  <div class="sheet">
+    <h2 id="proofViewerTitle">Bukti Pengerjaan</h2>
+    <div class="proof-meta-info" id="proofMetaInfo"></div>
+    <div id="proofViewerBody" style="text-align:center; margin:16px 0;">
+      <img id="proofViewerImg" src="" alt="Bukti Pengerjaan" style="max-width:100%; max-height:60vh; border-radius:var(--radius-md); box-shadow:var(--shadow-md);">
+    </div>
+    <div class="sheet-actions">
+      <button type="button" class="btn-batal" id="proofViewerCloseBtn">Tutup</button>
     </div>
   </div>
 </div>
@@ -2213,6 +2758,11 @@ const MATERI_ICON  = { pdf: '📄', excel: '📊', word: '📝', foto: '🖼️'
 const MATERI_LABEL = { pdf: 'PDF', excel: 'Excel', word: 'Word', foto: 'Foto', link: 'Link', tugas: 'Tugas', lain: 'File' };
 
 let currentSubject = null; // subject yang lagi dibuka di sheet detail materi
+let currentMateriList = [];
+let currentMateriFilter = 'semua';
+let completingTaskId = null;
+let chosenProofFile = null;
+let taskAttachMode = 'none';
 
 async function getMateriBySubject(subjectKey){
   return apiFetch(`/api/materi?subjectKey=${encodeURIComponent(subjectKey)}`);
@@ -2221,8 +2771,14 @@ async function getMateriBySubject(subjectKey){
 async function getMateriCounts(){
   const semua = await apiFetch('/api/materi');
   const counts = {};
-  semua.forEach(m => { counts[m.subjectKey] = (counts[m.subjectKey] || 0) + 1; });
-  return counts;
+  const pendingTugas = {};
+  semua.forEach(m => {
+    counts[m.subjectKey] = (counts[m.subjectKey] || 0) + 1;
+    if (m.type === 'tugas' && !m.isCompleted) {
+      pendingTugas[m.subjectKey] = (pendingTugas[m.subjectKey] || 0) + 1;
+    }
+  });
+  return { counts, pendingTugas };
 }
 
 async function deleteMateriEntry(id){
@@ -2240,10 +2796,55 @@ function detectFileType(file){
 }
 
 function formatTanggalUpload(iso){
+  if (!iso) return '-';
   const d = new Date(iso);
   const tgl = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
   const jam = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
   return `${tgl}, ${jam}`;
+}
+
+function formatDeadlineInfo(deadlineIso){
+  if (!deadlineIso) return null;
+  const d = new Date(deadlineIso);
+  if (isNaN(d.getTime())) return null;
+  
+  const now = new Date();
+  const diffMs = d.getTime() - now.getTime();
+  const diffHours = Math.round(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  const isOverdue = diffMs < 0;
+  
+  const dateStr = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+  const timeStr = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+  
+  let relative = '';
+  if (isOverdue) {
+    const absDays = Math.abs(diffDays);
+    relative = absDays === 0 ? 'Terlewat beberapa jam lalu' : `Terlewat ${absDays} hari`;
+  } else if (diffDays === 0 || (diffHours >= 0 && diffHours <= 12)) {
+    relative = `Hari ini, ${timeStr}`;
+  } else if (diffDays === 1) {
+    relative = `Besok, ${timeStr}`;
+  } else if (diffDays <= 7) {
+    relative = `${diffDays} hari lagi (${dateStr})`;
+  } else {
+    relative = `${dateStr}, ${timeStr}`;
+  }
+  
+  return {
+    fullText: `${dateStr}, ${timeStr}`,
+    relative,
+    isOverdue
+  };
+}
+
+function formatMimeShort(mime){
+  if (!mime) return 'Dokumen';
+  if (mime.includes('pdf')) return 'PDF';
+  if (mime.includes('word') || mime.includes('document')) return 'Word';
+  if (mime.includes('spreadsheet') || mime.includes('sheet') || mime.includes('csv')) return 'Excel';
+  if (mime.startsWith('image/')) return 'Foto';
+  return 'File';
 }
 
 /* daftar matkul/tutor unik, diambil dari jadwal yang sudah ada */
@@ -2271,7 +2872,7 @@ async function renderMateriList(){
     return;
   }
 
-  const counts = await getMateriCounts();
+  const { counts, pendingTugas } = await getMateriCounts();
 
   materiListArea.innerHTML = `
     <div class="materi-grid">
@@ -2280,7 +2881,8 @@ async function renderMateriList(){
           ${counts[s.key] ? `<div class="materi-badge">${counts[s.key]}</div>` : ''}
           <div class="materi-icon">${s.tipe === 'matkul' ? '📚' : s.tipe === 'tutor' ? '👨‍🏫' : '📋'}</div>
           <div class="materi-title">${escapeHtml(s.title)}</div>
-          <div class="materi-count">${counts[s.key] || 0} file</div>
+          <div class="materi-count">${counts[s.key] || 0} materi</div>
+          ${pendingTugas[s.key] ? `<div class="materi-tugas-badge">📌 ${pendingTugas[s.key]} tugas aktif</div>` : ''}
         </div>`).join('')}
     </div>`;
 
@@ -2300,42 +2902,171 @@ async function renderMateriList(){
 
 async function openMateriDetail(subject){
   currentSubject = subject;
+  currentMateriFilter = 'semua';
   document.getElementById('materiDetailTitle').textContent = subject.title;
-  const list = await getMateriBySubject(subject.key);
-  renderMateriFileList(list);
+  
+  document.querySelectorAll('.materi-filter-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.filter === 'semua');
+  });
+
   materiDetailBackdrop.classList.add('open');
+  await refreshCurrentMateriDetail();
 }
 
-function renderMateriFileList(list){
+async function refreshCurrentMateriDetail(){
+  if (!currentSubject) return;
+  const list = await getMateriBySubject(currentSubject.key);
+  currentMateriList = list;
+  updateFilterCounts();
+  renderFilteredMateri();
+}
+
+function updateFilterCounts(){
+  const countSemua = currentMateriList.length;
+  const countFile = currentMateriList.filter(m => m.type !== 'tugas').length;
+  const tugasList = currentMateriList.filter(m => m.type === 'tugas');
+  const pendingCount = tugasList.filter(m => !m.isCompleted).length;
+  
+  document.getElementById('countSemua').textContent = countSemua;
+  document.getElementById('countFile').textContent = countFile;
+  document.getElementById('countTugas').textContent = pendingCount > 0 ? `${tugasList.length} (${pendingCount} aktif)` : `${tugasList.length}`;
+}
+
+function renderFilteredMateri(){
   const container = document.getElementById('materiFileList');
+  let list = currentMateriList;
+
+  if (currentMateriFilter === 'file'){
+    list = list.filter(m => m.type !== 'tugas');
+  } else if (currentMateriFilter === 'tugas'){
+    list = list.filter(m => m.type === 'tugas');
+  }
 
   if (list.length === 0){
-    container.innerHTML = `<div class="empty" style="padding:24px 10px;">Belum ada materi.<br>Tap "Tambah Materi" buat upload.</div>`;
+    const pesan = currentMateriFilter === 'tugas'
+      ? 'Belum ada tugas untuk mata kuliah ini.<br>Tap "+ Tambah Materi / Tugas" untuk menambah tugas baru.'
+      : (currentMateriFilter === 'file'
+        ? 'Belum ada file materi.<br>Tap "+ Tambah Materi / Tugas" untuk upload file atau link.'
+        : 'Belum ada materi atau tugas.<br>Tap "+ Tambah Materi / Tugas" untuk upload.');
+    container.innerHTML = `<div class="empty" style="padding:28px 10px;">${pesan}</div>`;
     return;
   }
 
-  container.innerHTML = `<div class="materi-file-list">${list.map(m => `
-    <div class="materi-file" data-id="${m.id}">
-      <div class="materi-file-icon">${MATERI_ICON[m.type] || '📁'}</div>
-      <div class="materi-file-info">
-        <div class="materi-file-name">${escapeHtml(m.fileName)}</div>
-        <div class="materi-file-date">${MATERI_LABEL[m.type] || 'File'} · ${formatTanggalUpload(m.uploadedAt)}</div>
+  container.innerHTML = `<div class="materi-file-list">${list.map(m => {
+    if (m.type === 'tugas') {
+      return renderTaskCardHtml(m);
+    }
+    return `
+      <div class="materi-file" data-id="${m.id}">
+        <div class="materi-file-icon">${MATERI_ICON[m.type] || '📁'}</div>
+        <div class="materi-file-info">
+          <div class="materi-file-name">${escapeHtml(m.fileName)}</div>
+          <div class="materi-file-date">${MATERI_LABEL[m.type] || 'File'} · ${formatTanggalUpload(m.uploadedAt)}</div>
+        </div>
+        <div class="materi-file-actions">
+          <button type="button" class="lihat" onclick="lihatMateriById('${m.id}')">Lihat</button>
+          <button type="button" class="hapus" onclick="hapusMateri('${m.id}')">Hapus</button>
+        </div>
       </div>
-      <div class="materi-file-actions">
-        <button class="lihat">Lihat</button>
-        <button class="hapus">Hapus</button>
-      </div>
-    </div>`).join('')}</div>`;
+    `;
+  }).join('')}</div>`;
+}
 
-  container.querySelectorAll('.materi-file').forEach(row => {
-    const m = list.find(x => x.id === row.dataset.id);
-    row.querySelector('.lihat').onclick  = () => lihatMateri(m);
-    row.querySelector('.hapus').onclick = () => hapusMateri(m.id);
-  });
+function renderTaskCardHtml(m){
+  const isCompleted = Boolean(m.isCompleted);
+  const dlInfo = formatDeadlineInfo(m.deadline);
+  const isOverdue = dlInfo && dlInfo.isOverdue && !isCompleted;
+
+  let statusBadge = '';
+  if (isCompleted) {
+    statusBadge = `<span class="badge-status status-selesai">✓ Selesai</span>`;
+  } else if (isOverdue) {
+    statusBadge = `<span class="badge-status status-overdue">⚠️ Terlewat</span>`;
+  } else {
+    statusBadge = `<span class="badge-status status-pending">⏳ Belum Selesai</span>`;
+  }
+
+  let deadlineBadge = '';
+  if (dlInfo) {
+    const dlClass = isOverdue ? 'overdue' : (dlInfo.relative.startsWith('Hari ini') ? 'today' : '');
+    deadlineBadge = `<span class="badge-deadline ${dlClass}" title="Batas waktu: ${escapeHtml(dlInfo.fullText)}">⏰ ${escapeHtml(dlInfo.relative)}</span>`;
+  }
+
+  const descHtml = m.taskDesc ? `<div class="task-desc">${escapeHtml(m.taskDesc)}</div>` : '';
+
+  let attachHtml = '';
+  if (m.filePath) {
+    attachHtml = `
+      <div class="task-attach-item">
+        <button type="button" class="btn-task-attach" onclick="lihatMateriById('${m.id}')">
+          📎 Lampiran File (${escapeHtml(formatMimeShort(m.mimeType))})
+        </button>
+      </div>`;
+  } else if (m.url && (m.url.startsWith('http://') || m.url.startsWith('https://'))) {
+    attachHtml = `
+      <div class="task-attach-item">
+        <a class="btn-task-attach" href="${escapeHtml(m.url)}" target="_blank" rel="noopener">
+          🔗 Buka Link Tugas
+        </a>
+      </div>`;
+  }
+
+  let actionBtns = '';
+  if (!isCompleted) {
+    actionBtns = `
+      <button type="button" class="btn-selesai-task" onclick="bukaKonfirmasiSelesai('${m.id}')">
+        ✓ Tandai Selesai
+      </button>`;
+  } else {
+    let proofBtn = '';
+    if (m.hasProof) {
+      proofBtn = `
+        <button type="button" class="btn-lihat-bukti" onclick="lihatBuktiById('${m.id}')">
+          📷 Lihat Bukti Foto
+        </button>`;
+    }
+    actionBtns = `
+      ${proofBtn}
+      <button type="button" class="btn-uncomplete-task" onclick="batalSelesaiTask('${m.id}')">
+        ↺ Batal Selesai
+      </button>`;
+  }
+
+  const completedInfo = isCompleted && m.completedAt
+    ? `<div class="task-completed-info">Diselesaikan: ${formatTanggalUpload(m.completedAt)}</div>`
+    : '';
+
+  return `
+    <div class="task-card ${isCompleted ? 'is-completed' : ''}" data-id="${m.id}">
+      <div class="task-card-header">
+        <div class="task-title-area">
+          <div class="task-icon">${isCompleted ? '✅' : (isOverdue ? '⚠️' : '📌')}</div>
+          <div class="task-title">${escapeHtml(m.fileName)}</div>
+        </div>
+        <div class="task-badges">
+          ${statusBadge}
+          ${deadlineBadge}
+        </div>
+      </div>
+      ${descHtml}
+      ${attachHtml}
+      <div class="task-card-footer">
+        ${completedInfo}
+        <div class="task-card-actions">
+          ${actionBtns}
+          <button type="button" class="btn-hapus-task" onclick="hapusMateri('${m.id}')" title="Hapus Tugas">🗑️</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function lihatMateriById(id){
+  const m = currentMateriList.find(x => x.id === id);
+  if (m) lihatMateri(m);
 }
 
 function urlFileMateri(id){
-  // token lewat query param karena <iframe>/<img> src gak bisa kirim header Authorization
   return `${API_BASE}/api/materi/${id}/file?token=${encodeURIComponent(getToken())}`;
 }
 
@@ -2345,12 +3076,21 @@ async function lihatMateri(m){
     return;
   }
   if (m.type === 'tugas'){
+    if (m.filePath) {
+      // jika tugas ada file lampiran fisik, buka file lampirannya
+      tampilkanFileViewer(m);
+      return;
+    }
     document.getElementById('materiViewerTitle').textContent = m.fileName;
-    document.getElementById('materiViewerBody').innerHTML = `<div class="doc-preview" style="white-space: pre-wrap;">${escapeHtml(m.file_path || m.url || 'Detail tugas')}</div>`;
+    document.getElementById('materiViewerBody').innerHTML = `<div class="doc-preview" style="white-space: pre-wrap;">${escapeHtml(m.taskDesc || m.url || 'Detail tugas')}</div>`;
     materiViewerBackdrop.classList.add('open');
     return;
   }
 
+  tampilkanFileViewer(m);
+}
+
+async function tampilkanFileViewer(m){
   document.getElementById('materiViewerTitle').textContent = m.fileName;
   document.getElementById('materiViewerBody').innerHTML = '<div class="loading">Memuat…</div>';
   materiViewerBackdrop.classList.add('open');
@@ -2360,13 +3100,17 @@ async function lihatMateri(m){
   const fileUrl = urlFileMateri(m.id);
   const tombolDownload = `<a class="materi-viewer-download" href="${fileUrl}" download="${namaAman}">Download file ini</a>`;
 
-  if (m.type === 'pdf'){
+  const mime = m.mimeType || '';
+  const isPdf = m.type === 'pdf' || mime.includes('pdf');
+  const isFoto = m.type === 'foto' || mime.startsWith('image/');
+  const isWord = m.type === 'word' || mime.includes('word') || mime.includes('document');
+  const isExcel = m.type === 'excel' || mime.includes('sheet') || mime.includes('spreadsheet') || mime.includes('csv');
+
+  if (isPdf){
     body.innerHTML = `<iframe class="materi-viewer-frame" src="${fileUrl}"></iframe>${tombolDownload}`;
-
-  } else if (m.type === 'foto'){
+  } else if (isFoto){
     body.innerHTML = `<img class="materi-viewer-img" src="${fileUrl}" alt="${namaAman}">${tombolDownload}`;
-
-  } else if (m.type === 'word'){
+  } else if (isWord){
     try {
       await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.7.2/mammoth.browser.min.js');
       const res = await fetch(fileUrl, { headers: authHeader() });
@@ -2377,8 +3121,7 @@ async function lihatMateri(m){
       console.error(err);
       body.innerHTML = `<div class="hint">Preview isi Word gagal dimuat. Download dulu aja ya.</div>${tombolDownload}`;
     }
-
-  } else if (m.type === 'excel'){
+  } else if (isExcel){
     try {
       await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
       const res = await fetch(fileUrl, { headers: authHeader() });
@@ -2390,9 +3133,8 @@ async function lihatMateri(m){
       console.error(err);
       body.innerHTML = `<div class="hint">Preview isi Excel gagal dimuat. Download dulu aja ya.</div>${tombolDownload}`;
     }
-
   } else {
-    body.innerHTML = `<div class="hint">Preview belum bisa ditampilkan buat tipe file ini. Download dulu, lalu buka pakai aplikasi yang sesuai.</div>${tombolDownload}`;
+    body.innerHTML = `<div class="hint">Preview belum bisa ditampilkan buat tipe file ini. Silakan download untuk membuka.</div>${tombolDownload}`;
   }
 }
 
@@ -2416,9 +3158,9 @@ document.getElementById('materiViewerCloseBtn').onclick = tutupMateriViewer;
 materiViewerBackdrop.onclick = (e) => { if (e.target === materiViewerBackdrop) tutupMateriViewer(); };
 
 async function hapusMateri(id){
+  if (!confirm('Yakin ingin menghapus item ini?')) return;
   await deleteMateriEntry(id);
-  const list = await getMateriBySubject(currentSubject.key);
-  renderMateriFileList(list);
+  await refreshCurrentMateriDetail();
   renderMateriList();
 }
 
@@ -2426,7 +3168,136 @@ const materiDetailBackdrop = document.getElementById('materiDetailBackdrop');
 document.getElementById('materiDetailCloseBtn').onclick = () => materiDetailBackdrop.classList.remove('open');
 materiDetailBackdrop.onclick = (e) => { if (e.target === materiDetailBackdrop) materiDetailBackdrop.classList.remove('open'); };
 
-/* ---------- Sheet: tambah materi baru (file / link) ---------- */
+// Filter Tabs di dalam Sheet Detail
+document.querySelectorAll('.materi-filter-tab').forEach(tab => {
+  tab.onclick = () => {
+    currentMateriFilter = tab.dataset.filter;
+    document.querySelectorAll('.materi-filter-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.filter === currentMateriFilter);
+    });
+    renderFilteredMateri();
+  };
+});
+
+/* ---------- Sheet: Konfirmasi Selesai & Bukti Foto ---------- */
+const completeTaskBackdrop = document.getElementById('completeTaskBackdrop');
+completeTaskBackdrop.onclick = (e) => { if (e.target === completeTaskBackdrop) completeTaskBackdrop.classList.remove('open'); };
+document.getElementById('completeTaskCancelBtn').onclick = () => completeTaskBackdrop.classList.remove('open');
+
+const proofViewerBackdrop = document.getElementById('proofViewerBackdrop');
+proofViewerBackdrop.onclick = (e) => { if (e.target === proofViewerBackdrop) proofViewerBackdrop.classList.remove('open'); };
+document.getElementById('proofViewerCloseBtn').onclick = () => proofViewerBackdrop.classList.remove('open');
+
+function bukaKonfirmasiSelesai(id){
+  const task = currentMateriList.find(x => x.id === id);
+  if (!task) return;
+  completingTaskId = id;
+  chosenProofFile = null;
+
+  document.getElementById('completeTaskTitle').textContent = task.fileName;
+  document.getElementById('proofFileInput').value = '';
+  document.getElementById('proofPreviewImg').src = '';
+  document.getElementById('proofPreviewBox').style.display = 'none';
+  document.getElementById('btnPilihFoto').style.display = 'block';
+  document.getElementById('btnSimpanDenganFoto').disabled = true;
+
+  completeTaskBackdrop.classList.add('open');
+}
+
+document.getElementById('btnPilihFoto').onclick = () => {
+  document.getElementById('proofFileInput').click();
+};
+
+document.getElementById('btnHapusFoto').onclick = () => {
+  chosenProofFile = null;
+  document.getElementById('proofFileInput').value = '';
+  document.getElementById('proofPreviewImg').src = '';
+  document.getElementById('proofPreviewBox').style.display = 'none';
+  document.getElementById('btnPilihFoto').style.display = 'block';
+  document.getElementById('btnSimpanDenganFoto').disabled = true;
+};
+
+document.getElementById('proofFileInput').onchange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  chosenProofFile = file;
+  const url = URL.createObjectURL(file);
+  document.getElementById('proofPreviewImg').src = url;
+  document.getElementById('proofPreviewBox').style.display = 'flex';
+  document.getElementById('btnPilihFoto').style.display = 'none';
+  document.getElementById('btnSimpanDenganFoto').disabled = false;
+};
+
+document.getElementById('btnSimpanDenganFoto').onclick = async () => {
+  if (!completingTaskId || !chosenProofFile) return;
+  const btn = document.getElementById('btnSimpanDenganFoto');
+  btn.disabled = true;
+  btn.textContent = 'Mengunggah bukti…';
+  try {
+    const fd = new FormData();
+    fd.append('proof', chosenProofFile);
+    await apiFetch(`/api/materi/${completingTaskId}/complete`, {
+      method: 'POST',
+      body: fd
+    });
+    completeTaskBackdrop.classList.remove('open');
+    await refreshCurrentMateriDetail();
+    renderMateriList();
+  } catch (err) {
+    alert(err.message || 'Gagal menyelesaikan tugas.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Selesaikan & Upload Foto';
+  }
+};
+
+document.getElementById('btnSelesaiTanpaFoto').onclick = async () => {
+  if (!completingTaskId) return;
+  const btn = document.getElementById('btnSelesaiTanpaFoto');
+  btn.disabled = true;
+  btn.textContent = 'Menyelesaikan…';
+  try {
+    const fd = new FormData();
+    await apiFetch(`/api/materi/${completingTaskId}/complete`, {
+      method: 'POST',
+      body: fd
+    });
+    completeTaskBackdrop.classList.remove('open');
+    await refreshCurrentMateriDetail();
+    renderMateriList();
+  } catch (err) {
+    alert(err.message || 'Gagal menyelesaikan tugas.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '⚡ Selesaikan Tanpa Foto';
+  }
+};
+
+async function batalSelesaiTask(id){
+  if (!confirm('Kembalikan status tugas menjadi belum selesai?')) return;
+  try {
+    await apiFetch(`/api/materi/${id}/uncomplete`, { method: 'POST' });
+    await refreshCurrentMateriDetail();
+    renderMateriList();
+  } catch (err) {
+    alert(err.message || 'Gagal membatalkan status tugas.');
+  }
+}
+
+function lihatBuktiById(id){
+  const task = currentMateriList.find(x => x.id === id);
+  if (!task) return;
+  document.getElementById('proofViewerTitle').textContent = `Bukti: ${task.fileName}`;
+  const metaText = task.completedAt ? `Diselesaikan pada ${formatTanggalUpload(task.completedAt)}` : '';
+  document.getElementById('proofMetaInfo').textContent = metaText;
+
+  const token = encodeURIComponent(getToken());
+  const proofUrl = `${API_BASE}/api/materi/${id}/proof?token=${token}`;
+  document.getElementById('proofViewerImg').src = proofUrl;
+  proofViewerBackdrop.classList.add('open');
+}
+
+/* ---------- Sheet: tambah materi / tugas baru ---------- */
 const materiUploadBackdrop = document.getElementById('materiUploadBackdrop');
 let materiUploadMode = 'file';
 
@@ -2434,6 +3305,18 @@ document.getElementById('openMateriUploadBtn').onclick = () => {
   document.getElementById('materiFileInput').value = '';
   document.getElementById('materiLinkLabel').value = '';
   document.getElementById('materiLinkUrl').value = '';
+
+  // reset tugas
+  document.getElementById('materiTugasTitle').value = '';
+  document.getElementById('materiTugasDesc').value = '';
+  document.getElementById('materiTugasDeadline').value = '';
+  document.getElementById('materiTugasFileInput').value = '';
+  document.getElementById('materiTugasLinkUrl').value = '';
+  taskAttachMode = 'none';
+  document.querySelectorAll('.task-attach-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === 'none'));
+  document.getElementById('taskAttachFileBox').style.display = 'none';
+  document.getElementById('taskAttachLinkBox').style.display = 'none';
+
   document.getElementById('materiUploadError').style.display = 'none';
   switchMateriUploadMode('file');
   materiUploadBackdrop.classList.add('open');
@@ -2453,6 +3336,32 @@ function switchMateriUploadMode(mode){
   const tugasPane = document.getElementById('materiTugasPane');
   if (tugasPane) tugasPane.style.display = mode === 'tugas' ? '' : 'none';
 }
+
+// Quick buttons deadline
+document.querySelectorAll('.quick-deadline-btn[data-days]').forEach(btn => {
+  btn.onclick = () => {
+    const days = parseInt(btn.dataset.days);
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    d.setHours(23, 59, 0, 0);
+    const pad = n => String(n).padStart(2, '0');
+    const localIso = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    document.getElementById('materiTugasDeadline').value = localIso;
+  };
+});
+document.getElementById('clearDeadlineBtn').onclick = () => {
+  document.getElementById('materiTugasDeadline').value = '';
+};
+
+// Task attachment tabs
+document.querySelectorAll('.task-attach-tab').forEach(tab => {
+  tab.onclick = () => {
+    taskAttachMode = tab.dataset.mode;
+    document.querySelectorAll('.task-attach-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === taskAttachMode));
+    document.getElementById('taskAttachFileBox').style.display = taskAttachMode === 'file' ? 'block' : 'none';
+    document.getElementById('taskAttachLinkBox').style.display = taskAttachMode === 'link' ? 'block' : 'none';
+  };
+});
 
 document.getElementById('materiUploadSaveBtn').onclick = async () => {
   const errEl = document.getElementById('materiUploadError');
@@ -2475,17 +3384,32 @@ document.getElementById('materiUploadSaveBtn').onclick = async () => {
       formData.append('url', url);
       formData.append('label', document.getElementById('materiLinkLabel').value.trim());
     } else if (materiUploadMode === 'tugas') {
-      const text = document.getElementById('materiTugasText').value.trim();
-      if (!text){ errEl.textContent = 'Tulis detail tugasnya.'; errEl.style.display = 'block'; return; }
+      const title = document.getElementById('materiTugasTitle').value.trim();
+      if (!title){ errEl.textContent = 'Judul tugas wajib diisi.'; errEl.style.display = 'block'; return; }
+      const desc = document.getElementById('materiTugasDesc').value.trim();
+      const deadline = document.getElementById('materiTugasDeadline').value;
+      
       formData.append('mode', 'tugas');
-      formData.append('text', text);
+      formData.append('taskTitle', title);
+      formData.append('taskDesc', desc);
+      if (deadline) formData.append('deadline', deadline);
+      formData.append('attachmentType', taskAttachMode);
+
+      if (taskAttachMode === 'file') {
+        const file = document.getElementById('materiTugasFileInput').files[0];
+        if (!file){ errEl.textContent = 'Pilih file/foto lampiran tugas.'; errEl.style.display = 'block'; return; }
+        formData.append('file', file);
+      } else if (taskAttachMode === 'link') {
+        const linkUrl = document.getElementById('materiTugasLinkUrl').value.trim();
+        if (!linkUrl){ errEl.textContent = 'Isi URL link tugas.'; errEl.style.display = 'block'; return; }
+        formData.append('linkUrl', linkUrl);
+      }
     }
 
     await apiFetch('/api/materi', { method: 'POST', body: formData });
 
     materiUploadBackdrop.classList.remove('open');
-    const list = await getMateriBySubject(currentSubject.key);
-    renderMateriFileList(list);
+    await refreshCurrentMateriDetail();
     renderMateriList();
 
   } catch (err){

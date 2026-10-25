@@ -12,12 +12,14 @@ if (useLocal) {
   db.pragma('journal_mode = WAL');
   
   db.execute = function(opts) {
-    const sql = opts.sql.trim().toUpperCase();
+    const sqlStr = typeof opts === 'string' ? opts : (opts && opts.sql ? opts.sql : '');
+    const sql = sqlStr.trim().toUpperCase();
+    const args = (typeof opts === 'object' && opts && opts.args) || [];
     if (sql.startsWith('SELECT')) {
-      const result = this.prepare(opts.sql).all(...(opts.args || []));
+      const result = this.prepare(sqlStr).all(...args);
       return { rows: result };
     } else {
-      const info = this.prepare(opts.sql).run(...(opts.args || []));
+      const info = this.prepare(sqlStr).run(...args);
       return { rows: [], lastInsertRowid: info.lastInsertRowid };
     }
   };
@@ -69,6 +71,23 @@ async function initDb() {
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
   `);
+
+  // Migrasi aman untuk fitur tugas (jika kolom belum ada di database lama)
+  const tugasColumns = [
+    'deadline TEXT',
+    'task_desc TEXT',
+    'is_completed INTEGER DEFAULT 0',
+    'completed_at TEXT',
+    'proof_path TEXT'
+  ];
+
+  for (const col of tugasColumns) {
+    try {
+      await db.execute({ sql: `ALTER TABLE materi ADD COLUMN ${col};` });
+    } catch (e) {
+      // Abaikan jika kolom sudah ada di Turso / SQLite
+    }
+  }
 }
 
 module.exports = { db, initDb };
