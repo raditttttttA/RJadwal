@@ -282,7 +282,7 @@ router.get('/:id/file', authMiddleware, async (req, res) => {
   }
 });
 
-// endpoint untuk mengambil konten materi (Base64 untuk AI Quiz)
+// endpoint untuk mengambil konten materi (Base64 / Teks untuk AI Quiz)
 router.get('/:id/content', authMiddleware, async (req, res) => {
   try {
     const result = await db.execute({
@@ -293,17 +293,58 @@ router.get('/:id/content', authMiddleware, async (req, res) => {
     if (!row) return res.status(404).json({ error: 'Materi tidak ditemukan.' });
 
     if (row.type === 'link') {
-      return res.json({ fileName: row.file_name, type: 'link', text: `Link: ${row.url}` });
+      return res.json({
+        id: row.id,
+        fileName: row.file_name,
+        type: 'link',
+        text: `Link Referensi: ${row.file_name}\nURL: ${row.url}`
+      });
     }
 
-    if (!row.file_path) return res.status(400).json({ error: 'Bukan file.' });
+    if (row.type === 'tugas') {
+      let tugasText = `[TUGAS: ${row.file_name}]\n`;
+      if (row.task_desc) tugasText += `Deskripsi/Detail: ${row.task_desc}\n`;
+      else if (row.url && !row.url.startsWith('http')) tugasText += `Deskripsi/Detail: ${row.url}\n`;
+      if (row.url && row.url.startsWith('http')) tugasText += `Link Tugas: ${row.url}\n`;
+      if (row.deadline) tugasText += `Batas Waktu (Deadline): ${row.deadline}\n`;
+
+      let base64 = null;
+      let mimeType = null;
+      if (row.file_path) {
+        try {
+          const buffer = await downloadFile(row.file_path);
+          base64 = buffer.toString('base64');
+          mimeType = row.mime_type || 'application/octet-stream';
+        } catch (e) {
+          console.error('Gagal unduh lampiran tugas:', e);
+        }
+      }
+
+      return res.json({
+        id: row.id,
+        fileName: row.file_name,
+        type: 'tugas',
+        text: tugasText.trim(),
+        base64: base64 || undefined,
+        mimeType: mimeType || undefined
+      });
+    }
+
+    // Jika berupa file (PDF, Word, Excel, Foto)
+    if (!row.file_path) {
+      return res.json({
+        id: row.id,
+        fileName: row.file_name,
+        type: row.type || 'text',
+        text: `Materi: ${row.file_name}\n${row.task_desc || row.url || ''}`
+      });
+    }
 
     const buffer = await downloadFile(row.file_path);
-    
-    // Kirim base64 agar Gemini bisa baca aslinya (PDF/Foto)
-    const mimeType = row.type === 'pdf' ? 'application/pdf' : (row.mime_type || 'image/jpeg');
+    const mimeType = row.mime_type || (row.type === 'pdf' ? 'application/pdf' : (row.type === 'foto' ? 'image/jpeg' : 'application/octet-stream'));
     
     res.json({ 
+      id: row.id,
       fileName: row.file_name, 
       type: row.type, 
       mimeType: mimeType,
