@@ -1,6 +1,24 @@
+# Dependencies
 node_modules/
+
+# Environment Variables & Rahasia
 .env
-.vercel
+.env.local
+.env.*.local
+
+# Vercel Build Artifacts
+.vercel/
+
+# Database SQLite Lokal (agar tidak ter-commit ke git)
 *.db
 *.db-shm
 *.db-wal
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS Files
+.DS_Store
+Thumbs.db

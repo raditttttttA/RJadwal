@@ -52,15 +52,29 @@ disk lokal di banyak platform hosting gratis yang sifatnya sementara.
 
 1. Pastikan sudah install [Node.js](https://nodejs.org) versi 18 ke atas.
 2. Install dependency:
-   ```
+   ```bash
    npm install
    ```
-3. Salin `.env.example` jadi `.env`, isi semua nilainya (JWT_SECRET, Turso, Supabase).
-4. Jalankan:
+3. Salin `.env.example` jadi `.env`:
+   ```bash
+   cp .env.example .env
    ```
-   npm start
-   ```
-5. Buka `http://localhost:3000`. Tabel database otomatis dibuat saat pertama kali jalan.
+   > **Tips Belajar Offline:** Kamu bisa isi `USE_LOCAL_DB=true` di file `.env` jika ingin langsung mencoba tanpa perlu setup akun Turso Cloud terlebih dahulu. Backend akan otomatis memakai SQLite lokal (`jadwal.db`).
+
+4. Jalankan server:
+   - **Mode Pengembangan (Auto-Reload):**
+     ```bash
+     npm run dev
+     ```
+   - **Mode Standar:**
+     ```bash
+     npm start
+     ```
+5. Buka `http://localhost:3000` di browser. Tabel database otomatis dibuat saat pertama kali dijalankan.
+
+## 📖 Ingin Mempelajari Kodenya?
+Baca panduan lengkap arsitektur dan alur kerja kode di:
+👉 **[PANDUAN_BELAJAR.md](./PANDUAN_BELAJAR.md)**
 
 ## Deploy ke Vercel (gratis, tanpa kartu kredit)
 
@@ -86,18 +100,22 @@ disk lokal di banyak platform hosting gratis yang sifatnya sementara.
 ## Struktur folder
 ```
 jadwal-backend/
-├── server.js          # entry point Express, juga di-export sebagai handler Vercel
-├── db.js              # koneksi Turso (libSQL) & setup tabel
-├── storage.js          # wrapper Supabase Storage (upload/signed url/hapus file)
-├── vercel.json         # routing: /api/* ke server.js, sisanya ke public/
+├── .env.example        # Template konfigurasi environment variable
+├── server.js           # Entry point Express & handler Vercel serverless
+├── db.js               # Koneksi Turso (libSQL) / SQLite lokal & setup tabel
+├── storage.js          # Wrapper Supabase Storage (upload / signed url / hapus)
+├── vercel.json         # Routing: /api/* ke server.js, sisanya ke public/
+├── PANDUAN_BELAJAR.md  # Panduan arsitektur & alur kode untuk belajar
 ├── middleware/
-│   └── auth.js        # verifikasi JWT
+│   └── auth.js         # Verifikasi token JWT (header Bearer & query param)
 ├── routes/
-│   ├── auth.js         # register & login
-│   ├── items.js        # CRUD jadwal
-│   └── materi.js        # upload/list/hapus/serve file materi
+│   ├── auth.js         # Endpoint register & login
+│   ├── items.js        # Endpoint CRUD jadwal kegiatan
+│   └── materi.js       # Endpoint upload/hapus materi & tugas
 └── public/
-    └── index.html      # seluruh frontend (HTML+CSS+JS dalam satu file)
+    ├── index.html      # Seluruh frontend (PWA HTML+CSS+JS)
+    ├── manifest.json   # Web App Manifest untuk instalasi PWA
+    └── icon-*.png      # Ikon aplikasi
 ```
 
 ## Keamanan
@@ -106,3 +124,4 @@ jadwal-backend/
 - File materi disimpan di bucket Supabase yang **private**; akses file lewat
   signed URL sementara (berlaku 60 detik), bukan link publik permanen.
 - Batas ukuran upload file: 25MB per file (bisa diubah di `routes/materi.js`, cari `fileSize`).
+

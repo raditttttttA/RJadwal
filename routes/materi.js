@@ -1,3 +1,17 @@
+/**
+ * MATERI & TUGAS ROUTES (/api/materi)
+ * -------------------------------------------------------------
+ * Menyediakan endpoint pengelolaan berkas materi kuliah dan tugas:
+ * - GET    /api/materi              : Daftar materi/tugas milik user (opsional ?subjectKey=...)
+ * - POST   /api/materi              : Tambah materi (link, file, atau tugas baru)
+ * - POST   /api/materi/:id/complete : Tandai tugas selesai (+ upload foto bukti)
+ * - POST   /api/materi/:id/uncomplete: Batalkan status selesai
+ * - GET    /api/materi/:id/proof    : Redirect ke signed URL foto bukti
+ * - DELETE /api/materi/:id          : Hapus materi/tugas & hapus fisik di Supabase
+ * - GET    /api/materi/:id/file     : Redirect ke signed URL file materi (berlaku 60 detik)
+ * - GET    /api/materi/:id/content  : Ambil konten file (Base64 / Teks) untuk preview/AI
+ */
+
 const express = require('express');
 const path = require('path');
 const multer = require('multer');
@@ -8,9 +22,19 @@ const { uploadFile, getSignedUrl, deleteFile, downloadFile } = require('../stora
 
 const router = express.Router();
 
-// simpan file di memory dulu (buffer), baru dikirim ke Supabase Storage
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 25 * 1024 * 1024 } });
+// Semua rute materi memerlukan autentikasi
+router.use(authMiddleware);
 
+// Konfigurasi Multer: file disimpan di memori (buffer) sementara sebelum dikirim ke Supabase Storage.
+// Batas ukuran file: 25 MB
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 25 * 1024 * 1024 }
+});
+
+/**
+ * Deteksi tipe file berdasarkan MIME type atau ekstensi nama file.
+ */
 function detectType(file) {
   const name = (file.originalname || '').toLowerCase();
   const mime = file.mimetype || '';
@@ -21,6 +45,9 @@ function detectType(file) {
   return 'lain';
 }
 
+/**
+ * Helper: Mengonversi baris database menjadi format JSON yang rapi untuk frontend.
+ */
 function rowToMateri(r) {
   return {
     id: r.id,
@@ -40,7 +67,11 @@ function rowToMateri(r) {
   };
 }
 
-router.get('/', authMiddleware, async (req, res) => {
+/**
+ * GET /api/materi
+ * Mengambil daftar materi/tugas. Bisa difilter per subject: /api/materi?subjectKey=xyz
+ */
+router.get('/', async (req, res) => {
   const { subjectKey } = req.query;
   try {
     const result = subjectKey
@@ -54,12 +85,16 @@ router.get('/', authMiddleware, async (req, res) => {
         });
     res.json(result.rows.map(rowToMateri));
   } catch (err) {
-    console.error(err);
+    console.error('[Get Materi Error]:', err);
     res.status(500).json({ error: 'Gagal mengambil materi.' });
   }
 });
 
-router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
+/**
+ * POST /api/materi
+ * Mengunggah materi baru (mode link, mode file, atau mode tugas)
+ */
+router.post('/', upload.single('file'), async (req, res) => {
   const { subjectKey, subjectName, mode } = req.body || {};
 
   if (!subjectKey || !subjectName) {
@@ -158,8 +193,15 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
   }
 });
 
-// Endpoint untuk menandai tugas selesai (opsional dengan upload foto bukti)
-router.post('/:id/complete', authMiddleware, upload.single('proof'), async (req, res) => {
+// =============================================================
+// FITUR TUGAS: SELESAI & BUKTI
+// =============================================================
+
+/**
+ * POST /api/materi/:id/complete
+ * Menandai tugas telah selesai, dengan opsi mengunggah foto bukti penyelesaian.
+ */
+router.post('/:id/complete', upload.single('proof'), async (req, res) => {
   try {
     const result = await db.execute({
       sql: 'SELECT * FROM materi WHERE id = ? AND user_id = ?',
@@ -169,7 +211,10 @@ router.post('/:id/complete', authMiddleware, upload.single('proof'), async (req,
     if (!row) return res.status(404).json({ error: 'Tugas tidak ditemukan.' });
 
     let proofKey = row.proof_path || null;
+
+    // Jika user mengunggah foto bukti baru
     if (req.file) {
+      // Hapus foto bukti lama dari Supabase jika sebelumnya sudah ada
       if (row.proof_path) {
         await deleteFile(row.proof_path);
       }
@@ -191,13 +236,16 @@ router.post('/:id/complete', authMiddleware, upload.single('proof'), async (req,
       hasProof: Boolean(proofKey)
     });
   } catch (err) {
-    console.error(err);
+    console.error('[Complete Task Error]:', err);
     res.status(500).json({ error: 'Gagal menyelesaikan tugas.' });
   }
 });
 
-// Endpoint untuk membatalkan status tugas selesai
-router.post('/:id/uncomplete', authMiddleware, async (req, res) => {
+/**
+ * POST /api/materi/:id/uncomplete
+ * Membatalkan status selesai pada tugas dan menghapus foto bukti jika ada.
+ */
+router.post('/:id/uncomplete', async (req, res) => {
   try {
     const result = await db.execute({
       sql: 'SELECT * FROM materi WHERE id = ? AND user_id = ?',
@@ -217,13 +265,16 @@ router.post('/:id/uncomplete', authMiddleware, async (req, res) => {
 
     res.json({ ok: true, id: req.params.id, isCompleted: false, hasProof: false });
   } catch (err) {
-    console.error(err);
+    console.error('[Uncomplete Task Error]:', err);
     res.status(500).json({ error: 'Gagal membatalkan status tugas.' });
   }
 });
 
-// Endpoint untuk melihat foto bukti penyelesaian tugas (redirect ke signed URL 60s)
-router.get('/:id/proof', authMiddleware, async (req, res) => {
+/**
+ * GET /api/materi/:id/proof
+ * Melihat foto bukti penyelesaian tugas (redirect ke signed URL sementara 60 detik).
+ */
+router.get('/:id/proof', async (req, res) => {
   try {
     const result = await db.execute({
       sql: 'SELECT * FROM materi WHERE id = ? AND user_id = ?',
@@ -235,12 +286,20 @@ router.get('/:id/proof', authMiddleware, async (req, res) => {
     const signedUrl = await getSignedUrl(row.proof_path, 60);
     res.redirect(signedUrl);
   } catch (err) {
-    console.error(err);
+    console.error('[Proof View Error]:', err);
     res.status(404).send('Foto bukti tidak ditemukan di server.');
   }
 });
 
-router.delete('/:id', authMiddleware, async (req, res) => {
+// =============================================================
+// HAPUS & AKSES FILE MATERI
+// =============================================================
+
+/**
+ * DELETE /api/materi/:id
+ * Menghapus materi atau tugas, sekaligus membersihkan file fisik dari Supabase Storage.
+ */
+router.delete('/:id', async (req, res) => {
   try {
     const result = await db.execute({
       sql: 'SELECT * FROM materi WHERE id = ? AND user_id = ?',
@@ -249,23 +308,29 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     const row = result.rows[0];
     if (!row) return res.status(404).json({ error: 'Materi tidak ditemukan.' });
 
+    // Hapus lampiran berkas fisik di Supabase jika ada
     if (row.file_path) {
       await deleteFile(row.file_path);
     }
+    // Hapus foto bukti jika ada
     if (row.proof_path) {
       await deleteFile(row.proof_path);
     }
+
     await db.execute({ sql: 'DELETE FROM materi WHERE id = ?', args: [req.params.id] });
     res.json({ ok: true });
   } catch (err) {
-    console.error(err);
+    console.error('[Delete Materi Error]:', err);
     res.status(500).json({ error: 'Gagal menghapus materi.' });
   }
 });
 
-// endpoint serve file: redirect ke signed URL Supabase (berlaku 60 detik),
-// dipakai buat <iframe>/<img> src atau tombol download
-router.get('/:id/file', authMiddleware, async (req, res) => {
+/**
+ * GET /api/materi/:id/file
+ * Redirect ke Signed URL Supabase (berlaku 60 detik).
+ * Digunakan oleh tag <iframe>, <img>, atau tombol unduh di frontend.
+ */
+router.get('/:id/file', async (req, res) => {
   try {
     const result = await db.execute({
       sql: 'SELECT * FROM materi WHERE id = ? AND user_id = ?',
@@ -277,13 +342,17 @@ router.get('/:id/file', authMiddleware, async (req, res) => {
     const signedUrl = await getSignedUrl(row.file_path, 60);
     res.redirect(signedUrl);
   } catch (err) {
-    console.error(err);
+    console.error('[Serve File Error]:', err);
     res.status(404).send('File tidak ditemukan di server.');
   }
 });
 
-// endpoint untuk mengambil konten materi (Base64 / Teks untuk AI Quiz)
-router.get('/:id/content', authMiddleware, async (req, res) => {
+/**
+ * GET /api/materi/:id/content
+ * Mengunduh isi materi dan menyajikannya sebagai teks atau Base64.
+ * Berguna untuk integrasi preview dokumen atau pemrosesan AI.
+ */
+router.get('/:id/content', async (req, res) => {
   try {
     const result = await db.execute({
       sql: 'SELECT * FROM materi WHERE id = ? AND user_id = ?',
@@ -292,6 +361,7 @@ router.get('/:id/content', authMiddleware, async (req, res) => {
     const row = result.rows[0];
     if (!row) return res.status(404).json({ error: 'Materi tidak ditemukan.' });
 
+    // Kasus 1: Materi bertipe link web
     if (row.type === 'link') {
       return res.json({
         id: row.id,
@@ -301,6 +371,7 @@ router.get('/:id/content', authMiddleware, async (req, res) => {
       });
     }
 
+    // Kasus 2: Materi bertipe tugas
     if (row.type === 'tugas') {
       let tugasText = `[TUGAS: ${row.file_name}]\n`;
       if (row.task_desc) tugasText += `Deskripsi/Detail: ${row.task_desc}\n`;
@@ -316,7 +387,7 @@ router.get('/:id/content', authMiddleware, async (req, res) => {
           base64 = buffer.toString('base64');
           mimeType = row.mime_type || 'application/octet-stream';
         } catch (e) {
-          console.error('Gagal unduh lampiran tugas:', e);
+          console.error('[Download Attachment Error]:', e);
         }
       }
 
@@ -330,7 +401,7 @@ router.get('/:id/content', authMiddleware, async (req, res) => {
       });
     }
 
-    // Jika berupa file (PDF, Word, Excel, Foto)
+    // Kasus 3: Jika tidak ada file fisik tersimpan
     if (!row.file_path) {
       return res.json({
         id: row.id,
@@ -340,6 +411,7 @@ router.get('/:id/content', authMiddleware, async (req, res) => {
       });
     }
 
+    // Kasus 4: Materi file (PDF, Word, Excel, Foto)
     const buffer = await downloadFile(row.file_path);
     const mimeType = row.mime_type || (row.type === 'pdf' ? 'application/pdf' : (row.type === 'foto' ? 'image/jpeg' : 'application/octet-stream'));
     
@@ -351,7 +423,7 @@ router.get('/:id/content', authMiddleware, async (req, res) => {
       base64: buffer.toString('base64')
     });
   } catch (err) {
-    console.error(err);
+    console.error('[Read Content Error]:', err);
     res.status(500).json({ error: 'Gagal membaca konten materi.' });
   }
 });

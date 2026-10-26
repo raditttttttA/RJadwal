@@ -1,16 +1,23 @@
-const fs = require('fs');
 const path = require('path');
 
 let db;
-const useLocal = false; // Set true jika mau pakai SQLite lokal, false untuk Turso cloud
+
+/**
+ * Penentuan mode database:
+ * 1. Jika USE_LOCAL_DB='true' di .env -> gunakan SQLite lokal (jadwal.db)
+ * 2. Jika TURSO_DATABASE_URL tidak diisi -> otomatis fallback ke SQLite lokal
+ * 3. Jika USE_LOCAL_DB='false' dan ada TURSO_DATABASE_URL -> gunakan Turso Cloud (@libsql/client)
+ */
+const useLocal = process.env.USE_LOCAL_DB === 'true' || !process.env.TURSO_DATABASE_URL;
 
 if (useLocal) {
-  console.log('📁 Menggunakan SQLite lokal...');
+  console.log('📁 Menggunakan SQLite lokal (jadwal.db)...');
   const Database = require('better-sqlite3');
   const dbPath = path.join(__dirname, 'jadwal.db');
   db = new Database(dbPath);
   db.pragma('journal_mode = WAL');
   
+  // Adapter helper agar better-sqlite3 memiliki interface async yang sama dengan @libsql/client
   db.execute = function(opts) {
     const sqlStr = typeof opts === 'string' ? opts : (opts && opts.sql ? opts.sql : '');
     const sql = sqlStr.trim().toUpperCase();
@@ -28,7 +35,7 @@ if (useLocal) {
     this.exec(sql);
   };
 } else {
-  console.log('🌐 Menggunakan Turso cloud...');
+  console.log('🌐 Menggunakan Turso cloud (libSQL)...');
   const { createClient } = require('@libsql/client');
   db = createClient({
     url: process.env.TURSO_DATABASE_URL,
@@ -36,6 +43,12 @@ if (useLocal) {
   });
 }
 
+/**
+ * Inisialisasi skema tabel database:
+ * - users: data akun & password hash bcrypt
+ * - items: jadwal kuliah/tutor/lainnya
+ * - materi: berkas materi dan tugas
+ */
 async function initDb() {
   await db.executeMultiple(`
     CREATE TABLE IF NOT EXISTS users (
@@ -85,9 +98,10 @@ async function initDb() {
     try {
       await db.execute({ sql: `ALTER TABLE materi ADD COLUMN ${col};` });
     } catch (e) {
-      // Abaikan jika kolom sudah ada di Turso / SQLite
+      // Abaikan jika kolom sudah ada di database
     }
   }
 }
 
 module.exports = { db, initDb };
+

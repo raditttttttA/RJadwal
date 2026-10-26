@@ -2165,6 +2165,644 @@ span.flatpickr-weekday{
 }
 .username-label{ font-size: 12.5px; font-weight: 500; color: var(--ink-soft); }
 
+/* ==========================================================
+   MODERN DRAWER & APP HEADER
+   ========================================================== */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  position: relative;
+  gap: 12px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Tombol Garis Tiga (Hamburger) */
+.hamburger-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  width: 42px;
+  height: 42px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  padding: 0;
+  box-shadow: var(--shadow-sm);
+  transition: all .2s var(--ease);
+  color: var(--ink);
+  flex-shrink: 0;
+}
+.hamburger-btn:hover {
+  background: var(--paper-raised);
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+.hamburger-btn:active {
+  transform: scale(0.94);
+}
+.hamburger-btn .bar {
+  display: block;
+  width: 20px;
+  height: 2.2px;
+  background-color: currentColor;
+  border-radius: 2px;
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+.header-titles {
+  display: flex;
+  flex-direction: column;
+}
+.header-title {
+  font-family: "Fraunces", Georgia, "Iowan Old Style", serif;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  margin: 0;
+  color: var(--ink);
+}
+.header-subtitle {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-right .gear-btn, .header-right .logout-btn {
+  display: none !important; /* Tersembunyi rapi di header, kini diakses via Drawer */
+}
+
+.header-avatar-badge {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.header-avatar-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(184, 90, 37, 0.28);
+  border: 2px solid var(--card);
+  transition: transform .18s var(--ease);
+}
+.header-avatar-badge:hover .header-avatar-circle {
+  transform: scale(1.06);
+}
+
+/* DRAWER OVERLAY BACKDROP */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 28, 20, 0.45);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 1200;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .25s var(--ease), visibility .25s var(--ease);
+}
+.drawer-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* DRAWER ASIDE PANEL */
+.app-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(320px, 84vw);
+  background: var(--card);
+  border-right: 1px solid var(--line);
+  box-shadow: 16px 0 36px -12px rgba(20, 28, 20, 0.28);
+  z-index: 1210;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform .28s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.app-drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  padding: 22px 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+}
+.drawer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.drawer-brand-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+.drawer-brand-name {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.drawer-brand-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--primary-bg);
+  color: var(--primary);
+  margin-left: 6px;
+}
+.drawer-close-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .15s var(--ease);
+}
+.drawer-close-btn:hover {
+  background: var(--line);
+  color: var(--ink);
+}
+
+/* User Card in Drawer */
+.drawer-user-card {
+  padding: 14px 18px;
+  margin: 14px 16px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.drawer-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+.drawer-user-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.drawer-username {
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.drawer-user-status {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2E7D32;
+  box-shadow: 0 0 6px rgba(46, 125, 50, 0.5);
+  display: inline-block;
+}
+
+.drawer-section-label {
+  padding: 8px 22px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+/* Navigation Items */
+.drawer-nav {
+  padding: 4px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+.drawer-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all .16s var(--ease);
+}
+.drawer-nav-item:hover {
+  background: var(--paper-raised);
+  color: var(--ink);
+  transform: translateX(3px);
+}
+.drawer-nav-item.active {
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+.drawer-nav-item.active .nav-item-icon {
+  color: var(--paper);
+}
+.nav-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+  transition: color .16s var(--ease);
+  flex-shrink: 0;
+}
+.nav-item-text {
+  flex: 1;
+}
+.nav-badge-ai {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1F6B5B 0%, #154D41 100%);
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+.drawer-nav-item.active .nav-badge-ai {
+  background: var(--paper);
+  color: var(--ink);
+}
+.nav-badge-soon {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--paper-raised);
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+}
+.drawer-nav-item.active .nav-badge-soon {
+  background: rgba(255,255,255,0.2);
+  color: var(--paper);
+  border-color: transparent;
+}
+
+/* Drawer Footer */
+.drawer-footer {
+  padding: 16px;
+  border-top: 1px solid var(--line);
+  background: var(--paper-raised);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.drawer-tools {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.drawer-tool-btn {
+  padding: 8px 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .14s var(--ease);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.drawer-tool-btn:hover {
+  background: var(--card);
+  border-color: var(--line-strong);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+.drawer-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--card);
+  border: 1px solid var(--danger-bg);
+  color: var(--danger);
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .16s var(--ease);
+}
+.drawer-logout-btn:hover {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+}
+.drawer-logout-btn:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================================
+   BERANDA & SOCIAL VIEWS STYLING
+   ========================================================== */
+.view-container {
+  animation: fadeIn .24s var(--ease);
+}
+
+/* Beranda Hero Card */
+.beranda-hero-card {
+  background: linear-gradient(135deg, #1C2A20 0%, #2A3D30 100%);
+  color: #ECEFE1;
+  border-radius: var(--radius-lg);
+  padding: 24px 22px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+.beranda-hero-card::after {
+  content: "";
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(184, 90, 37, 0.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+.beranda-greeting {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+.beranda-subtext {
+  font-size: 13.5px;
+  color: #C1CBA9;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+.beranda-date-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #F7F8F0;
+  backdrop-filter: blur(4px);
+}
+
+/* Beranda Shortcuts Grid */
+.beranda-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.beranda-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+@media (min-width: 480px) {
+  .beranda-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.shortcut-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: all .18s var(--ease);
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+}
+.shortcut-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
+}
+.shortcut-card:active {
+  transform: scale(0.98);
+}
+.shortcut-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.shortcut-icon.schedule-icon { background: var(--matkul-bg); color: var(--matkul); }
+.shortcut-icon.course-icon   { background: var(--tutor-bg);  color: var(--tutor); }
+.shortcut-icon.quiz-icon     { background: #FDE8D7;          color: #B85A25; }
+.shortcut-icon.social-icon   { background: var(--lain-bg);   color: var(--lain); }
+
+.shortcut-content {
+  display: flex;
+  flex-direction: column;
+}
+.shortcut-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+.shortcut-desc {
+  font-size: 12px;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+
+/* Beranda Banner Segera Hadir */
+.beranda-banner {
+  background: var(--paper-raised);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--ink-soft);
+}
+.banner-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.banner-text {
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.banner-text strong {
+  color: var(--ink);
+  display: block;
+  font-size: 13.5px;
+  margin-bottom: 2px;
+}
+
+/* Social View Styling */
+.social-hero-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 36px 24px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.social-hero-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: var(--lain-bg);
+  color: var(--lain);
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  box-shadow: 0 4px 16px rgba(91, 68, 136, 0.16);
+}
+.social-hero-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.social-hero-sub {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  max-width: 380px;
+  margin: 0 auto 20px;
+}
+.social-badge-soon {
+  display: inline-block;
+  background: var(--lain-bg);
+  color: var(--lain);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+.social-feature-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.social-feature-item {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.social-feature-emoji {
+  font-size: 22px;
+  line-height: 1;
+  padding-top: 2px;
+}
+.social-feature-detail h4 {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.social-feature-detail p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+
 </style>
 </head>
 <body>
@@ -2206,39 +2844,295 @@ span.flatpickr-weekday{
   </div>
 </div>
 
+<!-- Drawer Overlay Backdrop -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+<!-- Modern Drawer Sidebar Navigation -->
+<aside class="app-drawer" id="appDrawer" aria-label="Menu Navigasi Utama" aria-hidden="true">
+  <div class="drawer-header">
+    <div class="drawer-brand">
+      <div class="drawer-brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+      </div>
+      <div class="drawer-brand-info">
+        <span class="drawer-brand-name">Agenda</span>
+        <span class="drawer-brand-badge">v2.0</span>
+      </div>
+    </div>
+    <button class="drawer-close-btn" id="closeDrawerBtn" aria-label="Tutup Menu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <div class="drawer-user-card">
+    <div class="drawer-avatar" id="drawerAvatar">U</div>
+    <div class="drawer-user-info">
+      <span class="drawer-username" id="drawerUsername">Username</span>
+      <span class="drawer-user-status"><span class="status-dot"></span> Online</span>
+    </div>
+  </div>
+
+  <div class="drawer-section-label">NAVIGASI MENU</div>
+
+  <nav class="drawer-nav">
+    <!-- 1. Beranda -->
+    <button type="button" class="drawer-nav-item active" data-view="beranda">
+      <div class="nav-item-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </div>
+      <span class="nav-item-text">Beranda</span>
+    </button>
+
+    <!-- 2. Schedule -->
+    <button type="button" class="drawer-nav-item" data-view="schedule">
+      <div class="nav-item-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+      </div>
+      <span class="nav-item-text">Schedule</span>
+    </button>
+
+    <!-- 3. Course -->
+    <button type="button" class="drawer-nav-item" data-view="course">
+      <div class="nav-item-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+      </div>
+      <span class="nav-item-text">Course</span>
+    </button>
+
+    <!-- 4. Quiz -->
+    <button type="button" class="drawer-nav-item" data-view="quiz">
+      <div class="nav-item-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        </svg>
+      </div>
+      <span class="nav-item-text">Quiz</span>
+      <span class="nav-badge-ai">AI</span>
+    </button>
+
+    <!-- 5. Social -->
+    <button type="button" class="drawer-nav-item" data-view="social">
+      <div class="nav-item-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <span class="nav-item-text">Social</span>
+      <span class="nav-badge-soon">Soon</span>
+    </button>
+  </nav>
+
+  <div class="drawer-footer">
+    <div class="drawer-tools">
+      <button type="button" class="drawer-tool-btn" id="drawerApiKeyBtn" title="Atur Gemini API Key">
+        ✨ Gemini AI
+      </button>
+      <button type="button" class="drawer-tool-btn" id="drawerGroqBtn" title="Atur Groq API Key">
+        ⚡ Groq AI
+      </button>
+    </div>
+    <button type="button" class="drawer-logout-btn" id="drawerLogoutBtn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" y1="12" x2="9" y2="12"></line>
+      </svg>
+      <span>Keluar Akun</span>
+    </button>
+  </div>
+</aside>
+
 <div class="wrap" id="appWrap" style="display:none">
-  <header>
-    <h1>Agenda</h1>
+  <header class="app-header">
+    <div class="header-left">
+      <button type="button" class="hamburger-btn" id="openDrawerBtn" aria-label="Buka Menu" title="Menu Navigasi">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <div class="header-titles">
+        <h1 class="header-title" id="pageTitle">Beranda</h1>
+        <span class="header-subtitle" id="pageSubtitle">Ringkasan & Aktivitas</span>
+      </div>
+    </div>
     <div class="header-right">
       <div class="today-label" id="todayLabel"></div>
-      <span class="username-label" id="usernameLabel"></span>
-      <button class="gear-btn" id="apiKeyBtn" title="Atur API key AI (Gemini)">✨</button>
-      <button class="logout-btn" id="logoutBtn">Keluar</button>
+      <div class="header-avatar-badge" id="headerAvatarBtn" title="Buka Menu Akun">
+        <div class="header-avatar-circle" id="headerAvatar">U</div>
+      </div>
+      <!-- Elemen legacy agar script query tetap aman -->
+      <span class="username-label" id="usernameLabel" style="display:none"></span>
+      <button class="gear-btn" id="apiKeyBtn" style="display:none" title="Atur API key AI (Gemini)">✨</button>
+      <button class="logout-btn" id="logoutBtn" style="display:none">Keluar</button>
     </div>
   </header>
 
-  <div class="view-tabs">
-    <button class="view-tab active" data-view="jadwal">Jadwal</button>
-    <button class="view-tab" data-view="materi">Materi</button>
-    <button class="view-tab" data-view="quiz">Quiz AI</button>
+  <!-- TAB 1: BERANDA -->
+  <div id="berandaView" class="view-container">
+    <div class="beranda-hero-card">
+      <div class="beranda-greeting">Halo, <span id="berandaUsername">Sobat</span>! 👋</div>
+      <div class="beranda-subtext">Selamat datang di Agenda. Semua jadwal perkuliahan, modul materi, dan kuis latihan tersusun rapi dalam satu tempat.</div>
+      <div class="beranda-date-pill">
+        <span>📅</span>
+        <span id="berandaDateLabel">Hari ini</span>
+      </div>
+    </div>
+
+    <div class="beranda-section-title">
+      <span>Akses Cepat</span>
+      <span style="font-size:12px; font-weight:500; color:var(--ink-soft)">Pilih modul</span>
+    </div>
+
+    <div class="beranda-grid">
+      <button type="button" class="shortcut-card" onclick="switchView('schedule')">
+        <div class="shortcut-icon schedule-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </div>
+        <div class="shortcut-content">
+          <span class="shortcut-title">Schedule</span>
+          <span class="shortcut-desc">Jadwal matkul, tutor & timeline harian</span>
+        </div>
+      </button>
+
+      <button type="button" class="shortcut-card" onclick="switchView('course')">
+        <div class="shortcut-icon course-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+        </div>
+        <div class="shortcut-content">
+          <span class="shortcut-title">Course</span>
+          <span class="shortcut-desc">Materi kuliah, modul PDF & tugas</span>
+        </div>
+      </button>
+
+      <button type="button" class="shortcut-card" onclick="switchView('quiz')">
+        <div class="shortcut-icon quiz-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+          </svg>
+        </div>
+        <div class="shortcut-content">
+          <span class="shortcut-title">Quiz AI</span>
+          <span class="shortcut-desc">Latihan soal otomatis dari materimu</span>
+        </div>
+      </button>
+
+      <button type="button" class="shortcut-card" onclick="switchView('social')">
+        <div class="shortcut-icon social-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <div class="shortcut-content">
+          <span class="shortcut-title">Social</span>
+          <span class="shortcut-desc">Komunitas belajar & diskusi sesama</span>
+        </div>
+      </button>
+    </div>
+
+    <div class="beranda-banner">
+      <div class="banner-icon">✨</div>
+      <div class="banner-text">
+        <strong>Dashboard Beranda Segera Hadir</strong>
+        Widget ringkasan agenda hari ini, grafik absensi, dan reminder tugas terdekat sedang dirancang untuk kamu!
+      </div>
+    </div>
   </div>
 
-  <div id="jadwalView">
+  <!-- TAB 2: SCHEDULE (JADWAL) -->
+  <div id="jadwalView" class="view-container" style="display:none">
     <div class="day-tabs" id="dayTabs"></div>
     <div id="listArea"><div class="loading">Memuat…</div></div>
   </div>
 
-  <div id="materiView" style="display:none">
+  <!-- TAB 3: COURSE (MATERI) -->
+  <div id="materiView" class="view-container" style="display:none">
     <div id="materiListArea"><div class="loading">Memuat…</div></div>
   </div>
 
-  <div id="quizView" style="display:none">
+  <!-- TAB 4: QUIZ -->
+  <div id="quizView" class="view-container" style="display:none">
     <div class="quiz-hero">
       <div class="quiz-hero-icon">🧠</div>
       <div class="quiz-hero-title">Latihan Soal AI</div>
       <div class="quiz-hero-sub">Pilih mata kuliah untuk membuat kuis otomatis berdasarkan isi dokumen materi & tugas yang kamu upload.</div>
     </div>
     <div id="quizListArea"><div class="loading">Memuat…</div></div>
+  </div>
+
+  <!-- TAB 5: SOCIAL -->
+  <div id="socialView" class="view-container" style="display:none">
+    <div class="social-hero-card">
+      <div class="social-hero-icon">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <h2 class="social-hero-title">Social & Komunitas Belajar</h2>
+      <p class="social-hero-sub">Ruang interaksi dan kolaborasi belajar sesama teman kuliah akan segera hadir di sini.</p>
+      <span class="social-badge-soon">🚀 Segera Hadir</span>
+    </div>
+
+    <div class="social-feature-cards">
+      <div class="social-feature-item">
+        <div class="social-feature-emoji">💬</div>
+        <div class="social-feature-detail">
+          <h4>Forum Tanya Jawab Mata Kuliah</h4>
+          <p>Diskusikan materi yang sulit dipahami dan tanyakan langsung ke rekan satu kelas atau tutor.</p>
+        </div>
+      </div>
+
+      <div class="social-feature-item">
+        <div class="social-feature-emoji">📚</div>
+        <div class="social-feature-detail">
+          <h4>Berbagi Catatan & Rangkuman</h4>
+          <p>Bagikan catatan kuliah tulisan tangan atau rangkuman digitalmu untuk saling membantu saat ujian.</p>
+        </div>
+      </div>
+
+      <div class="social-feature-item">
+        <div class="social-feature-emoji">🔥</div>
+        <div class="social-feature-detail">
+          <h4>Study Group & Streak</h4>
+          <p>Bangun kebiasaan belajar teratur bareng circle belajarmu dengan leaderboard mingguan.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -3859,21 +4753,153 @@ document.getElementById('materiUploadSaveBtn').onclick = async () => {
   }
 };
 
-/* ---------- Tab "Jadwal" / "Materi" ---------- */
-document.querySelectorAll('.view-tab').forEach(tab => {
-  tab.onclick = () => switchView(tab.dataset.view);
+/* ==========================================================
+   MODERN DRAWER NAVIGATION & VIEW SWITCHER
+   ========================================================== */
+const appDrawer = document.getElementById('appDrawer');
+const drawerBackdrop = document.getElementById('drawerBackdrop');
+const openDrawerBtn = document.getElementById('openDrawerBtn');
+const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+const headerAvatarBtn = document.getElementById('headerAvatarBtn');
+
+function openDrawer(){
+  if (!appDrawer || !drawerBackdrop) return;
+  appDrawer.classList.add('open');
+  drawerBackdrop.classList.add('open');
+  appDrawer.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer(){
+  if (!appDrawer || !drawerBackdrop) return;
+  appDrawer.classList.remove('open');
+  drawerBackdrop.classList.remove('open');
+  appDrawer.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+if (openDrawerBtn) openDrawerBtn.onclick = openDrawer;
+if (closeDrawerBtn) closeDrawerBtn.onclick = closeDrawer;
+if (headerAvatarBtn) headerAvatarBtn.onclick = openDrawer;
+if (drawerBackdrop) drawerBackdrop.onclick = closeDrawer;
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && appDrawer && appDrawer.classList.contains('open')) {
+    closeDrawer();
+  }
 });
 
+// Navigasi item di dalam drawer
+document.querySelectorAll('.drawer-nav-item').forEach(btn => {
+  btn.onclick = () => {
+    switchView(btn.dataset.view);
+    closeDrawer();
+  };
+});
+
+// Drawer footer actions
+const drawerApiKeyBtn = document.getElementById('drawerApiKeyBtn');
+if (drawerApiKeyBtn) {
+  drawerApiKeyBtn.onclick = () => {
+    closeDrawer();
+    const apiKeyBtn = document.getElementById('apiKeyBtn');
+    if (apiKeyBtn) apiKeyBtn.click();
+  };
+}
+
+const drawerGroqBtn = document.getElementById('drawerGroqBtn');
+if (drawerGroqBtn) {
+  drawerGroqBtn.onclick = () => {
+    closeDrawer();
+    if (typeof groqBtn !== 'undefined' && groqBtn.onclick) {
+      groqBtn.onclick();
+    } else {
+      const current = getGroqKey();
+      const input = window.prompt(
+        'Masukkan Groq API key kamu (gratis, bikin di console.groq.com/keys). Disimpan hanya di browser ini:',
+        current
+      );
+      if (input !== null) setGroqKey(input.trim());
+    }
+  };
+}
+
+const drawerLogoutBtn = document.getElementById('drawerLogoutBtn');
+if (drawerLogoutBtn) {
+  drawerLogoutBtn.onclick = () => {
+    closeDrawer();
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) logoutBtn.click();
+  };
+}
+
 function switchView(view){
-  document.querySelectorAll('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
-  document.getElementById('jadwalView').style.display = view === 'jadwal' ? '' : 'none';
-  document.getElementById('materiView').style.display = view === 'materi' ? '' : 'none';
-  const quizView = document.getElementById('quizView');
-  if (quizView) quizView.style.display = view === 'quiz' ? '' : 'none';
-  document.getElementById('openAiBtn').style.display   = view === 'jadwal' ? '' : 'none';
-  document.getElementById('openAddBtn').style.display  = view === 'jadwal' ? '' : 'none';
-  if (view === 'materi') renderMateriList();
-  if (view === 'quiz') renderQuizList();
+  // Normalisasi nama view untuk backward compatibility
+  let normalized = view;
+  if (view === 'jadwal') normalized = 'schedule';
+  if (view === 'materi') normalized = 'course';
+
+  // Update item aktif di drawer
+  document.querySelectorAll('.drawer-nav-item').forEach(t => {
+    t.classList.toggle('active', t.dataset.view === normalized);
+  });
+
+  // Tampilkan container view yang sesuai
+  const berandaView = document.getElementById('berandaView');
+  const jadwalView  = document.getElementById('jadwalView');
+  const materiView  = document.getElementById('materiView');
+  const quizView    = document.getElementById('quizView');
+  const socialView  = document.getElementById('socialView');
+
+  if (berandaView) berandaView.style.display = normalized === 'beranda' ? '' : 'none';
+  if (jadwalView)  jadwalView.style.display  = normalized === 'schedule' ? '' : 'none';
+  if (materiView)  materiView.style.display  = normalized === 'course' ? '' : 'none';
+  if (quizView)    quizView.style.display    = normalized === 'quiz' ? '' : 'none';
+  if (socialView)  socialView.style.display  = normalized === 'social' ? '' : 'none';
+
+  // FAB tombol tambah hanya tampil di tab Schedule
+  const openAiBtn = document.getElementById('openAiBtn');
+  const openAddBtn = document.getElementById('openAddBtn');
+  if (openAiBtn) openAiBtn.style.display = normalized === 'schedule' ? '' : 'none';
+  if (openAddBtn) openAddBtn.style.display = normalized === 'schedule' ? '' : 'none';
+
+  // Update Judul & Subtitle Header
+  const titleEl = document.getElementById('pageTitle');
+  const subEl = document.getElementById('pageSubtitle');
+  if (titleEl && subEl){
+    switch (normalized) {
+      case 'beranda':
+        titleEl.textContent = 'Beranda';
+        subEl.textContent = 'Ringkasan & Aktivitas';
+        break;
+      case 'schedule':
+        titleEl.textContent = 'Schedule';
+        subEl.textContent = 'Jadwal & Agenda Kuliah';
+        break;
+      case 'course':
+        titleEl.textContent = 'Course';
+        subEl.textContent = 'Materi & Modul Kuliah';
+        break;
+      case 'quiz':
+        titleEl.textContent = 'Quiz AI';
+        subEl.textContent = 'Latihan Soal Cerdas';
+        break;
+      case 'social':
+        titleEl.textContent = 'Social';
+        subEl.textContent = 'Komunitas & Diskusi';
+        break;
+      default:
+        titleEl.textContent = 'Agenda';
+        subEl.textContent = 'Agenda & Belajar';
+    }
+  }
+
+  // Trigger render spesifik
+  if (normalized === 'course') renderMateriList();
+  if (normalized === 'quiz') renderQuizList();
+  if (normalized === 'schedule') {
+    if (typeof renderHariIni === 'function') renderHariIni();
+  }
 }
 
 
@@ -3951,13 +4977,33 @@ function tampilkanAuthScreen(){
   document.getElementById('appWrap').style.display = 'none';
   document.getElementById('openAiBtn').style.display = 'none';
   document.getElementById('openAddBtn').style.display = 'none';
+  closeDrawer();
 }
 
 function tampilkanApp(){
   authScreen.style.display = 'none';
   document.getElementById('appWrap').style.display = '';
-  document.getElementById('usernameLabel').textContent = getUsername();
-  switchView('jadwal');
+  const uname = getUsername() || 'Pengguna';
+  document.getElementById('usernameLabel').textContent = uname;
+  const initial = uname.charAt(0).toUpperCase();
+  const drawerUnameEl = document.getElementById('drawerUsername');
+  if (drawerUnameEl) drawerUnameEl.textContent = uname;
+  const headerAvatarEl = document.getElementById('headerAvatar');
+  if (headerAvatarEl) headerAvatarEl.textContent = initial;
+  const drawerAvatarEl = document.getElementById('drawerAvatar');
+  if (drawerAvatarEl) drawerAvatarEl.textContent = initial;
+  const berandaUnameEl = document.getElementById('berandaUsername');
+  if (berandaUnameEl) berandaUnameEl.textContent = uname;
+  const berandaDateEl = document.getElementById('berandaDateLabel');
+  if (berandaDateEl) {
+    try {
+      berandaDateEl.textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    } catch(e) {
+      berandaDateEl.textContent = DAY_NAMES[getTodayIndex()];
+    }
+  }
+
+  switchView('beranda');
   loadItems();
 }
 
