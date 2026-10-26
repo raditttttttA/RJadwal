@@ -7,13 +7,13 @@
 
 <!-- ====== Supaya bisa "Add to Home Screen" di iPhone dan tampil kayak app ====== -->
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Agenda">
 <link rel="apple-touch-icon" href="icon-180.png">
 
 <!-- Manifest, biar juga rapi kalau suatu saat dibuka/di-install dari Android/Chrome -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1C2A20">
+<meta name="theme-color" content="#ECEFE1">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -87,7 +87,10 @@ body{
 .wrap{
   max-width: 520px;
   margin: 0 auto;
-  padding: 32px 18px 110px; /* padding bawah = ruang buat tombol tambah */
+  padding-top: max(56px, calc(env(safe-area-inset-top, 0px) + 24px));
+  padding-left: max(18px, env(safe-area-inset-left, 0px));
+  padding-right: max(18px, env(safe-area-inset-right, 0px));
+  padding-bottom: max(110px, calc(env(safe-area-inset-bottom, 0px) + 90px));
 }
 
 header{
@@ -409,7 +412,7 @@ h1{
 .fab{
   position: fixed;
   left: 50%;
-  bottom: 24px;
+  bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 16px));
   transform: translateX(-50%);
   width: min(484px, calc(100% - 36px));
   padding: 16px 0;
@@ -580,7 +583,7 @@ h1{
    ========================================================== */
 .fab-ai{
   background: var(--tutor);
-  bottom: 78px;
+  bottom: max(78px, calc(env(safe-area-inset-bottom, 0px) + 70px));
 }
 .fab-manual{ }
 
@@ -2280,13 +2283,13 @@ span.flatpickr-weekday{
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   z-index: 1200;
+  display: none;
   opacity: 0;
-  visibility: hidden;
-  transition: opacity .25s var(--ease), visibility .25s var(--ease);
+  transition: opacity .25s var(--ease);
 }
 .drawer-backdrop.open {
+  display: block;
   opacity: 1;
-  visibility: visible;
 }
 
 /* DRAWER ASIDE PANEL */
@@ -2312,7 +2315,7 @@ span.flatpickr-weekday{
 }
 
 .drawer-header {
-  padding: 22px 20px 16px;
+  padding: max(22px, calc(env(safe-area-inset-top, 0px) + 16px)) 20px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
