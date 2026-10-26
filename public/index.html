@@ -2803,7 +2803,392 @@ span.flatpickr-weekday{
   margin: 0;
   font-size: 12px;
   color: var(--ink-soft);
-  line-height: 1.45;
+/* ==========================================================
+   CAMPUS INFO HUB (BEASISWA, LOMBA & EVENT)
+   ========================================================== */
+.info-section {
+  margin-top: 26px;
+  margin-bottom: 24px;
+}
+.info-section-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 10px;
+}
+.info-main-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-tambah-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .16s var(--ease);
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+.btn-tambah-info:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+/* Category Filter Tabs */
+.info-cat-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 2px 2px 10px;
+  margin-bottom: 14px;
+  scrollbar-width: none;
+}
+.info-cat-tabs::-webkit-scrollbar { display: none; }
+.info-cat-btn {
+  flex: 0 0 auto;
+  padding: 7px 15px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .16s var(--ease);
+  white-space: nowrap;
+}
+.info-cat-btn:hover {
+  background: var(--paper-raised);
+  color: var(--ink);
+}
+.info-cat-btn.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(184, 90, 37, 0.28);
+}
+
+/* Horizontal Category Row (when "Semua" is active) */
+.info-lane {
+  margin-bottom: 22px;
+}
+.info-lane-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.info-lane-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.info-lane-link {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  transition: opacity .14s var(--ease);
+}
+.info-lane-link:hover {
+  text-decoration: underline;
+}
+
+.info-lane-track {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 4px 12px;
+  margin: 0 -4px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.info-lane-track::-webkit-scrollbar { display: none; }
+
+/* Horizontal Card */
+.info-card-h {
+  flex: 0 0 250px;
+  scroll-snap-align: start;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all .18s var(--ease);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+.info-card-h:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
+}
+.info-card-h:active {
+  transform: scale(0.98);
+}
+
+.card-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 9px;
+}
+.card-cat-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+.badge-beasiswa { background: #E2F5EA; color: #156637; }
+.badge-lomba    { background: #F3E8FF; color: #6932A2; }
+.badge-event    { background: #FFF4E5; color: #B35B00; }
+
+.card-deadline-pill {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.card-deadline-pill.urgent {
+  color: #B91C1C;
+  font-weight: 700;
+}
+
+.info-card-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.35;
+  margin-bottom: 5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.info-card-org {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.info-card-desc-snippet {
+  font-size: 12px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.info-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--paper-raised);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* Vertical Feed List (when category selected) */
+.info-vertical-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeIn .2s var(--ease);
+}
+.info-card-v {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: all .16s var(--ease);
+  box-shadow: var(--shadow-sm);
+}
+.info-card-v:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
+}
+.info-card-v:active {
+  transform: scale(0.99);
+}
+
+/* Detail Popup Sheet Styling */
+.info-detail-body {
+  padding: 4px 0 16px;
+}
+.info-detail-header-badge {
+  display: inline-flex;
+  margin-bottom: 10px;
+}
+.info-detail-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+.info-detail-org {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+.info-detail-highlight-box {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.highlight-item {
+  display: flex;
+  flex-direction: column;
+}
+.highlight-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.highlight-value {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.info-detail-desc {
+  font-size: 13.5px;
+  color: var(--ink);
+  line-height: 1.6;
+  white-space: pre-line;
+  margin-bottom: 24px;
+}
+.info-detail-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.btn-open-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all .14s var(--ease);
+}
+.btn-open-link:hover {
+  background: var(--primary-dark);
+}
+.btn-save-schedule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  background: var(--card);
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .14s var(--ease);
+}
+.btn-save-schedule:hover {
+  background: var(--paper-raised);
+}
+.btn-delete-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--danger);
+  border: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px;
+  margin-top: 4px;
+}
+.btn-delete-info:hover {
+  text-decoration: underline;
+}
+
+/* Category Pill Radio in Add Modal */
+.info-type-picker {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.info-type-choice {
+  flex: 1;
+  padding: 10px 8px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-align: center;
+  transition: all .16s var(--ease);
+}
+.info-type-choice.active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  box-shadow: var(--shadow-sm);
 }
 
 </style>
@@ -3065,11 +3450,29 @@ span.flatpickr-weekday{
       </button>
     </div>
 
-    <div class="beranda-banner">
-      <div class="banner-icon">✨</div>
-      <div class="banner-text">
-        <strong>Dashboard Beranda Segera Hadir</strong>
-        Widget ringkasan agenda hari ini, grafik absensi, dan reminder tugas terdekat sedang dirancang untuk kamu!
+    <!-- SECTION INFORMASI KAMPUS (BEASISWA, LOMBA & EVENT) -->
+    <div class="info-section">
+      <div class="info-section-top">
+        <div class="info-main-title">
+          <span>📢</span>
+          <span>Info Kampus</span>
+        </div>
+        <button type="button" class="btn-tambah-info" id="openAddInfoBtn">
+          <span>+ Tambah Info</span>
+        </button>
+      </div>
+
+      <!-- Filter Kategori Tabs -->
+      <div class="info-cat-tabs" id="infoCatTabs">
+        <button type="button" class="info-cat-btn active" data-cat="all">Semua</button>
+        <button type="button" class="info-cat-btn" data-cat="beasiswa">🎓 Beasiswa</button>
+        <button type="button" class="info-cat-btn" data-cat="lomba">🏆 Lomba</button>
+        <button type="button" class="info-cat-btn" data-cat="event">🎪 Event</button>
+      </div>
+
+      <!-- Feed Container (Horizontal lanes saat 'all', Vertical list saat filter kategori) -->
+      <div id="infoFeedContainer">
+        <div class="loading">Memuat info kampus…</div>
       </div>
     </div>
   </div>
@@ -3477,6 +3880,65 @@ span.flatpickr-weekday{
     <div class="sheet-actions">
       <button type="button" class="btn-batal" id="materiViewerCloseBtn">Tutup</button>
     </div>
+  </div>
+</div>
+
+<!-- Sheet: Detail Info Kampus (Beasiswa/Lomba/Event) -->
+<div class="sheet-backdrop" id="infoDetailBackdrop">
+  <div class="sheet">
+    <div class="info-detail-body" id="infoDetailContent">
+      <!-- Diisi secara dinamis oleh JavaScript -->
+    </div>
+    <div class="sheet-actions">
+      <button type="button" class="btn-batal" id="infoDetailCloseBtn">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: Tambah Info Kampus Baru -->
+<div class="sheet-backdrop" id="infoAddBackdrop">
+  <div class="sheet">
+    <h2>Tambah Info Kampus</h2>
+    <form id="infoAddForm">
+      <div class="field">
+        <label>Kategori</label>
+        <div class="info-type-picker" id="addInfoTypePicker">
+          <button type="button" class="info-type-choice active" data-type="beasiswa">🎓 Beasiswa</button>
+          <button type="button" class="info-type-choice" data-type="lomba">🏆 Lomba</button>
+          <button type="button" class="info-type-choice" data-type="event">🎪 Event</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Nama Kegiatan / Judul</label>
+        <input type="text" id="infoAddTitle" placeholder="mis. Beasiswa Unggulan, Gemastik UX" required>
+      </div>
+
+      <div class="field">
+        <label>Penyelenggara</label>
+        <input type="text" id="infoAddOrganizer" placeholder="mis. Kemendikbud, Bank Indonesia, Google DSC">
+      </div>
+
+      <div class="field">
+        <label>Batas Waktu / Tanggal Acara</label>
+        <input type="text" id="infoAddDeadline" placeholder="Pilih tanggal deadline" required>
+      </div>
+
+      <div class="field">
+        <label>Deskripsi & Persyaratan Singkat</label>
+        <textarea id="infoAddDesc" rows="3" placeholder="Tuliskan benefit, syarat semester, atau rincian kegiatan..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Link Website / Pendaftaran</label>
+        <input type="url" id="infoAddLink" placeholder="https://contoh.com/daftar">
+      </div>
+
+      <div class="sheet-actions">
+        <button type="button" class="btn-batal" id="infoAddCancelBtn">Batal</button>
+        <button type="submit" class="btn-simpan" id="infoAddSubmitBtn">Simpan Info</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -4898,6 +5360,9 @@ function switchView(view){
   }
 
   // Trigger render spesifik
+  if (normalized === 'beranda') {
+    if (typeof renderBerandaInfo === 'function') renderBerandaInfo(activeInfoCategory);
+  }
   if (normalized === 'course') renderMateriList();
   if (normalized === 'quiz') renderQuizList();
   if (normalized === 'schedule') {
@@ -5008,6 +5473,7 @@ function tampilkanApp(){
 
   switchView('beranda');
   loadItems();
+  loadCampusInfo();
 }
 
 // cek status login pas halaman dibuka
@@ -5753,6 +6219,422 @@ document.getElementById('quizDisplayCloseBtn').onclick = () => {
   document.getElementById('quizDisplayBackdrop').classList.remove('open');
   renderQuizList();
 };
+
+
+/* ==========================================================
+   17. FITUR INFORMASI KAMPUS (BERANDA)
+   ========================================================== */
+let campusInfoList = [];
+let activeInfoCategory = 'all'; // 'all' | 'beasiswa' | 'lomba' | 'event'
+let currentViewingInfo = null;
+let newInfoCategory = 'beasiswa';
+
+const infoFeedContainer  = document.getElementById('infoFeedContainer');
+const infoDetailBackdrop = document.getElementById('infoDetailBackdrop');
+const infoDetailContent  = document.getElementById('infoDetailContent');
+const infoAddBackdrop    = document.getElementById('infoAddBackdrop');
+const infoAddForm        = document.getElementById('infoAddForm');
+const openAddInfoBtn     = document.getElementById('openAddInfoBtn');
+
+async function loadCampusInfo(){
+  try {
+    const res = await apiFetch('/api/info');
+    campusInfoList = Array.isArray(res) ? res : [];
+    renderBerandaInfo(activeInfoCategory);
+  } catch (err){
+    console.error('Gagal memuat info kampus:', err);
+    if (infoFeedContainer) {
+      infoFeedContainer.innerHTML = `
+        <div class="empty">
+          <div class="big">Belum dapat memuat info</div>
+          Pastikan koneksi internet stabil.
+        </div>`;
+    }
+  }
+}
+
+// Menghitung status deadline dan sisa hari
+function getDeadlineStatus(dateStr){
+  if (!dateStr) return { text: 'Terbuka', urgent: false };
+  const target = new Date(dateStr + 'T23:59:59');
+  if (isNaN(target.getTime())) return { text: dateStr, urgent: false };
+  
+  const now = new Date();
+  const diffTime = target.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays < 0) {
+    return { text: 'Sudah Ditutup', urgent: true, isClosed: true };
+  } else if (diffDays === 0) {
+    return { text: 'Hari Terakhir!', urgent: true, isClosed: false };
+  } else if (diffDays === 1) {
+    return { text: 'Besok Terakhir!', urgent: true, isClosed: false };
+  } else if (diffDays <= 4) {
+    return { text: `Sisa ${diffDays} hari!`, urgent: true, isClosed: false };
+  } else if (diffDays <= 14) {
+    return { text: `Sisa ${diffDays} hari`, urgent: false, isClosed: false };
+  } else {
+    const formatted = target.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    return { text: `Batas: ${formatted}`, urgent: false, isClosed: false };
+  }
+}
+
+function getCategoryLabel(cat){
+  switch (cat) {
+    case 'beasiswa': return '🎓 Beasiswa';
+    case 'lomba':    return '🏆 Lomba';
+    case 'event':    return '🎪 Event';
+    default:         return '📢 Info';
+  }
+}
+
+function getCategoryBadgeClass(cat){
+  switch (cat) {
+    case 'beasiswa': return 'badge-beasiswa';
+    case 'lomba':    return 'badge-lomba';
+    case 'event':    return 'badge-event';
+    default:         return 'badge-beasiswa';
+  }
+}
+
+function switchInfoCategory(cat){
+  activeInfoCategory = cat;
+  document.querySelectorAll('.info-cat-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.cat === cat);
+  });
+  renderBerandaInfo(cat);
+}
+
+// Filter Tab Click Listeners
+document.querySelectorAll('.info-cat-btn').forEach(btn => {
+  btn.onclick = () => {
+    switchInfoCategory(btn.dataset.cat);
+  };
+});
+
+// Render Feed di Beranda
+function renderBerandaInfo(cat = 'all'){
+  if (!infoFeedContainer) return;
+
+  if (campusInfoList.length === 0){
+    infoFeedContainer.innerHTML = `
+      <div class="empty">
+        <div class="big">Belum ada info kampus</div>
+        Klik tombol "+ Tambah Info" di atas untuk menambahkan informasi beasiswa, lomba, atau kegiatan pertama.
+      </div>`;
+    return;
+  }
+
+  // JIKA PILIH "SEMUA" -> TAMPILKAN 3 BARIS HORIZONTAL SCROLL
+  if (cat === 'all'){
+    const beasiswaItems = campusInfoList.filter(i => i.category === 'beasiswa');
+    const lombaItems    = campusInfoList.filter(i => i.category === 'lomba');
+    const eventItems    = campusInfoList.filter(i => i.category === 'event');
+
+    let html = '';
+
+    // Lane 1: Beasiswa
+    if (beasiswaItems.length > 0){
+      html += `
+        <div class="info-lane">
+          <div class="info-lane-header">
+            <span class="info-lane-title">🎓 Beasiswa Terbaru</span>
+            <button type="button" class="info-lane-link" onclick="switchInfoCategory('beasiswa')">Lihat Semua ›</button>
+          </div>
+          <div class="info-lane-track">
+            ${beasiswaItems.map(item => renderHorizontalCardHtml(item)).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // Lane 2: Lomba
+    if (lombaItems.length > 0){
+      html += `
+        <div class="info-lane">
+          <div class="info-lane-header">
+            <span class="info-lane-title">🏆 Lomba & Kompetisi</span>
+            <button type="button" class="info-lane-link" onclick="switchInfoCategory('lomba')">Lihat Semua ›</button>
+          </div>
+          <div class="info-lane-track">
+            ${lombaItems.map(item => renderHorizontalCardHtml(item)).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // Lane 3: Event
+    if (eventItems.length > 0){
+      html += `
+        <div class="info-lane">
+          <div class="info-lane-header">
+            <span class="info-lane-title">🎪 Event & Seminar Kampus</span>
+            <button type="button" class="info-lane-link" onclick="switchInfoCategory('event')">Lihat Semua ›</button>
+          </div>
+          <div class="info-lane-track">
+            ${eventItems.map(item => renderHorizontalCardHtml(item)).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    infoFeedContainer.innerHTML = html;
+
+  } else {
+    // JIKA PILIH KATEGORI SPESIFIK -> TAMPILKAN VERTICAL FEED LIST KE BAWAH
+    const filtered = campusInfoList.filter(i => i.category === cat);
+
+    if (filtered.length === 0){
+      infoFeedContainer.innerHTML = `
+        <div class="empty">
+          <div class="big">Belum ada info untuk ${getCategoryLabel(cat)}</div>
+          Klik tombol "+ Tambah Info" untuk menambahkan info baru.
+        </div>`;
+      return;
+    }
+
+    infoFeedContainer.innerHTML = `
+      <div class="info-vertical-list">
+        ${filtered.map(item => renderVerticalCardHtml(item)).join('')}
+      </div>
+    `;
+  }
+
+  // Pasang event klik pada semua kartu info untuk buka sheet detail
+  infoFeedContainer.querySelectorAll('[data-info-id]').forEach(card => {
+    const id = card.dataset.infoId;
+    const item = campusInfoList.find(i => i.id === id);
+    if (item){
+      card.onclick = () => openInfoDetail(item);
+    }
+  });
+}
+
+function renderHorizontalCardHtml(item){
+  const deadline = getDeadlineStatus(item.deadlineDate);
+  const badgeClass = getCategoryBadgeClass(item.category);
+  const catLabel = getCategoryLabel(item.category);
+
+  return `
+    <div class="info-card-h" data-info-id="${escapeHtml(item.id)}">
+      <div>
+        <div class="card-badge-row">
+          <span class="card-cat-badge ${badgeClass}">${catLabel}</span>
+          <span class="card-deadline-pill ${deadline.urgent ? 'urgent' : ''}">⏳ ${escapeHtml(deadline.text)}</span>
+        </div>
+        <div class="info-card-title">${escapeHtml(item.title)}</div>
+        <div class="info-card-org">${escapeHtml(item.organizer || 'Kampus / Umum')}</div>
+        <div class="info-card-desc-snippet">${escapeHtml(item.description || '')}</div>
+      </div>
+      <div class="info-card-footer">
+        <span>Lihat Detail</span>
+        <span>›</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderVerticalCardHtml(item){
+  const deadline = getDeadlineStatus(item.deadlineDate);
+  const badgeClass = getCategoryBadgeClass(item.category);
+  const catLabel = getCategoryLabel(item.category);
+
+  return `
+    <div class="info-card-v" data-info-id="${escapeHtml(item.id)}">
+      <div class="card-badge-row">
+        <span class="card-cat-badge ${badgeClass}">${catLabel}</span>
+        <span class="card-deadline-pill ${deadline.urgent ? 'urgent' : ''}">⏳ ${escapeHtml(deadline.text)}</span>
+      </div>
+      <div class="info-card-title" style="-webkit-line-clamp:unset; font-size:16px;">${escapeHtml(item.title)}</div>
+      <div class="info-card-org" style="margin-bottom:8px;">Penyelenggara: <strong>${escapeHtml(item.organizer || 'Umum')}</strong></div>
+      <div class="info-card-desc-snippet" style="-webkit-line-clamp:3; margin-bottom:12px;">${escapeHtml(item.description || '')}</div>
+      <div class="info-card-footer">
+        <span>Buka Rincian & Pendaftaran</span>
+        <span>→</span>
+      </div>
+    </div>
+  `;
+}
+
+// Buka Bottom Sheet Detail Info
+function openInfoDetail(item){
+  currentViewingInfo = item;
+  const deadline = getDeadlineStatus(item.deadlineDate);
+  const badgeClass = getCategoryBadgeClass(item.category);
+  const catLabel = getCategoryLabel(item.category);
+
+  let deadlineDisplay = 'Tidak ditentukan';
+  if (item.deadlineDate){
+    try {
+      const d = new Date(item.deadlineDate + 'T00:00:00');
+      deadlineDisplay = d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    } catch(e){
+      deadlineDisplay = item.deadlineDate;
+    }
+  }
+
+  infoDetailContent.innerHTML = `
+    <div class="info-detail-header-badge">
+      <span class="card-cat-badge ${badgeClass}">${catLabel}</span>
+    </div>
+    <h2 class="info-detail-title">${escapeHtml(item.title)}</h2>
+    <div class="info-detail-org">Oleh: <strong>${escapeHtml(item.organizer || 'Umum')}</strong></div>
+
+    <div class="info-detail-highlight-box">
+      <div class="highlight-item">
+        <span class="highlight-label">Batas Pendaftaran / Acara</span>
+        <span class="highlight-value">${escapeHtml(deadlineDisplay)}</span>
+      </div>
+      <div class="highlight-item" style="text-align:right;">
+        <span class="highlight-label">Status Waktu</span>
+        <span class="highlight-value" style="${deadline.urgent ? 'color:#B91C1C;' : ''}">${escapeHtml(deadline.text)}</span>
+      </div>
+    </div>
+
+    <div class="info-detail-desc">${escapeHtml(item.description || 'Tidak ada deskripsi tambahan.')}</div>
+
+    <div class="info-detail-actions">
+      ${item.linkUrl ? `
+        <a href="${escapeHtml(item.linkUrl)}" target="_blank" rel="noopener noreferrer" class="btn-open-link">
+          <span>🔗 Buka Link Pendaftaran Resmi</span>
+        </a>
+      ` : ''}
+
+      <button type="button" class="btn-save-schedule" id="btnSaveInfoToSchedule">
+        <span>📌 Masukkan ke Jadwal Agenda</span>
+      </button>
+
+      <button type="button" class="btn-delete-info" id="btnDeleteCurrentInfo">
+        <span>🗑️ Hapus Info Ini</span>
+      </button>
+    </div>
+  `;
+
+  // Listener simpan ke tab schedule
+  document.getElementById('btnSaveInfoToSchedule').onclick = () => saveInfoToSchedule(item);
+
+  // Listener hapus info
+  document.getElementById('btnDeleteCurrentInfo').onclick = () => deleteCampusInfo(item.id);
+
+  infoDetailBackdrop.classList.add('open');
+}
+
+// Simpan event/deadline info langsung ke jadwal kegiatan
+async function saveInfoToSchedule(item){
+  try {
+    const dayIndex = getTodayIndex();
+    await apiFetch('/api/items', {
+      method: 'POST',
+      body: JSON.stringify({
+        title: `[${item.category.toUpperCase()}] ${item.title}`,
+        time: '09:00',
+        endTime: '10:00',
+        note: `Penyelenggara: ${item.organizer || '-'} | Link: ${item.linkUrl || '-'}`,
+        tipe: 'lain',
+        days: [dayIndex]
+      })
+    });
+    alert(`Berhasil! "${item.title}" telah ditambahkan ke agenda kegiatanmu.`);
+    infoDetailBackdrop.classList.remove('open');
+    loadItems();
+  } catch(err){
+    console.error(err);
+    alert('Gagal menambahkan ke jadwal.');
+  }
+}
+
+// Hapus info kampus
+async function deleteCampusInfo(id){
+  if (!confirm('Yakin ingin menghapus informasi ini dari Beranda?')) return;
+  try {
+    await apiFetch('/api/info/' + id, { method: 'DELETE' });
+    campusInfoList = campusInfoList.filter(i => i.id !== id);
+    infoDetailBackdrop.classList.remove('open');
+    renderBerandaInfo(activeInfoCategory);
+  } catch (err){
+    console.error(err);
+    alert('Gagal menghapus informasi.');
+  }
+}
+
+// Close listeners detail sheet
+document.getElementById('infoDetailCloseBtn').onclick = () => infoDetailBackdrop.classList.remove('open');
+infoDetailBackdrop.onclick = (e) => {
+  if (e.target === infoDetailBackdrop) infoDetailBackdrop.classList.remove('open');
+};
+
+// Modal Tambah Info Baru
+if (openAddInfoBtn){
+  openAddInfoBtn.onclick = () => {
+    infoAddForm.reset();
+    newInfoCategory = 'beasiswa';
+    document.querySelectorAll('#addInfoTypePicker .info-type-choice').forEach(b => {
+      b.classList.toggle('active', b.dataset.type === 'beasiswa');
+    });
+    infoAddBackdrop.classList.add('open');
+
+    // Inisialisasi kalender flatpickr pada input tanggal
+    if (typeof flatpickr !== 'undefined') {
+      flatpickr("#infoAddDeadline", {
+        locale: "id",
+        dateFormat: "Y-m-d",
+        minDate: "today"
+      });
+    }
+  };
+}
+
+// Selector kategori di form tambah
+document.querySelectorAll('#addInfoTypePicker .info-type-choice').forEach(btn => {
+  btn.onclick = () => {
+    newInfoCategory = btn.dataset.type;
+    document.querySelectorAll('#addInfoTypePicker .info-type-choice').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  };
+});
+
+document.getElementById('infoAddCancelBtn').onclick = () => infoAddBackdrop.classList.remove('open');
+infoAddBackdrop.onclick = (e) => {
+  if (e.target === infoAddBackdrop) infoAddBackdrop.classList.remove('open');
+};
+
+// Handle Submit Form Tambah Info
+infoAddForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const submitBtn = document.getElementById('infoAddSubmitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Menyimpan…';
+
+  const title = document.getElementById('infoAddTitle').value.trim();
+  const organizer = document.getElementById('infoAddOrganizer').value.trim();
+  const deadlineDate = document.getElementById('infoAddDeadline').value.trim();
+  const description = document.getElementById('infoAddDesc').value.trim();
+  const linkUrl = document.getElementById('infoAddLink').value.trim();
+
+  try {
+    const newInfo = await apiFetch('/api/info', {
+      method: 'POST',
+      body: JSON.stringify({
+        category: newInfoCategory,
+        title,
+        organizer,
+        deadlineDate,
+        description,
+        linkUrl
+      })
+    });
+
+    campusInfoList.unshift(newInfo);
+    infoAddBackdrop.classList.remove('open');
+    renderBerandaInfo(activeInfoCategory);
+  } catch (err){
+    console.error(err);
+    alert(err.message || 'Gagal menyimpan info baru.');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Simpan Info';
+  }
+});
 
 </script>
 </body>

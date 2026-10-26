@@ -20,6 +20,7 @@ const { initDb } = require('./db');
 const authRoutes = require('./routes/auth');
 const itemsRoutes = require('./routes/items');
 const materiRoutes = require('./routes/materi');
+const infoRoutes = require('./routes/info');
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.use(async (req, res, next) => {
 app.use('/api/auth', authRoutes);     // Endpoint autentikasi (login, register)
 app.use('/api/items', itemsRoutes);   // Endpoint CRUD jadwal kegiatan
 app.use('/api/materi', materiRoutes); // Endpoint materi & tugas
+app.use('/api/info', infoRoutes);     // Endpoint info beasiswa, lomba & event kampus
 
 // =============================================================
 // 4. FRONTEND STATIC ASSETS & SPA ROUTING
