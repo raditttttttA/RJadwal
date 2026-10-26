@@ -43,13 +43,18 @@ if (useLocal) {
   });
 }
 
+let isDbInitialized = false;
+
 /**
  * Inisialisasi skema tabel database:
  * - users: data akun & password hash bcrypt
  * - items: jadwal kuliah/tutor/lainnya
  * - materi: berkas materi dan tugas
+ * - campus_info: beasiswa, lomba, event kampus
  */
 async function initDb() {
+  if (isDbInitialized) return;
+
   await db.executeMultiple(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -81,6 +86,11 @@ async function initDb() {
       file_path TEXT,
       url TEXT,
       uploaded_at TEXT NOT NULL,
+      deadline TEXT,
+      task_desc TEXT,
+      is_completed INTEGER DEFAULT 0,
+      completed_at TEXT,
+      proof_path TEXT,
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
@@ -97,21 +107,29 @@ async function initDb() {
     );
   `);
 
-  // Migrasi aman untuk fitur tugas (jika kolom belum ada di database lama)
-  const tugasColumns = [
-    'deadline TEXT',
-    'task_desc TEXT',
-    'is_completed INTEGER DEFAULT 0',
-    'completed_at TEXT',
-    'proof_path TEXT'
-  ];
+  // Migrasi aman untuk fitur tugas (hanya jalankan jika kolom belum ada di database lama)
+  try {
+    const tableInfo = await db.execute({ sql: 'PRAGMA table_info(materi);', args: [] });
+    const existingCols = new Set(tableInfo.rows.map(r => r.name));
+    const tugasColumns = [
+      { name: 'deadline', def: 'deadline TEXT' },
+      { name: 'task_desc', def: 'task_desc TEXT' },
+      { name: 'is_completed', def: 'is_completed INTEGER DEFAULT 0' },
+      { name: 'completed_at', def: 'completed_at TEXT' },
+      { name: 'proof_path', def: 'proof_path TEXT' }
+    ];
 
-  for (const col of tugasColumns) {
-    try {
-      await db.execute({ sql: `ALTER TABLE materi ADD COLUMN ${col};`, args: [] });
-    } catch (e) {
-      // Abaikan jika kolom sudah ada di database
+    for (const col of tugasColumns) {
+      if (!existingCols.has(col.name)) {
+        try {
+          await db.execute({ sql: `ALTER TABLE materi ADD COLUMN ${col.def};`, args: [] });
+        } catch (e) {
+          // Abaikan jika sudah ada
+        }
+      }
     }
+  } catch (e) {
+    // Abaikan error pragma jika database tidak mendukung
   }
 
   // Seed data awal info beasiswa, lomba & event jika tabel masih kosong
@@ -188,6 +206,8 @@ async function initDb() {
   } catch (e) {
     console.warn('[DB Seed Warning]:', e.message);
   }
+
+  isDbInitialized = true;
 }
 
 module.exports = { db, initDb };

@@ -4012,6 +4012,14 @@ let items = [];                                // semua jadwal, disimpan lokal &
 let selectedDay = getTodayIndex();              // hari yang sedang ditampilkan (0 = Senin)
 let editingId = null;                           // id jadwal yang sedang diedit (null = mode tambah)
 
+// State Fitur Info Kampus (Beranda)
+let campusInfoList = [];
+let activeInfoCategory = 'all';                 // 'all' | 'beasiswa' | 'lomba' | 'event'
+let currentViewingInfo = null;
+let newInfoCategory = 'beasiswa';
+let isCampusInfoLoading = false;
+let campusInfoError = null;
+
 function getTodayIndex(){
   // Date.getDay() = 0 (Minggu) .. 6 (Sabtu) -> digeser jadi 0 (Senin) .. 6 (Minggu)
   return (new Date().getDay() + 6) % 7;
@@ -4044,8 +4052,11 @@ function renderDayTabs(){
    5. RENDER: daftar jadwal untuk hari yang dipilih
    ========================================================== */
 function renderList(){
+  if (!listArea) return;
+  if (!Array.isArray(items)) items = [];
+
   const todaysItems = items
-    .filter(it => it.days.includes(selectedDay))
+    .filter(it => it && Array.isArray(it.days) && it.days.includes(selectedDay))
     .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
 
   const timeline = buildTimeline(todaysItems);
@@ -4128,8 +4139,9 @@ function renderTimelineEvent(item){
    6. HELPER
    ========================================================== */
 function timeToMinutes(t){
+  if (!t || typeof t !== 'string' || !t.includes(':')) return 0;
   const [h, m] = t.split(':').map(Number);
-  return h * 60 + m;
+  return (isNaN(h) ? 0 : h) * 60 + (isNaN(m) ? 0 : m);
 }
 
 function escapeHtml(text){
@@ -4189,10 +4201,20 @@ function closeSheet(){
    ========================================================== */
 async function loadItems(){
   try {
-    items = await apiFetch('/api/items');
+    const res = await apiFetch('/api/items');
+    items = Array.isArray(res) ? res : [];
   } catch (err) {
-    console.error(err);
+    console.error('Gagal memuat jadwal:', err);
     items = [];
+    if (listArea) {
+      listArea.innerHTML = `
+        <div class="empty">
+          <div class="big">Gagal memuat jadwal</div>
+          <p style="margin-bottom:12px; font-size:13px; color:var(--ink-soft);">${escapeHtml(err.message || 'Coba periksa koneksi internet.')}</p>
+          <button type="button" class="btn-refresh-info" onclick="loadItems()" style="padding:8px 16px; border-radius:10px; background:var(--forest); color:#fff; border:none; cursor:pointer; font-weight:600;">🔄 Coba Lagi</button>
+        </div>`;
+      return;
+    }
   }
   renderDayTabs();
   renderList();
@@ -5361,12 +5383,13 @@ function switchView(view){
 
   // Trigger render spesifik
   if (normalized === 'beranda') {
-    if (typeof renderBerandaInfo === 'function') renderBerandaInfo(activeInfoCategory);
+    if (typeof renderBerandaInfo === 'function') renderBerandaInfo(activeInfoCategory || 'all');
   }
   if (normalized === 'course') renderMateriList();
   if (normalized === 'quiz') renderQuizList();
   if (normalized === 'schedule') {
-    if (typeof renderHariIni === 'function') renderHariIni();
+    renderDayTabs();
+    renderList();
   }
 }
 
@@ -5476,12 +5499,7 @@ function tampilkanApp(){
   loadCampusInfo();
 }
 
-// cek status login pas halaman dibuka
-if (getToken()){
-  tampilkanApp();
-} else {
-  tampilkanAuthScreen();
-}
+// (Catatan: Boot awal aplikasi dijalankan di bagian paling akhir skrip setelah semua modul terdefinisi)
 
 /* ==========================================================
    16. FITUR QUIZ (AI-generated dari isi materi & tugas)
@@ -6224,11 +6242,6 @@ document.getElementById('quizDisplayCloseBtn').onclick = () => {
 /* ==========================================================
    17. FITUR INFORMASI KAMPUS (BERANDA)
    ========================================================== */
-let campusInfoList = [];
-let activeInfoCategory = 'all'; // 'all' | 'beasiswa' | 'lomba' | 'event'
-let currentViewingInfo = null;
-let newInfoCategory = 'beasiswa';
-
 const infoFeedContainer  = document.getElementById('infoFeedContainer');
 const infoDetailBackdrop = document.getElementById('infoDetailBackdrop');
 const infoDetailContent  = document.getElementById('infoDetailContent');
@@ -6237,19 +6250,19 @@ const infoAddForm        = document.getElementById('infoAddForm');
 const openAddInfoBtn     = document.getElementById('openAddInfoBtn');
 
 async function loadCampusInfo(){
+  isCampusInfoLoading = true;
+  campusInfoError = null;
+  renderBerandaInfo(activeInfoCategory);
+
   try {
     const res = await apiFetch('/api/info');
     campusInfoList = Array.isArray(res) ? res : [];
-    renderBerandaInfo(activeInfoCategory);
   } catch (err){
     console.error('Gagal memuat info kampus:', err);
-    if (infoFeedContainer) {
-      infoFeedContainer.innerHTML = `
-        <div class="empty">
-          <div class="big">Belum dapat memuat info</div>
-          Pastikan koneksi internet stabil.
-        </div>`;
-    }
+    campusInfoError = err.message || 'Gagal memuat informasi kampus.';
+  } finally {
+    isCampusInfoLoading = false;
+    renderBerandaInfo(activeInfoCategory);
   }
 }
 
@@ -6314,10 +6327,26 @@ document.querySelectorAll('.info-cat-btn').forEach(btn => {
 
 // Render Feed di Beranda
 function renderBerandaInfo(cat = 'all'){
-  if (!infoFeedContainer) return;
+  const container = document.getElementById('infoFeedContainer');
+  if (!container) return;
+
+  if (isCampusInfoLoading) {
+    container.innerHTML = `<div class="loading">Memuat info kampus…</div>`;
+    return;
+  }
+
+  if (campusInfoError) {
+    container.innerHTML = `
+      <div class="empty">
+        <div class="big">Belum dapat memuat info kampus</div>
+        <p style="margin-bottom:12px; font-size:13px; color:var(--ink-soft);">${escapeHtml(campusInfoError)}</p>
+        <button type="button" class="btn-refresh-info" onclick="loadCampusInfo()" style="padding:8px 16px; border-radius:10px; background:var(--forest); color:#fff; border:none; cursor:pointer; font-weight:600;">🔄 Coba Lagi</button>
+      </div>`;
+    return;
+  }
 
   if (campusInfoList.length === 0){
-    infoFeedContainer.innerHTML = `
+    container.innerHTML = `
       <div class="empty">
         <div class="big">Belum ada info kampus</div>
         Klik tombol "+ Tambah Info" di atas untuk menambahkan informasi beasiswa, lomba, atau kegiatan pertama.
@@ -6635,6 +6664,17 @@ infoAddForm.addEventListener('submit', async (e) => {
     submitBtn.textContent = 'Simpan Info';
   }
 });
+
+
+/* ==========================================================
+   18. BOOT AWAL APLIKASI
+   ========================================================== */
+// Cek status autentikasi setelah semua modul dan variabel terdefinisi
+if (getToken()){
+  tampilkanApp();
+} else {
+  tampilkanAuthScreen();
+}
 
 </script>
 </body>

@@ -33,19 +33,38 @@ app.use(express.json());
 // =============================================================
 // 2. DATABASE READINESS GUARD
 // =============================================================
-// Memastikan skema database (CREATE TABLE IF NOT EXISTS) sudah selesai
-// sebelum request pertama diproses. Sangat penting di Vercel (serverless cold start).
-const dbReady = initDb().catch((err) => {
-  console.error('[Database Init Error]: Gagal inisialisasi database:', err);
-  throw err;
-});
+// Memastikan skema database sudah siap sebelum menangani request API.
+// Menggunakan lazy promise yang dapat di-retry jika terjadi network hiccup saat cold start.
+let dbReadyPromise = null;
+
+function ensureDb() {
+  if (!dbReadyPromise) {
+    dbReadyPromise = initDb().catch((err) => {
+      console.error('[Database Init Error]: Gagal inisialisasi database:', err);
+      // Reset promise agar request berikutnya dapat mencoba lagi, bukan terkunci permanen di 503
+      dbReadyPromise = null;
+      throw err;
+    });
+  }
+  return dbReadyPromise;
+}
+
+// Trigger inisialisasi awal di background
+ensureDb().catch(() => {});
 
 app.use(async (req, res, next) => {
+  // Hanya cegat route /api/* agar file statis frontend tetap disajikan lancar
+  if (!req.path.startsWith('/api')) {
+    return next();
+  }
   try {
-    await dbReady;
+    await ensureDb();
     next();
   } catch (err) {
-    res.status(503).json({ error: 'Database belum siap, coba lagi beberapa saat.' });
+    res.status(503).json({
+      error: 'Database belum siap, coba lagi beberapa saat.',
+      details: err.message
+    });
   }
 });
 
@@ -74,7 +93,7 @@ app.get('*', (req, res) => {
 // Jika file ini dijalankan langsung via Node (node server.js), buka port HTTP.
 // Jika diimpor oleh Vercel Serverless Function, export app tanpa app.listen.
 if (require.main === module) {
-  dbReady.then(() => {
+  ensureDb().then(() => {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
       console.log(`🚀 Server berjalan di http://localhost:${PORT}`);
