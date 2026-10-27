@@ -30,6 +30,7 @@ function rowToInfo(row) {
     deadlineDate: row.deadline_date || '',
     description: row.description || '',
     linkUrl: row.link_url || '',
+    imageUrl: row.image_url || '',
     createdAt: row.created_at
   };
 }
@@ -54,11 +55,11 @@ router.get('/', async (req, res) => {
 /**
  * POST /api/info
  * Menambahkan info beasiswa/lomba/event baru.
- * Body: { category, title, organizer, deadlineDate, description, linkUrl }
+ * Body: { category, title, organizer, deadlineDate, description, linkUrl, imageUrl }
  */
 router.post('/', async (req, res) => {
   try {
-    const { category, title, organizer, deadlineDate, description, linkUrl } = req.body || {};
+    const { category, title, organizer, deadlineDate, description, linkUrl, imageUrl } = req.body || {};
 
     if (!title || !title.trim()) {
       return res.status(400).json({ error: 'Judul informasi wajib diisi.' });
@@ -71,8 +72,8 @@ router.post('/', async (req, res) => {
     const now = new Date().toISOString();
 
     await db.execute({
-      sql: `INSERT INTO campus_info (id, user_id, category, title, organizer, deadline_date, description, link_url, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+      sql: `INSERT INTO campus_info (id, user_id, category, title, organizer, deadline_date, description, link_url, image_url, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
       args: [
         id,
         req.userId || null,
@@ -82,6 +83,7 @@ router.post('/', async (req, res) => {
         deadlineDate || null,
         (description || '').trim(),
         (linkUrl || '').trim(),
+        (imageUrl || '').trim(),
         now
       ]
     });
@@ -95,6 +97,7 @@ router.post('/', async (req, res) => {
       deadlineDate: deadlineDate || null,
       description: (description || '').trim(),
       linkUrl: (linkUrl || '').trim(),
+      imageUrl: (imageUrl || '').trim(),
       createdAt: now
     });
   } catch (err) {

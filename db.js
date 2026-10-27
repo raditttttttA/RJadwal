@@ -103,6 +103,7 @@ async function initDb() {
       deadline_date TEXT,
       description TEXT,
       link_url TEXT,
+      image_url TEXT,
       created_at TEXT NOT NULL
     );
   `);
@@ -132,6 +133,21 @@ async function initDb() {
     // Abaikan error pragma jika database tidak mendukung
   }
 
+  // Migrasi aman untuk kolom image_url pada campus_info
+  try {
+    const infoTable = await db.execute({ sql: 'PRAGMA table_info(campus_info);', args: [] });
+    const existingInfoCols = new Set(infoTable.rows.map(r => r.name));
+    if (!existingInfoCols.has('image_url')) {
+      try {
+        await db.execute({ sql: 'ALTER TABLE campus_info ADD COLUMN image_url TEXT;', args: [] });
+      } catch (e) {
+        // Abaikan jika sudah ada
+      }
+    }
+  } catch (e) {
+    // Abaikan error pragma
+  }
+
   // Seed data awal info beasiswa, lomba & event jika tabel masih kosong
   try {
     const checkCount = await db.execute({ sql: 'SELECT COUNT(*) AS count FROM campus_info;', args: [] });
@@ -145,7 +161,8 @@ async function initDb() {
           organizer: 'Bank Indonesia',
           deadline_date: '2026-11-20',
           description: 'Bantuan biaya pendidikan Rp 1.000.000/bulan, program pembinaan kepemimpinan nasional, dan jejaring komunitas Generasi Baru Indonesia (GenBI) untuk mahasiswa S1 aktif minimal semester 3.',
-          link_url: 'https://beasiswa.bi.go.id'
+          link_url: 'https://beasiswa.bi.go.id',
+          image_url: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop&q=80'
         },
         {
           id: 'starter-info-2',
@@ -154,7 +171,8 @@ async function initDb() {
           organizer: 'Djarum Foundation',
           deadline_date: '2026-11-30',
           description: 'Dana beasiswa selama 1 tahun penuh disertai pelatihan soft skills intensif (Leadership Development, Character Building, Nation Building, dan Competition Challenges). Terbuka untuk seluruh jurusan.',
-          link_url: 'https://djarumbeasiswaplus.org'
+          link_url: 'https://djarumbeasiswaplus.org',
+          image_url: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&auto=format&fit=crop&q=80'
         },
         {
           id: 'starter-info-3',
@@ -163,7 +181,8 @@ async function initDb() {
           organizer: 'Puspresnas Kemdikbudristek',
           deadline_date: '2026-11-15',
           description: 'Kompetisi teknologi informasi & komunikasi mahasiswa tingkat nasional. Kategori Desain Pengalaman Pengguna (UX) dan Pengembangan Aplikasi dengan total hadiah puluhan juta rupiah & sertifikat juara resmi.',
-          link_url: 'https://puspresnas.kemdikbud.go.id'
+          link_url: 'https://puspresnas.kemdikbud.go.id',
+          image_url: 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&auto=format&fit=crop&q=80'
         },
         {
           id: 'starter-info-4',
@@ -172,7 +191,8 @@ async function initDb() {
           organizer: 'Tech Innovation Hub',
           deadline_date: '2026-11-25',
           description: 'Hackathon 48 jam bertema Sustainable Tech & Generative AI. Terbuka untuk tim mahasiswa 2-4 orang. Total hadiah Rp 35 Juta + kesempatan inkubasi startup dan mentoring eksklusif.',
-          link_url: 'https://hackathon.id'
+          link_url: 'https://hackathon.id',
+          image_url: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&auto=format&fit=crop&q=80'
         },
         {
           id: 'starter-info-5',
@@ -181,7 +201,8 @@ async function initDb() {
           organizer: 'Himpunan Mahasiswa Informatika',
           deadline_date: '2026-11-10',
           description: 'Seminar industri teknologi terdepan, talkshow bersama engineer unicorn, booth pameran karier & magang, serta sesi review CV gratis. Dapatkan e-sertifikat ber-SKP.',
-          link_url: 'https://eventmahasiswa.com/tech-fest'
+          link_url: 'https://eventmahasiswa.com/tech-fest',
+          image_url: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800&auto=format&fit=crop&q=80'
         },
         {
           id: 'starter-info-6',
@@ -190,16 +211,33 @@ async function initDb() {
           organizer: 'Google Developer Student Clubs',
           deadline_date: '2026-11-18',
           description: 'Hands-on workshop arsitektur serverless, microservices, dan database cloud modern. Dapatkan sertifikat digital dan voucher lab cloud praktikum gratis senilai $100.',
-          link_url: 'https://gdsc.community.dev'
+          link_url: 'https://gdsc.community.dev',
+          image_url: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80'
         }
       ];
 
       const now = new Date().toISOString();
       for (const item of initialInfos) {
         await db.execute({
-          sql: `INSERT INTO campus_info (id, user_id, category, title, organizer, deadline_date, description, link_url, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          args: [item.id, null, item.category, item.title, item.organizer, item.deadline_date, item.description, item.link_url, now]
+          sql: `INSERT INTO campus_info (id, user_id, category, title, organizer, deadline_date, description, link_url, image_url, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          args: [item.id, null, item.category, item.title, item.organizer, item.deadline_date, item.description, item.link_url, item.image_url, now]
+        });
+      }
+    } else {
+      // Pastikan starter items yang sudah ada dilengkapi poster jika masih kosong
+      const starterImages = {
+        'starter-info-1': 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop&q=80',
+        'starter-info-2': 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&auto=format&fit=crop&q=80',
+        'starter-info-3': 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&auto=format&fit=crop&q=80',
+        'starter-info-4': 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&auto=format&fit=crop&q=80',
+        'starter-info-5': 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800&auto=format&fit=crop&q=80',
+        'starter-info-6': 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80'
+      };
+      for (const [sId, sImg] of Object.entries(starterImages)) {
+        await db.execute({
+          sql: 'UPDATE campus_info SET image_url = ? WHERE id = ? AND (image_url IS NULL OR image_url = "");',
+          args: [sImg, sId]
         });
       }
     }

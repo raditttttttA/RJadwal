@@ -2882,7 +2882,7 @@ span.flatpickr-weekday{
   display: flex;
   gap: 16px;
   overflow-x: auto;
-  padding: 10px calc(50% - 135px) 24px;
+  padding: 10px calc(50% - 140px) 24px;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
@@ -2891,8 +2891,8 @@ span.flatpickr-weekday{
 
 /* HORIZONTAL CARD DESIGN with Depth of Field & Focus Carousel */
 .info-card-h {
-  flex: 0 0 270px;
-  max-width: 270px;
+  flex: 0 0 280px;
+  max-width: 280px;
   scroll-snap-align: center;
   background: var(--card);
   border: 1px solid var(--line);
@@ -2935,13 +2935,104 @@ span.flatpickr-weekday{
   transform: scale(0.97);
 }
 
-.card-top-accent {
-  height: 5px;
+/* Card Poster Banner & Artwork Styling */
+.card-poster-banner {
+  position: relative;
   width: 100%;
+  height: 142px;
+  overflow: hidden;
+  background-color: #1A251D;
 }
-.accent-beasiswa { background: linear-gradient(90deg, #10B981, #059669); }
-.accent-lomba    { background: linear-gradient(90deg, #8B5CF6, #6366F1); }
-.accent-event    { background: linear-gradient(90deg, #F59E0B, #EA580C); }
+.card-poster-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: transform .4s cubic-bezier(.25, .8, .25, 1);
+}
+.info-card-h:hover .card-poster-img,
+.info-card-v:hover .card-poster-img {
+  transform: scale(1.06);
+}
+
+/* Fallback Decorative Themed Poster Banner when no photo provided */
+.card-poster-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+}
+.fallback-beasiswa {
+  background: linear-gradient(135deg, #064E3B 0%, #047857 50%, #10B981 100%);
+}
+.fallback-lomba {
+  background: linear-gradient(135deg, #3B0764 0%, #6D28D9 50%, #8B5CF6 100%);
+}
+.fallback-event {
+  background: linear-gradient(135deg, #7C2D12 0%, #C2410C 50%, #F59E0B 100%);
+}
+.fallback-watermark {
+  position: absolute;
+  right: -6px;
+  top: -12px;
+  font-size: 72px;
+  opacity: 0.22;
+  user-select: none;
+  pointer-events: none;
+  line-height: 1;
+}
+.fallback-cat-icon {
+  font-size: 26px;
+  margin-bottom: 4px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+.fallback-tagline {
+  position: relative;
+  z-index: 1;
+  color: #FFFFFF;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Dark gradient overlay on banner to make floating badges readable */
+.poster-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.38) 0%, transparent 40%, rgba(0,0,0,0.55) 100%);
+  pointer-events: none;
+}
+
+.poster-floating-badges {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  z-index: 2;
+}
+
+/* Floating Glassmorphism Badges */
+.glass-badge {
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.glass-badge.urgent {
+  background: rgba(254, 226, 226, 0.95) !important;
+  color: #B91C1C !important;
+}
 
 .info-card-inner {
   padding: 14px 16px 14px;
@@ -2951,13 +3042,6 @@ span.flatpickr-weekday{
   justify-content: space-between;
 }
 
-.card-badge-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  margin-bottom: 10px;
-}
 .card-cat-badge {
   font-size: 10.5px;
   font-weight: 700;
@@ -3003,7 +3087,7 @@ span.flatpickr-weekday{
   font-size: 12px;
   font-weight: 600;
   color: var(--ink-soft);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -3043,7 +3127,7 @@ span.flatpickr-weekday{
 .info-vertical-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   animation: fadeIn .2s var(--ease);
 }
 .info-card-v {
@@ -3051,24 +3135,22 @@ span.flatpickr-weekday{
   border: 1px solid var(--line);
   border-radius: 18px;
   overflow: hidden;
-  padding: 18px 20px;
   cursor: pointer;
   transition: all .2s cubic-bezier(.4, 0, .2, 1);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
-.info-card-v::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 5px;
+.info-card-v .card-poster-banner {
+  height: 160px;
 }
-.info-card-v.card-beasiswa::before { background: linear-gradient(180deg, #10B981, #059669); }
-.info-card-v.card-lomba::before    { background: linear-gradient(180deg, #8B5CF6, #6366F1); }
-.info-card-v.card-event::before    { background: linear-gradient(180deg, #F59E0B, #EA580C); }
-
+.info-card-v-body {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
 .info-card-v:hover {
   transform: translateY(-3px);
   border-color: var(--line-strong);
@@ -3076,6 +3158,130 @@ span.flatpickr-weekday{
 }
 .info-card-v:active {
   transform: scale(0.99);
+}
+
+/* Poster Preview in Detail Bottom Sheet */
+.info-detail-poster-wrap {
+  position: relative;
+  width: 100%;
+  max-height: 260px;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: #111;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.14);
+  cursor: zoom-in;
+}
+.info-detail-poster-img {
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform .25s ease;
+}
+.info-detail-poster-wrap:hover .info-detail-poster-img {
+  transform: scale(1.02);
+}
+.poster-zoom-tip {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* Poster Form Dropzone & Inputs */
+.poster-input-box {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+}
+.poster-toggle-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.poster-toggle-btn {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.poster-toggle-btn.active {
+  background: var(--forest);
+  color: #ECEFE1;
+  border-color: var(--forest);
+}
+.poster-drop-area {
+  display: block;
+  border: 2px dashed var(--line-strong);
+  border-radius: 10px;
+  padding: 16px 12px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--card);
+  transition: all .18s ease;
+}
+.poster-drop-area:hover, .poster-drop-area.dragover {
+  border-color: var(--primary);
+  background: rgba(30, 77, 43, 0.04);
+}
+.poster-drop-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.poster-drop-preview {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  max-height: 160px;
+}
+.poster-drop-preview img {
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+}
+.poster-preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 8px 12px;
+}
+.btn-clear-poster {
+  background: #B91C1C;
+  color: #fff;
+  border: none;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 /* Detail Popup Sheet Styling */
@@ -3904,6 +4110,48 @@ span.flatpickr-weekday{
       </div>
 
       <div class="field">
+        <label style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Poster / Brosur Pamflet</span>
+          <span style="font-size:11px; font-weight:500; color:var(--ink-soft);">(Foto / Brosur visual)</span>
+        </label>
+        <div class="poster-input-box">
+          <div class="poster-toggle-tabs">
+            <button type="button" class="poster-toggle-btn active" id="btnPosterModeUpload">📁 Upload Foto Brosur</button>
+            <button type="button" class="poster-toggle-btn" id="btnPosterModeUrl">🔗 Link URL Gambar</button>
+          </div>
+
+          <!-- Mode 1: File Upload (Drag & Drop or Click) -->
+          <div id="posterUploadPane" class="poster-pane">
+            <label for="infoAddPosterFile" class="poster-drop-area" id="posterDropArea">
+              <input type="file" id="infoAddPosterFile" accept="image/*" style="display:none;">
+              <div id="posterDropPrompt" class="poster-drop-prompt">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--forest); margin-bottom:4px;">
+                  <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                  <circle cx="9" cy="9" r="2"/>
+                  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                </svg>
+                <div style="font-size:12.5px; font-weight:600; color:var(--ink);">Pilih atau Tarik Foto Brosur</div>
+                <div style="font-size:11px; color:var(--ink-soft);">Format JPG, PNG, WEBP dari galeri / kamera</div>
+              </div>
+              <div id="posterDropPreview" class="poster-drop-preview" style="display:none;">
+                <img id="posterPreviewThumbnail" src="" alt="Thumbnail Brosur">
+                <div class="poster-preview-overlay">
+                  <span style="font-size:11px; font-weight:600; color:#fff;">Foto brosur siap diunggah ✓</span>
+                  <button type="button" class="btn-clear-poster" id="btnClearPoster" title="Ganti foto">Ganti Foto ✕</button>
+                </div>
+              </div>
+            </label>
+          </div>
+
+          <!-- Mode 2: Image URL -->
+          <div id="posterUrlPane" class="poster-pane" style="display:none;">
+            <input type="url" id="infoAddPosterUrl" placeholder="https://contoh.com/poster-brosur.jpg" style="margin-bottom:4px;">
+            <div style="font-size:11px; color:var(--ink-soft);">Bisa ambil URL pamflet dari Instagram, drive, atau website resmi.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
         <label>Deskripsi & Persyaratan Singkat</label>
         <textarea id="infoAddDesc" rows="3" placeholder="Tuliskan benefit, syarat semester, atau rincian kegiatan..."></textarea>
       </div>
@@ -3918,6 +4166,15 @@ span.flatpickr-weekday{
         <button type="submit" class="btn-simpan" id="infoAddSubmitBtn">Simpan Info</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Modal Lightbox: Zoom Poster Pamflet Penuh -->
+<div class="sheet-backdrop" id="posterLightboxModal" style="display:none; z-index:9999; align-items:center; justify-content:center; padding:16px; background:rgba(0,0,0,0.85);">
+  <div style="position:relative; max-width:92vw; max-height:90vh; display:flex; flex-direction:column; align-items:center;">
+    <button type="button" id="closeLightboxBtn" style="position:absolute; top:-14px; right:-14px; width:36px; height:36px; border-radius:50%; background:#1C2A20; color:#fff; border:2px solid #fff; font-size:16px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.4); z-index:10;">✕</button>
+    <img id="lightboxPosterImg" src="" alt="Poster Pamflet Lengkap" style="max-width:100%; max-height:85vh; object-fit:contain; border-radius:12px; box-shadow:0 12px 36px rgba(0,0,0,0.6);">
+    <div style="margin-top:10px; color:#ECEFE1; font-size:12px; text-shadow:0 1px 3px rgba(0,0,0,0.8);">💡 Tips: Sentuh dan cubit layar untuk melihat detail teks pamflet</div>
   </div>
 </div>
 
@@ -6511,20 +6768,54 @@ function setupCarouselFocus(){
 }
 
 
-function renderHorizontalCardHtml(item){
+// Helper: Render banner visual poster atau artwork dekoratif
+function renderCardPosterBannerHtml(item, isVertical = false){
   const deadline = getDeadlineStatus(item.deadlineDate);
   const badgeClass = getCategoryBadgeClass(item.category);
   const catLabel = getCategoryLabel(item.category);
 
+  let bannerContent = '';
+  if (item.imageUrl) {
+    bannerContent = `
+      <img class="card-poster-img" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+      <div class="card-poster-fallback fallback-${item.category}" style="display:none;">
+        <span class="fallback-tagline">${escapeHtml(item.title)}</span>
+      </div>
+    `;
+  } else {
+    // Artwork ilustrasi tematik modern jika poster foto tidak diunggah
+    let themeIcon = '🎓';
+    let themeTagline = 'Peluang Beasiswa Kampus';
+    if (item.category === 'lomba') { themeIcon = '🏆'; themeTagline = 'Kompetisi & Lomba'; }
+    if (item.category === 'event') { themeIcon = '🎪'; themeTagline = 'Seminar & Acara'; }
+
+    bannerContent = `
+      <div class="card-poster-fallback fallback-${item.category}">
+        <div class="fallback-watermark">${themeIcon}</div>
+        <div class="fallback-cat-icon">${themeIcon}</div>
+        <div class="fallback-tagline">${themeTagline}</div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="card-poster-banner">
+      ${bannerContent}
+      <div class="poster-banner-overlay"></div>
+      <div class="poster-floating-badges">
+        <span class="card-cat-badge ${badgeClass} glass-badge">${catLabel}</span>
+        <span class="card-deadline-pill glass-badge ${deadline.urgent ? 'urgent' : ''}">⏳ ${escapeHtml(deadline.text)}</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderHorizontalCardHtml(item){
   return `
     <div class="info-card-h" data-info-id="${escapeHtml(item.id)}">
-      <div class="card-top-accent accent-${item.category}"></div>
+      ${renderCardPosterBannerHtml(item, false)}
       <div class="info-card-inner">
         <div>
-          <div class="card-badge-row">
-            <span class="card-cat-badge ${badgeClass}">${catLabel}</span>
-            <span class="card-deadline-pill ${deadline.urgent ? 'urgent' : ''}">⏳ ${escapeHtml(deadline.text)}</span>
-          </div>
           <div class="info-card-title">${escapeHtml(item.title)}</div>
           <div class="info-card-org">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
@@ -6535,7 +6826,7 @@ function renderHorizontalCardHtml(item){
           <div class="info-card-desc-snippet">${escapeHtml(item.description || '')}</div>
         </div>
         <div class="info-card-footer">
-          <span>Lihat Rincian</span>
+          <span>Lihat Pamflet & Rincian</span>
           <span style="font-size:14px; font-weight:700;">›</span>
         </div>
       </div>
@@ -6544,27 +6835,22 @@ function renderHorizontalCardHtml(item){
 }
 
 function renderVerticalCardHtml(item){
-  const deadline = getDeadlineStatus(item.deadlineDate);
-  const badgeClass = getCategoryBadgeClass(item.category);
-  const catLabel = getCategoryLabel(item.category);
-
   return `
     <div class="info-card-v card-${item.category}" data-info-id="${escapeHtml(item.id)}">
-      <div class="card-badge-row">
-        <span class="card-cat-badge ${badgeClass}">${catLabel}</span>
-        <span class="card-deadline-pill ${deadline.urgent ? 'urgent' : ''}">⏳ ${escapeHtml(deadline.text)}</span>
-      </div>
-      <div class="info-card-title" style="-webkit-line-clamp:unset; font-size:16.5px;">${escapeHtml(item.title)}</div>
-      <div class="info-card-org" style="margin-bottom:10px;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
-          <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>
-        </svg>
-        <span>Penyelenggara: <strong>${escapeHtml(item.organizer || 'Umum')}</strong></span>
-      </div>
-      <div class="info-card-desc-snippet" style="-webkit-line-clamp:3; margin-bottom:14px; font-size:13px; line-height:1.5;">${escapeHtml(item.description || '')}</div>
-      <div class="info-card-footer">
-        <span style="font-weight:600;">Buka Rincian & Pendaftaran</span>
-        <span style="font-size:14px; font-weight:700;">→</span>
+      ${renderCardPosterBannerHtml(item, true)}
+      <div class="info-card-v-body">
+        <div class="info-card-title" style="-webkit-line-clamp:unset; font-size:16.5px;">${escapeHtml(item.title)}</div>
+        <div class="info-card-org" style="margin-bottom:10px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+            <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>
+          </svg>
+          <span>Penyelenggara: <strong>${escapeHtml(item.organizer || 'Umum')}</strong></span>
+        </div>
+        <div class="info-card-desc-snippet" style="-webkit-line-clamp:3; margin-bottom:14px; font-size:13px; line-height:1.5;">${escapeHtml(item.description || '')}</div>
+        <div class="info-card-footer">
+          <span style="font-weight:600;">Buka Pamflet & Pendaftaran</span>
+          <span style="font-size:14px; font-weight:700;">→</span>
+        </div>
       </div>
     </div>
   `;
@@ -6587,7 +6873,22 @@ function openInfoDetail(item){
     }
   }
 
+  // Hero visual pamflet jika tersedia
+  let posterHeroHtml = '';
+  if (item.imageUrl) {
+    posterHeroHtml = `
+      <div class="info-detail-poster-wrap" onclick="openPosterLightbox('${escapeHtml(item.imageUrl)}')">
+        <img src="${escapeHtml(item.imageUrl)}" class="info-detail-poster-img" alt="Brosur ${escapeHtml(item.title)}">
+        <div class="poster-zoom-tip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6M8 11h6"/></svg>
+          <span>Ketuk untuk perbesar pamflet</span>
+        </div>
+      </div>
+    `;
+  }
+
   infoDetailContent.innerHTML = `
+    ${posterHeroHtml}
     <div class="info-detail-header-badge">
       <span class="card-cat-badge ${badgeClass}">${catLabel}</span>
     </div>
@@ -6633,6 +6934,24 @@ function openInfoDetail(item){
   infoDetailBackdrop.classList.add('open');
 }
 
+// Kontrol Modal Lightbox Zoom Poster Pamflet
+function openPosterLightbox(imgUrl){
+  const modal = document.getElementById('posterLightboxModal');
+  const img = document.getElementById('lightboxPosterImg');
+  if (modal && img){
+    img.src = imgUrl;
+    modal.style.display = 'flex';
+  }
+}
+function closePosterLightbox(){
+  const modal = document.getElementById('posterLightboxModal');
+  if (modal) modal.style.display = 'none';
+}
+document.getElementById('closeLightboxBtn').onclick = closePosterLightbox;
+document.getElementById('posterLightboxModal').onclick = (e) => {
+  if (e.target === document.getElementById('posterLightboxModal')) closePosterLightbox();
+};
+
 // Simpan event/deadline info langsung ke jadwal kegiatan
 async function saveInfoToSchedule(item){
   try {
@@ -6677,10 +6996,138 @@ infoDetailBackdrop.onclick = (e) => {
   if (e.target === infoDetailBackdrop) infoDetailBackdrop.classList.remove('open');
 };
 
+// Penanganan Unggah Poster / URL Gambar Pamflet
+let currentPosterDataUrl = '';
+
+function resetPosterInputUi(){
+  currentPosterDataUrl = '';
+  const fileInput = document.getElementById('infoAddPosterFile');
+  if (fileInput) fileInput.value = '';
+  const urlInput = document.getElementById('infoAddPosterUrl');
+  if (urlInput) urlInput.value = '';
+  const promptEl = document.getElementById('posterDropPrompt');
+  if (promptEl) promptEl.style.display = 'flex';
+  const previewEl = document.getElementById('posterDropPreview');
+  if (previewEl) previewEl.style.display = 'none';
+  const thumbEl = document.getElementById('posterPreviewThumbnail');
+  if (thumbEl) thumbEl.src = '';
+}
+
+// Toggle tab antara mode Upload File vs Link URL
+const btnPosterUpload = document.getElementById('btnPosterModeUpload');
+const btnPosterUrl    = document.getElementById('btnPosterModeUrl');
+const panePosterUpload = document.getElementById('posterUploadPane');
+const panePosterUrl    = document.getElementById('posterUrlPane');
+
+if (btnPosterUpload && btnPosterUrl){
+  btnPosterUpload.onclick = () => {
+    btnPosterUpload.classList.add('active');
+    btnPosterUrl.classList.remove('active');
+    panePosterUpload.style.display = 'block';
+    panePosterUrl.style.display = 'none';
+  };
+  btnPosterUrl.onclick = () => {
+    btnPosterUrl.classList.add('active');
+    btnPosterUpload.classList.remove('active');
+    panePosterUrl.style.display = 'block';
+    panePosterUpload.style.display = 'none';
+  };
+}
+
+// Auto-compress gambar menggunakan canvas HTML5 agar ringan & instan
+function processPosterImageFile(file){
+  if (!file || !file.type.startsWith('image/')) {
+    alert('Harap pilih file gambar (JPG, PNG, atau WEBP).');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      // Resize gambar ke resolusi optimal (max 1000px) agar kilat di-load dan hemat memori
+      const maxDim = 1000;
+      let width = img.width;
+      let height = img.height;
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      currentPosterDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+
+      // Tampilkan thumbnail preview
+      const promptEl = document.getElementById('posterDropPrompt');
+      const previewEl = document.getElementById('posterDropPreview');
+      const thumbEl = document.getElementById('posterPreviewThumbnail');
+      if (promptEl) promptEl.style.display = 'none';
+      if (previewEl) previewEl.style.display = 'block';
+      if (thumbEl) thumbEl.src = currentPosterDataUrl;
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Listener file input
+const posterFileInput = document.getElementById('infoAddPosterFile');
+if (posterFileInput){
+  posterFileInput.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]){
+      processPosterImageFile(e.target.files[0]);
+    }
+  });
+}
+
+// Tombol hapus foto terpilih
+const btnClearPoster = document.getElementById('btnClearPoster');
+if (btnClearPoster){
+  btnClearPoster.onclick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    resetPosterInputUi();
+  };
+}
+
+// Drag & drop support
+const posterDropArea = document.getElementById('posterDropArea');
+if (posterDropArea){
+  ['dragenter', 'dragover'].forEach(eventName => {
+    posterDropArea.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      posterDropArea.classList.add('dragover');
+    }, false);
+  });
+  ['dragleave', 'drop'].forEach(eventName => {
+    posterDropArea.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      posterDropArea.classList.remove('dragover');
+    }, false);
+  });
+  posterDropArea.addEventListener('drop', (e) => {
+    const dt = e.dataTransfer;
+    if (dt && dt.files && dt.files[0]){
+      processPosterImageFile(dt.files[0]);
+    }
+  });
+}
+
 // Modal Tambah Info Baru
 if (openAddInfoBtn){
   openAddInfoBtn.onclick = () => {
     infoAddForm.reset();
+    resetPosterInputUi();
     newInfoCategory = 'beasiswa';
     document.querySelectorAll('#addInfoTypePicker .info-type-choice').forEach(b => {
       b.classList.toggle('active', b.dataset.type === 'beasiswa');
@@ -6725,6 +7172,10 @@ infoAddForm.addEventListener('submit', async (e) => {
   const description = document.getElementById('infoAddDesc').value.trim();
   const linkUrl = document.getElementById('infoAddLink').value.trim();
 
+  // Dapatkan gambar dari hasil upload file atau URL yang diketik
+  const posterUrlVal = document.getElementById('infoAddPosterUrl')?.value?.trim() || '';
+  const finalImageUrl = currentPosterDataUrl || posterUrlVal || '';
+
   try {
     const newInfo = await apiFetch('/api/info', {
       method: 'POST',
@@ -6734,12 +7185,14 @@ infoAddForm.addEventListener('submit', async (e) => {
         organizer,
         deadlineDate,
         description,
-        linkUrl
+        linkUrl,
+        imageUrl: finalImageUrl
       })
     });
 
     campusInfoList.unshift(newInfo);
     infoAddBackdrop.classList.remove('open');
+    resetPosterInputUi();
     renderBerandaInfo(activeInfoCategory);
   } catch (err){
     console.error(err);
