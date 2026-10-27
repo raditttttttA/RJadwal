@@ -2578,137 +2578,7 @@ span.flatpickr-weekday{
   animation: fadeIn .24s var(--ease);
 }
 
-/* Beranda Hero Card */
-.beranda-hero-card {
-  background: linear-gradient(135deg, #1C2A20 0%, #2A3D30 100%);
-  color: #ECEFE1;
-  border-radius: var(--radius-lg);
-  padding: 24px 22px;
-  margin-bottom: 22px;
-  box-shadow: var(--shadow-md);
-  position: relative;
-  overflow: hidden;
-}
-.beranda-hero-card::after {
-  content: "";
-  position: absolute;
-  top: -20px;
-  right: -20px;
-  width: 140px;
-  height: 140px;
-  background: radial-gradient(circle, rgba(184, 90, 37, 0.35) 0%, transparent 70%);
-  pointer-events: none;
-}
-.beranda-greeting {
-  font-family: "Fraunces", Georgia, serif;
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  letter-spacing: -0.01em;
-}
-.beranda-subtext {
-  font-size: 13.5px;
-  color: #C1CBA9;
-  line-height: 1.5;
-  margin-bottom: 18px;
-}
-.beranda-date-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.12);
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #F7F8F0;
-  backdrop-filter: blur(4px);
-}
-
-/* Beranda Shortcuts Grid */
-.beranda-section-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.beranda-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  margin-bottom: 22px;
-}
-@media (min-width: 480px) {
-  .beranda-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-.shortcut-card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  cursor: pointer;
-  transition: all .18s var(--ease);
-  box-shadow: var(--shadow-sm);
-  text-align: left;
-}
-.shortcut-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--line-strong);
-  box-shadow: var(--shadow-md);
-}
-.shortcut-card:active {
-  transform: scale(0.98);
-}
-.shortcut-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-}
-.shortcut-icon.schedule-icon { background: var(--matkul-bg); color: var(--matkul); }
-.shortcut-icon.course-icon   { background: var(--tutor-bg);  color: var(--tutor); }
-.shortcut-icon.quiz-icon     { background: #FDE8D7;          color: #B85A25; }
-.shortcut-icon.social-icon   { background: var(--lain-bg);   color: var(--lain); }
-
-.shortcut-content {
-  display: flex;
-  flex-direction: column;
-}
-.shortcut-title {
-  font-size: 14.5px;
-  font-weight: 600;
-  color: var(--ink);
-  margin-bottom: 3px;
-}
-.shortcut-desc {
-  font-size: 12px;
-  color: var(--ink-soft);
-  line-height: 1.35;
-}
-
-/* Beranda Banner Segera Hadir */
-.beranda-banner {
-  background: var(--paper-raised);
-  border: 1px dashed var(--line-strong);
-  border-radius: var(--radius-md);
-  padding: 18px 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  color: var(--ink-soft);
-}
+/* Legacy beranda styles cleaned up for dedicated Campus Info Hub */
 .banner-icon {
   font-size: 24px;
   flex-shrink: 0;
@@ -2803,152 +2673,263 @@ span.flatpickr-weekday{
   margin: 0;
   font-size: 12px;
   color: var(--ink-soft);
+}
+
 /* ==========================================================
-   CAMPUS INFO HUB (BEASISWA, LOMBA & EVENT)
+   CAMPUS INFO HUB (PUSAT INFORMASI BEASISWA, LOMBA & EVENT)
    ========================================================== */
-.info-section {
-  margin-top: 26px;
-  margin-bottom: 24px;
+.campus-hub-hero {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(246, 248, 244, 0.95));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 22px 20px 18px;
+  margin-bottom: 22px;
+  box-shadow: 0 4px 24px -10px rgba(20, 28, 20, 0.08);
+  position: relative;
+  overflow: hidden;
 }
-.info-section-top {
-  display: flex;
+.campus-hub-hero::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(184, 90, 37, 0.12), transparent 70%);
+  pointer-events: none;
+}
+.hub-hero-badge {
+  display: inline-flex;
   align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--forest);
+  background: rgba(30, 77, 43, 0.08);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+.hub-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+  animation: pulseDot 2s infinite;
+}
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+.hub-hero-top {
+  display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 14px;
-  gap: 10px;
+  gap: 14px;
+  margin-bottom: 18px;
 }
-.info-main-title {
+.hub-hero-title {
   font-family: "Fraunces", Georgia, serif;
-  font-size: 20px;
+  font-size: 23px;
   font-weight: 600;
+  line-height: 1.25;
   color: var(--ink);
-  letter-spacing: -0.01em;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  margin: 0 0 6px;
+  letter-spacing: -0.015em;
 }
-.btn-tambah-info {
+.hub-hero-desc {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.btn-hero-add-info {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 13px;
-  background: var(--ink);
-  color: var(--paper);
-  border: 1px solid var(--ink);
-  border-radius: 999px;
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .16s var(--ease);
-  box-shadow: var(--shadow-sm);
-  flex-shrink: 0;
-}
-.btn-tambah-info:hover {
+  padding: 9px 16px;
   background: var(--primary);
-  border-color: var(--primary);
-  transform: translateY(-1px);
-}
-
-/* Category Filter Tabs */
-.info-cat-tabs {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding: 2px 2px 10px;
-  margin-bottom: 14px;
-  scrollbar-width: none;
-}
-.info-cat-tabs::-webkit-scrollbar { display: none; }
-.info-cat-btn {
-  flex: 0 0 auto;
-  padding: 7px 15px;
+  color: #fff;
+  border: none;
   border-radius: 999px;
-  border: 1px solid var(--line);
-  background: var(--card);
-  color: var(--ink-soft);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all .16s var(--ease);
+  box-shadow: 0 4px 14px rgba(184, 90, 37, 0.35);
+  transition: all .18s var(--ease);
+  flex-shrink: 0;
   white-space: nowrap;
 }
-.info-cat-btn:hover {
+.btn-hero-add-info:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(184, 90, 37, 0.45);
+}
+.btn-hero-add-info:active {
+  transform: scale(0.97);
+}
+
+/* Category Filter Counter Chips */
+.hub-counter-pills {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 2px 4px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.hub-counter-pills::-webkit-scrollbar { display: none; }
+
+.counter-chip {
+  flex: 1;
+  min-width: 90px;
+  padding: 9px 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  transition: all .16s var(--ease);
+  user-select: none;
+  box-shadow: var(--shadow-sm);
+}
+.counter-chip:hover {
+  border-color: var(--line-strong);
+  background: var(--paper-raised);
+}
+.counter-chip.active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  box-shadow: 0 4px 12px rgba(20, 28, 20, 0.2);
+}
+.counter-chip .chip-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.counter-chip .chip-count {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
   background: var(--paper-raised);
   color: var(--ink);
 }
-.info-cat-btn.active {
-  background: var(--primary);
+.counter-chip.active .chip-count {
+  background: rgba(255, 255, 255, 0.22);
   color: #fff;
-  border-color: var(--primary);
-  box-shadow: 0 2px 8px rgba(184, 90, 37, 0.28);
 }
 
 /* Horizontal Category Row (when "Semua" is active) */
 .info-lane {
-  margin-bottom: 22px;
+  margin-bottom: 26px;
 }
 .info-lane-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
-.info-lane-title {
-  font-size: 14.5px;
-  font-weight: 700;
-  color: var(--ink);
+.info-lane-title-group {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+}
+.info-lane-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 16.5px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+.info-lane-count-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  padding: 2px 8px;
+  border-radius: 999px;
 }
 .info-lane-link {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--primary);
   background: none;
   border: none;
   cursor: pointer;
   padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
   transition: opacity .14s var(--ease);
 }
 .info-lane-link:hover {
+  opacity: 0.8;
   text-decoration: underline;
 }
 
 .info-lane-track {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   overflow-x: auto;
-  padding: 4px 4px 12px;
+  padding: 6px 4px 16px;
   margin: 0 -4px;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 .info-lane-track::-webkit-scrollbar { display: none; }
 
-/* Horizontal Card */
+/* HORIZONTAL CARD DESIGN */
 .info-card-h {
-  flex: 0 0 250px;
+  flex: 0 0 270px;
+  max-width: 270px;
   scroll-snap-align: start;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 15px;
+  border-radius: 18px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
-  transition: all .18s var(--ease);
-  box-shadow: var(--shadow-sm);
+  transition: all .2s cubic-bezier(.4, 0, .2, 1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   position: relative;
 }
 .info-card-h:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
   border-color: var(--line-strong);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.1);
 }
 .info-card-h:active {
   transform: scale(0.98);
+}
+
+.card-top-accent {
+  height: 5px;
+  width: 100%;
+}
+.accent-beasiswa { background: linear-gradient(90deg, #10B981, #059669); }
+.accent-lomba    { background: linear-gradient(90deg, #8B5CF6, #6366F1); }
+.accent-event    { background: linear-gradient(90deg, #F59E0B, #EA580C); }
+
+.info-card-inner {
+  padding: 14px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
 }
 
 .card-badge-row {
@@ -2956,39 +2937,44 @@ span.flatpickr-weekday{
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-  margin-bottom: 9px;
+  margin-bottom: 10px;
 }
 .card-cat-badge {
   font-size: 10.5px;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 3px 9px;
   border-radius: 999px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
-.badge-beasiswa { background: #E2F5EA; color: #156637; }
-.badge-lomba    { background: #F3E8FF; color: #6932A2; }
-.badge-event    { background: #FFF4E5; color: #B35B00; }
+.badge-beasiswa { background: #E6F8F0; color: #0D7A49; }
+.badge-lomba    { background: #F2EDFE; color: #6327AF; }
+.badge-event    { background: #FFF4E6; color: #B45309; }
 
 .card-deadline-pill {
   font-size: 11px;
   font-weight: 600;
   color: var(--ink-soft);
+  background: var(--paper-raised);
+  padding: 3px 8px;
+  border-radius: 999px;
   display: flex;
   align-items: center;
   gap: 4px;
   white-space: nowrap;
 }
 .card-deadline-pill.urgent {
+  background: #FEE2E2;
   color: #B91C1C;
   font-weight: 700;
 }
 
 .info-card-title {
-  font-size: 14.5px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--ink);
   line-height: 1.35;
-  margin-bottom: 5px;
+  margin: 0 0 6px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -2996,8 +2982,12 @@ span.flatpickr-weekday{
 }
 .info-card-org {
   font-size: 12px;
+  font-weight: 600;
   color: var(--ink-soft);
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3005,7 +2995,7 @@ span.flatpickr-weekday{
 .info-card-desc-snippet {
   font-size: 12px;
   color: var(--ink-soft);
-  line-height: 1.4;
+  line-height: 1.45;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -3017,32 +3007,53 @@ span.flatpickr-weekday{
   align-items: center;
   justify-content: space-between;
   padding-top: 10px;
-  border-top: 1px solid var(--paper-raised);
+  border-top: 1px dashed var(--line);
   font-size: 12px;
   font-weight: 600;
   color: var(--primary);
+  margin-top: auto;
+}
+.info-card-h:hover .info-card-footer span:last-child {
+  transform: translateX(4px);
+}
+.info-card-footer span:last-child {
+  transition: transform .18s var(--ease);
 }
 
-/* Vertical Feed List (when category selected) */
+/* VERTICAL FEED LIST */
 .info-vertical-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   animation: fadeIn .2s var(--ease);
 }
 .info-card-v {
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 16px 18px;
+  border-radius: 18px;
+  overflow: hidden;
+  padding: 18px 20px;
   cursor: pointer;
-  transition: all .16s var(--ease);
-  box-shadow: var(--shadow-sm);
+  transition: all .2s cubic-bezier(.4, 0, .2, 1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  position: relative;
 }
+.info-card-v::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+}
+.info-card-v.card-beasiswa::before { background: linear-gradient(180deg, #10B981, #059669); }
+.info-card-v.card-lomba::before    { background: linear-gradient(180deg, #8B5CF6, #6366F1); }
+.info-card-v.card-event::before    { background: linear-gradient(180deg, #F59E0B, #EA580C); }
+
 .info-card-v:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   border-color: var(--line-strong);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.1);
 }
 .info-card-v:active {
   transform: scale(0.99);
@@ -3377,103 +3388,52 @@ span.flatpickr-weekday{
     </div>
   </header>
 
-  <!-- TAB 1: BERANDA -->
+  <!-- TAB 1: BERANDA (PUSAT INFORMASI KAMPUS) -->
   <div id="berandaView" class="view-container">
-    <div class="beranda-hero-card">
-      <div class="beranda-greeting">Halo, <span id="berandaUsername">Sobat</span>! 👋</div>
-      <div class="beranda-subtext">Selamat datang di Agenda. Semua jadwal perkuliahan, modul materi, dan kuis latihan tersusun rapi dalam satu tempat.</div>
-      <div class="beranda-date-pill">
-        <span>📅</span>
-        <span id="berandaDateLabel">Hari ini</span>
+    <!-- CAMPUS INFO HUB HERO -->
+    <div class="campus-hub-hero">
+      <div class="hub-hero-badge">
+        <span class="hub-live-dot"></span>
+        <span>Pusat Peluang Kampus</span>
       </div>
-    </div>
-
-    <div class="beranda-section-title">
-      <span>Akses Cepat</span>
-      <span style="font-size:12px; font-weight:500; color:var(--ink-soft)">Pilih modul</span>
-    </div>
-
-    <div class="beranda-grid">
-      <button type="button" class="shortcut-card" onclick="switchView('schedule')">
-        <div class="shortcut-icon schedule-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
+      <div class="hub-hero-top">
+        <div>
+          <h2 class="hub-hero-title">Beasiswa, Lomba & Event</h2>
+          <p class="hub-hero-desc">Pusat kurasi informasi beasiswa bergengsi, kompetisi nasional, seminar, dan event akademik mahasiswa.</p>
+        </div>
+        <button type="button" class="btn-hero-add-info" id="openAddInfoBtn" title="Tambah Informasi Baru">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
-        </div>
-        <div class="shortcut-content">
-          <span class="shortcut-title">Schedule</span>
-          <span class="shortcut-desc">Jadwal matkul, tutor & timeline harian</span>
-        </div>
-      </button>
-
-      <button type="button" class="shortcut-card" onclick="switchView('course')">
-        <div class="shortcut-icon course-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-          </svg>
-        </div>
-        <div class="shortcut-content">
-          <span class="shortcut-title">Course</span>
-          <span class="shortcut-desc">Materi kuliah, modul PDF & tugas</span>
-        </div>
-      </button>
-
-      <button type="button" class="shortcut-card" onclick="switchView('quiz')">
-        <div class="shortcut-icon quiz-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
-          </svg>
-        </div>
-        <div class="shortcut-content">
-          <span class="shortcut-title">Quiz AI</span>
-          <span class="shortcut-desc">Latihan soal otomatis dari materimu</span>
-        </div>
-      </button>
-
-      <button type="button" class="shortcut-card" onclick="switchView('social')">
-        <div class="shortcut-icon social-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-          </svg>
-        </div>
-        <div class="shortcut-content">
-          <span class="shortcut-title">Social</span>
-          <span class="shortcut-desc">Komunitas belajar & diskusi sesama</span>
-        </div>
-      </button>
-    </div>
-
-    <!-- SECTION INFORMASI KAMPUS (BEASISWA, LOMBA & EVENT) -->
-    <div class="info-section">
-      <div class="info-section-top">
-        <div class="info-main-title">
-          <span>📢</span>
-          <span>Info Kampus</span>
-        </div>
-        <button type="button" class="btn-tambah-info" id="openAddInfoBtn">
-          <span>+ Tambah Info</span>
+          <span>Tambah</span>
         </button>
       </div>
 
-      <!-- Filter Kategori Tabs -->
-      <div class="info-cat-tabs" id="infoCatTabs">
-        <button type="button" class="info-cat-btn active" data-cat="all">Semua</button>
-        <button type="button" class="info-cat-btn" data-cat="beasiswa">🎓 Beasiswa</button>
-        <button type="button" class="info-cat-btn" data-cat="lomba">🏆 Lomba</button>
-        <button type="button" class="info-cat-btn" data-cat="event">🎪 Event</button>
+      <!-- Category Filter Counter Pills -->
+      <div class="hub-counter-pills" id="hubCounterPills">
+        <div class="counter-chip active" data-cat="all" onclick="switchInfoCategory('all')">
+          <span class="chip-label">📢 Semua</span>
+          <span class="chip-count" id="countAll">0</span>
+        </div>
+        <div class="counter-chip" data-cat="beasiswa" onclick="switchInfoCategory('beasiswa')">
+          <span class="chip-label">🎓 Beasiswa</span>
+          <span class="chip-count" id="countBeasiswa">0</span>
+        </div>
+        <div class="counter-chip" data-cat="lomba" onclick="switchInfoCategory('lomba')">
+          <span class="chip-label">🏆 Lomba</span>
+          <span class="chip-count" id="countLomba">0</span>
+        </div>
+        <div class="counter-chip" data-cat="event" onclick="switchInfoCategory('event')">
+          <span class="chip-label">🎪 Event</span>
+          <span class="chip-count" id="countEvent">0</span>
+        </div>
       </div>
+    </div>
 
-      <!-- Feed Container (Horizontal lanes saat 'all', Vertical list saat filter kategori) -->
-      <div id="infoFeedContainer">
-        <div class="loading">Memuat info kampus…</div>
-      </div>
+    <!-- Feed Container (Horizontal lanes saat 'all', Vertical list saat filter kategori) -->
+    <div id="infoFeedContainer">
+      <div class="loading">Memuat info kampus…</div>
     </div>
   </div>
 
@@ -5356,8 +5316,8 @@ function switchView(view){
   if (titleEl && subEl){
     switch (normalized) {
       case 'beranda':
-        titleEl.textContent = 'Beranda';
-        subEl.textContent = 'Ringkasan & Aktivitas';
+        titleEl.textContent = 'Info Kampus';
+        subEl.textContent = 'Beasiswa, Lomba & Event';
         break;
       case 'schedule':
         titleEl.textContent = 'Schedule';
@@ -6310,28 +6270,42 @@ function getCategoryBadgeClass(cat){
   }
 }
 
+function updateHubCounters(){
+  const allCount = campusInfoList.length;
+  const beasiswaCount = campusInfoList.filter(i => i.category === 'beasiswa').length;
+  const lombaCount = campusInfoList.filter(i => i.category === 'lomba').length;
+  const eventCount = campusInfoList.filter(i => i.category === 'event').length;
+
+  const elAll = document.getElementById('countAll');
+  if (elAll) elAll.textContent = allCount;
+  const elB = document.getElementById('countBeasiswa');
+  if (elB) elB.textContent = beasiswaCount;
+  const elL = document.getElementById('countLomba');
+  if (elL) elL.textContent = lombaCount;
+  const elE = document.getElementById('countEvent');
+  if (elE) elE.textContent = eventCount;
+}
+
 function switchInfoCategory(cat){
   activeInfoCategory = cat;
-  document.querySelectorAll('.info-cat-btn').forEach(btn => {
+  document.querySelectorAll('.counter-chip').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.cat === cat);
   });
   renderBerandaInfo(cat);
 }
 
-// Filter Tab Click Listeners
-document.querySelectorAll('.info-cat-btn').forEach(btn => {
-  btn.onclick = () => {
-    switchInfoCategory(btn.dataset.cat);
-  };
-});
-
 // Render Feed di Beranda
 function renderBerandaInfo(cat = 'all'){
+  updateHubCounters();
+
   const container = document.getElementById('infoFeedContainer');
   if (!container) return;
 
   if (isCampusInfoLoading) {
-    container.innerHTML = `<div class="loading">Memuat info kampus…</div>`;
+    container.innerHTML = `
+      <div class="empty">
+        <div class="loading" style="font-size:15px; font-weight:600;">Sedang mencari peluang kampus terkini…</div>
+      </div>`;
     return;
   }
 
@@ -6339,8 +6313,8 @@ function renderBerandaInfo(cat = 'all'){
     container.innerHTML = `
       <div class="empty">
         <div class="big">Belum dapat memuat info kampus</div>
-        <p style="margin-bottom:12px; font-size:13px; color:var(--ink-soft);">${escapeHtml(campusInfoError)}</p>
-        <button type="button" class="btn-refresh-info" onclick="loadCampusInfo()" style="padding:8px 16px; border-radius:10px; background:var(--forest); color:#fff; border:none; cursor:pointer; font-weight:600;">🔄 Coba Lagi</button>
+        <p style="margin-bottom:14px; font-size:13px; color:var(--ink-soft);">${escapeHtml(campusInfoError)}</p>
+        <button type="button" class="btn-hero-add-info" onclick="loadCampusInfo()" style="padding:8px 18px; border-radius:999px;">🔄 Coba Lagi</button>
       </div>`;
     return;
   }
@@ -6349,7 +6323,8 @@ function renderBerandaInfo(cat = 'all'){
     container.innerHTML = `
       <div class="empty">
         <div class="big">Belum ada info kampus</div>
-        Klik tombol "+ Tambah Info" di atas untuk menambahkan informasi beasiswa, lomba, atau kegiatan pertama.
+        <p style="margin-bottom:14px; font-size:13px; color:var(--ink-soft);">Klik tombol "+ Tambah" di atas untuk menambahkan informasi beasiswa, lomba, atau kegiatan pertama.</p>
+        <button type="button" class="btn-hero-add-info" onclick="document.getElementById('openAddInfoBtn').click()">+ Tambah Info Sekarang</button>
       </div>`;
     return;
   }
@@ -6367,7 +6342,10 @@ function renderBerandaInfo(cat = 'all'){
       html += `
         <div class="info-lane">
           <div class="info-lane-header">
-            <span class="info-lane-title">🎓 Beasiswa Terbaru</span>
+            <div class="info-lane-title-group">
+              <h3 class="info-lane-title">🎓 Beasiswa Kampus</h3>
+              <span class="info-lane-count-tag">${beasiswaItems.length} Info</span>
+            </div>
             <button type="button" class="info-lane-link" onclick="switchInfoCategory('beasiswa')">Lihat Semua ›</button>
           </div>
           <div class="info-lane-track">
@@ -6382,7 +6360,10 @@ function renderBerandaInfo(cat = 'all'){
       html += `
         <div class="info-lane">
           <div class="info-lane-header">
-            <span class="info-lane-title">🏆 Lomba & Kompetisi</span>
+            <div class="info-lane-title-group">
+              <h3 class="info-lane-title">🏆 Kompetisi & Lomba</h3>
+              <span class="info-lane-count-tag">${lombaItems.length} Info</span>
+            </div>
             <button type="button" class="info-lane-link" onclick="switchInfoCategory('lomba')">Lihat Semua ›</button>
           </div>
           <div class="info-lane-track">
@@ -6397,7 +6378,10 @@ function renderBerandaInfo(cat = 'all'){
       html += `
         <div class="info-lane">
           <div class="info-lane-header">
-            <span class="info-lane-title">🎪 Event & Seminar Kampus</span>
+            <div class="info-lane-title-group">
+              <h3 class="info-lane-title">🎪 Seminar & Event</h3>
+              <span class="info-lane-count-tag">${eventItems.length} Info</span>
+            </div>
             <button type="button" class="info-lane-link" onclick="switchInfoCategory('event')">Lihat Semua ›</button>
           </div>
           <div class="info-lane-track">
@@ -6407,22 +6391,23 @@ function renderBerandaInfo(cat = 'all'){
       `;
     }
 
-    infoFeedContainer.innerHTML = html;
+    container.innerHTML = html;
 
   } else {
     // JIKA PILIH KATEGORI SPESIFIK -> TAMPILKAN VERTICAL FEED LIST KE BAWAH
     const filtered = campusInfoList.filter(i => i.category === cat);
 
     if (filtered.length === 0){
-      infoFeedContainer.innerHTML = `
+      container.innerHTML = `
         <div class="empty">
           <div class="big">Belum ada info untuk ${getCategoryLabel(cat)}</div>
-          Klik tombol "+ Tambah Info" untuk menambahkan info baru.
+          <p style="margin-bottom:14px; font-size:13px; color:var(--ink-soft);">Klik tombol "+ Tambah" di atas untuk menambahkan info baru.</p>
+          <button type="button" class="btn-hero-add-info" onclick="document.getElementById('openAddInfoBtn').click()">+ Tambah ${getCategoryLabel(cat)}</button>
         </div>`;
       return;
     }
 
-    infoFeedContainer.innerHTML = `
+    container.innerHTML = `
       <div class="info-vertical-list">
         ${filtered.map(item => renderVerticalCardHtml(item)).join('')}
       </div>
@@ -6430,7 +6415,7 @@ function renderBerandaInfo(cat = 'all'){
   }
 
   // Pasang event klik pada semua kartu info untuk buka sheet detail
-  infoFeedContainer.querySelectorAll('[data-info-id]').forEach(card => {
+  container.querySelectorAll('[data-info-id]').forEach(card => {
     const id = card.dataset.infoId;
     const item = campusInfoList.find(i => i.id === id);
     if (item){
@@ -6446,18 +6431,26 @@ function renderHorizontalCardHtml(item){
 
   return `
     <div class="info-card-h" data-info-id="${escapeHtml(item.id)}">
-      <div>
-        <div class="card-badge-row">
-          <span class="card-cat-badge ${badgeClass}">${catLabel}</span>
-          <span class="card-deadline-pill ${deadline.urgent ? 'urgent' : ''}">⏳ ${escapeHtml(deadline.text)}</span>
+      <div class="card-top-accent accent-${item.category}"></div>
+      <div class="info-card-inner">
+        <div>
+          <div class="card-badge-row">
+            <span class="card-cat-badge ${badgeClass}">${catLabel}</span>
+            <span class="card-deadline-pill ${deadline.urgent ? 'urgent' : ''}">⏳ ${escapeHtml(deadline.text)}</span>
+          </div>
+          <div class="info-card-title">${escapeHtml(item.title)}</div>
+          <div class="info-card-org">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+              <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>
+            </svg>
+            <span>${escapeHtml(item.organizer || 'Kampus / Lembaga')}</span>
+          </div>
+          <div class="info-card-desc-snippet">${escapeHtml(item.description || '')}</div>
         </div>
-        <div class="info-card-title">${escapeHtml(item.title)}</div>
-        <div class="info-card-org">${escapeHtml(item.organizer || 'Kampus / Umum')}</div>
-        <div class="info-card-desc-snippet">${escapeHtml(item.description || '')}</div>
-      </div>
-      <div class="info-card-footer">
-        <span>Lihat Detail</span>
-        <span>›</span>
+        <div class="info-card-footer">
+          <span>Lihat Rincian</span>
+          <span style="font-size:14px; font-weight:700;">›</span>
+        </div>
       </div>
     </div>
   `;
@@ -6469,17 +6462,22 @@ function renderVerticalCardHtml(item){
   const catLabel = getCategoryLabel(item.category);
 
   return `
-    <div class="info-card-v" data-info-id="${escapeHtml(item.id)}">
+    <div class="info-card-v card-${item.category}" data-info-id="${escapeHtml(item.id)}">
       <div class="card-badge-row">
         <span class="card-cat-badge ${badgeClass}">${catLabel}</span>
         <span class="card-deadline-pill ${deadline.urgent ? 'urgent' : ''}">⏳ ${escapeHtml(deadline.text)}</span>
       </div>
-      <div class="info-card-title" style="-webkit-line-clamp:unset; font-size:16px;">${escapeHtml(item.title)}</div>
-      <div class="info-card-org" style="margin-bottom:8px;">Penyelenggara: <strong>${escapeHtml(item.organizer || 'Umum')}</strong></div>
-      <div class="info-card-desc-snippet" style="-webkit-line-clamp:3; margin-bottom:12px;">${escapeHtml(item.description || '')}</div>
+      <div class="info-card-title" style="-webkit-line-clamp:unset; font-size:16.5px;">${escapeHtml(item.title)}</div>
+      <div class="info-card-org" style="margin-bottom:10px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+          <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>
+        </svg>
+        <span>Penyelenggara: <strong>${escapeHtml(item.organizer || 'Umum')}</strong></span>
+      </div>
+      <div class="info-card-desc-snippet" style="-webkit-line-clamp:3; margin-bottom:14px; font-size:13px; line-height:1.5;">${escapeHtml(item.description || '')}</div>
       <div class="info-card-footer">
-        <span>Buka Rincian & Pendaftaran</span>
-        <span>→</span>
+        <span style="font-weight:600;">Buka Rincian & Pendaftaran</span>
+        <span style="font-size:14px; font-weight:700;">→</span>
       </div>
     </div>
   `;
