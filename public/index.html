@@ -2880,21 +2880,20 @@ span.flatpickr-weekday{
 
 .info-lane-track {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   overflow-x: auto;
-  padding: 6px 4px 16px;
-  margin: 0 -4px;
+  padding: 10px calc(50% - 135px) 24px;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
 .info-lane-track::-webkit-scrollbar { display: none; }
 
-/* HORIZONTAL CARD DESIGN */
+/* HORIZONTAL CARD DESIGN with Depth of Field & Focus Carousel */
 .info-card-h {
   flex: 0 0 270px;
   max-width: 270px;
-  scroll-snap-align: start;
+  scroll-snap-align: center;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -2903,17 +2902,37 @@ span.flatpickr-weekday{
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
-  transition: all .2s cubic-bezier(.4, 0, .2, 1);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   position: relative;
+  user-select: none;
+
+  /* Status non-aktif: redup, mengecil & blur lembut */
+  opacity: 0.42;
+  filter: blur(2.5px);
+  transform: scale(0.91);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform .32s cubic-bezier(.34, 1.4, .64, 1),
+              opacity .26s ease,
+              filter .26s ease,
+              box-shadow .26s ease,
+              border-color .26s ease;
 }
-.info-card-h:hover {
-  transform: translateY(-4px);
+
+/* Status aktif (fokus di tengah): tajam, menonjol & terangkat */
+.info-card-h.active-focus {
+  opacity: 1;
+  filter: blur(0px);
+  transform: scale(1.02);
+  box-shadow: 0 16px 36px -8px rgba(20, 28, 20, 0.18);
   border-color: var(--line-strong);
-  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+
+.info-card-h.active-focus:hover {
+  transform: scale(1.04) translateY(-3px);
+  box-shadow: 0 20px 42px -10px rgba(20, 28, 20, 0.24);
 }
 .info-card-h:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 .card-top-accent {
@@ -6414,15 +6433,83 @@ function renderBerandaInfo(cat = 'all'){
     `;
   }
 
-  // Pasang event klik pada semua kartu info untuk buka sheet detail
+  // Pasang event klik pada semua kartu info untuk buka sheet detail atau fokus ke tengah
   container.querySelectorAll('[data-info-id]').forEach(card => {
     const id = card.dataset.infoId;
     const item = campusInfoList.find(i => i.id === id);
-    if (item){
+    if (!item) return;
+
+    if (card.classList.contains('info-card-h')) {
+      card.onclick = (e) => {
+        // Jika kartu belum aktif / belum fokus di tengah, scroll ke tengah lebih dulu
+        if (!card.classList.contains('active-focus')) {
+          e.preventDefault();
+          e.stopPropagation();
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          return;
+        }
+        openInfoDetail(item);
+      };
+    } else {
       card.onclick = () => openInfoDetail(item);
     }
   });
+
+  // Jalankan inisialisasi fokus cover-flow jika di tab 'Semua'
+  if (cat === 'all'){
+    setupCarouselFocus();
+  }
 }
+
+// Efek Cover Flow Focus Carousel: kartu di tengah tajam & menonjol, samping redup & blur
+function setupCarouselFocus(){
+  const tracks = document.querySelectorAll('.info-lane-track');
+  tracks.forEach(track => {
+    let ticking = false;
+
+    function updateActiveCard(){
+      ticking = false;
+      const trackRect = track.getBoundingClientRect();
+      const trackCenter = trackRect.left + trackRect.width / 2;
+      const cards = track.querySelectorAll('.info-card-h');
+      if (!cards.length) return;
+
+      let closestCard = null;
+      let closestDist = Infinity;
+
+      cards.forEach(card => {
+        const cardRect = card.getBoundingClientRect();
+        const cardCenter = cardRect.left + cardRect.width / 2;
+        const dist = Math.abs(trackCenter - cardCenter);
+        if (dist < closestDist){
+          closestDist = dist;
+          closestCard = card;
+        }
+      });
+
+      cards.forEach(card => {
+        if (card === closestCard) {
+          card.classList.add('active-focus');
+        } else {
+          card.classList.remove('active-focus');
+        }
+      });
+    }
+
+    track.addEventListener('scroll', () => {
+      if (!ticking){
+        requestAnimationFrame(updateActiveCard);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Initial check setelah render
+    updateActiveCard();
+    setTimeout(updateActiveCard, 80);
+    setTimeout(updateActiveCard, 300);
+  });
+}
+
 
 function renderHorizontalCardHtml(item){
   const deadline = getDeadlineStatus(item.deadlineDate);
