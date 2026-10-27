@@ -236,7 +236,7 @@ async function initDb() {
       };
       for (const [sId, sImg] of Object.entries(starterImages)) {
         await db.execute({
-          sql: 'UPDATE campus_info SET image_url = ? WHERE id = ? AND (image_url IS NULL OR image_url = "");',
+          sql: "UPDATE campus_info SET image_url = ? WHERE id = ? AND (image_url IS NULL OR image_url = '' OR TRIM(image_url) = '');",
           args: [sImg, sId]
         });
       }

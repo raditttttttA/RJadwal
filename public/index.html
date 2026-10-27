@@ -6777,7 +6777,7 @@ function renderCardPosterBannerHtml(item, isVertical = false){
   let bannerContent = '';
   if (item.imageUrl) {
     bannerContent = `
-      <img class="card-poster-img" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+      <img class="card-poster-img" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
       <div class="card-poster-fallback fallback-${item.category}" style="display:none;">
         <span class="fallback-tagline">${escapeHtml(item.title)}</span>
       </div>
@@ -6878,7 +6878,7 @@ function openInfoDetail(item){
   if (item.imageUrl) {
     posterHeroHtml = `
       <div class="info-detail-poster-wrap" onclick="openPosterLightbox('${escapeHtml(item.imageUrl)}')">
-        <img src="${escapeHtml(item.imageUrl)}" class="info-detail-poster-img" alt="Brosur ${escapeHtml(item.title)}">
+        <img src="${escapeHtml(item.imageUrl)}" class="info-detail-poster-img" alt="Brosur ${escapeHtml(item.title)}" referrerpolicy="no-referrer">
         <div class="poster-zoom-tip">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6M8 11h6"/></svg>
           <span>Ketuk untuk perbesar pamflet</span>

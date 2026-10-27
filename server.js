@@ -81,10 +81,19 @@ app.use('/api/info', infoRoutes);     // Endpoint info beasiswa, lomba & event k
 // 4. FRONTEND STATIC ASSETS & SPA ROUTING
 // =============================================================
 // Melayani file HTML, CSS, JS, dan ikon dari folder public
+app.use((req, res, next) => {
+  if (req.path === '/' || req.path.endsWith('.html')) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+  next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 // SPA fallback: kirim index.html untuk semua route yang bukan /api/*
 app.get('*', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
